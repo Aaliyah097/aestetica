@@ -1,5 +1,5 @@
 # Structure
-![img.png](assets/class diagram.png)
+![img.png](class diagram.png)
 ## 1. Staff
 - department
 - filial

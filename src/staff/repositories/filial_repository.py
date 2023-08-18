@@ -1,4 +1,4 @@
-from src.staff.entities.filial import Filial
+from src.treatments.entities.filial import Filial
 from db.aestetica.tables import (
     Base,
     Filial as FilialTable

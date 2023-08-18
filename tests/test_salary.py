@@ -1,6 +1,6 @@
 from src.staff.repositories.staff_repository import StaffFactory
 from src.staff.entities.role import Role
-from src.staff.entities.department import Department
+from src.treatments.entities.department import Department
 
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.service.salary_calculation_service import SalaryCalculationService

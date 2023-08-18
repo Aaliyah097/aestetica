@@ -1,7 +1,7 @@
 from src.salary.entities.salary import Salary
 from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.entities.users.staff import Staff
-from src.staff.entities.department import Department
+from src.treatments.entities.department import Department
 
 from db.aestetica.tables import (
     Salary as SalaryTable,

@@ -1,8 +1,6 @@
 # Structure
 ![img.png](assets/class_diagram.png)
 ## 1. Staff
-- department
-- filial
 - role
 - users
   - staff
@@ -12,6 +10,8 @@
 ## 2. Treatments
 - service
 - treatment
+- filial
+- department
 
 ## 3. Schedule
 - schedule

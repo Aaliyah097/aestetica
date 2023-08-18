@@ -2,13 +2,12 @@ import datetime
 
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.treatments.repositories.treatments_repository import TreatmentRepository
-from src.staff.repositories.staff_repository import StaffRepository
 from src.staff.repositories.filial_repository import FilialRepository
 
-from src.staff.entities.filial import Filial
+from src.treatments.entities.filial import Filial
 from src.salary.entities.salary import Salary
 from src.staff.entities.users.doctor import Doctor
-from src.staff.entities.department import Department
+from src.treatments.entities.department import Department
 
 
 class SalaryCalculationService:

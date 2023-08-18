@@ -5,8 +5,8 @@ import settings
 from src.treatments.entities.treatment import Treatment
 from src.staff.repositories.staff_repository import StaffFactory
 from src.staff.entities.role import Role
-from src.staff.entities.filial import Filial
-from src.staff.entities.department import Department
+from src.treatments.entities.filial import Filial
+from src.treatments.entities.department import Department
 
 
 from db.infodent.db import Connector

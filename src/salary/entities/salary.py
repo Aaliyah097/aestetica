@@ -1,6 +1,6 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.assistant import Assistant
-from src.staff.entities.department import Department
+from src.treatments.entities.department import Department
 from src.salary.entities.salary_grid import SalaryGrid
 
 

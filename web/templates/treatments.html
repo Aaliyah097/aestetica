@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Приемы{% endblock %}
+
+{% block page_content %}
+    <h3>Приемы | {{ treatments|count }} шт.</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Клиент</th>
+                <th>Дата</th>
+                <th>Услуга</th>
+                <th>Код услуги</th>
+                <th>Кол-во</th>
+                <th>Стоимость</th>
+                <th>Скидка</th>
+                <th>Цена</th>
+                <th>Сотрудник</th>
+                <th>Роль</th>
+                <th>Филиал</th>
+                <th>Отделение</th>
+                <th>Зуб</th>
+                <th>Техник</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for treat in treatments %}
+            <tr>
+                <td>{{ treat.client }}</td>
+                <td>{{ treat.on_date }}</td>
+                <td>{{ treat.service.name }}</td>
+                <td>{{ treat.service.code }}</td>
+                <td>{{ treat.amount }}</td>
+                <td>{{ treat.cost_wo_discount }}</td>
+                <td>{{ treat.discount }}</td>
+                <td>{{ treat.cost }}</td>
+                <td>{{ treat.staff.name }}</td>
+                <td>{{ treat.staff.role.name }}</td>
+                <td>{{ treat.filial.name }}</td>
+                <td>{{ treat.department.name }}</td>
+                <td>{{ treat.tooth }}</td>
+                <td>{{ treat.technician.name }}</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td>Итого</td>
+                <td colspan="4"></td>
+                <td>{{ treatments|map(attribute="cost_wo_discount")|sum }}</td>
+                <td>{{ treatments|map(attribute="discount")|sum }}</td>
+                <td>{{ treatments|map(attribute="cost")|sum }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

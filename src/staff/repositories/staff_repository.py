@@ -1,6 +1,7 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.technician import Technician
 from src.staff.entities.role import Role
 
 
@@ -16,6 +17,8 @@ class StaffFactory:
             new_staff = Doctor(name=name)
         elif staff_role.name in ['Медсестра', "Ст. медсестра"]:
             new_staff = Assistant(name=name)
+        elif staff_role.name == 'Техник':
+            new_staff = Technician(name=name)
         else:
             new_staff = Staff(name=name)
 

@@ -21,8 +21,15 @@ class ServicesRepository:
 
     @staticmethod
     def get_by_code(code: str) -> Service | None:
+        if not code:
+            return None
+
         with Base() as session:
-            return session.get(ServiceTable, code)
+            service = session.get(ServiceTable, code)
+            return Service(
+                name=service.name,
+                code=service.code
+            )
 
     @staticmethod
     def get_all() -> list[Service]:

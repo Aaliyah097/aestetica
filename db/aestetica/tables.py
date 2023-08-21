@@ -91,3 +91,12 @@ class Service(Base):
 
     code: Mapped[str] = mapped_column(String(20), primary_key=True, unique=True, autoincrement=False)
     name: Mapped[str] = mapped_column(String(500))
+
+
+class Consumables(Base):
+    __tablename__ = 'consumables'
+
+    id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
+    service: Mapped[str] = mapped_column(ForeignKey('services.code'))
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)

@@ -5,9 +5,10 @@
 - Role
 > The role defines the invariant of the Staff: doctor, assistant, etc.
 - Users
-  - Staff 
+  - Staff (abstract class)
   - Doctor 
   - Assistant
+  - Technician (not an employee)
 >   Each Staff can be presented in variants based on his role.  
 >   The calculation method for each invariant is different
 
@@ -19,6 +20,7 @@
 - Filial
 - Department
 > Staff have different interest rates (a.n.a. Salary-grid) depends on Department
+- Consumables
 
 ## 3. Schedule
 ### Entities

@@ -5,7 +5,8 @@ from aestetica.tables import (
     Service as ServiceTable,
     Role as RoleTable,
     Staff as StaffTable,
-    Department as DepartmentTable
+    Department as DepartmentTable,
+    Filial as FilialTable
 )
 
 
@@ -91,9 +92,25 @@ def sync_departments():
         session.commit()
 
 
+def sync_filials():
+    names = ['Курская', "Барвиха"]
+    with Base() as session:
+        for name in names:
+            if session.get(FilialTable, name):
+                continue
+
+            session.add(
+                FilialTable(
+                    name=name
+                )
+            )
+        session.commit()
+
+
 if __name__ == '__main__':
     """sync"""
-    # sync_services()
-    # sync_roles()
-    # sync_staff()
-    # sync_departments()
+    sync_services()
+    sync_roles()
+    sync_staff()
+    sync_departments()
+    sync_filials()

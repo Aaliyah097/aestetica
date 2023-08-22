@@ -8,6 +8,7 @@
 
 <div class="block_filter">
     <p class="description">Расчет автоматизации ЗП</p>
+
     <form action="" class="input_block">
         <label for="" class="label_date">Выберите дату <br>
             <input type="month" class="input_and_select" id="date_start">
@@ -83,14 +84,13 @@
 <script>
     (function () {
         document.querySelector('.table').style = 'display: none'
-    
     }())
 
     let generate_button = document.getElementById('generate_button')
     let date_start = document.getElementById('date_start')
     let filial = document.getElementById('filial')
     let table = document.querySelector('.table')
-    let month_ZP =  document.querySelector('#month_ZP')
+    let month_ZP = document.querySelector('#month_ZP')
 
     generate_button.addEventListener('click', () => {
         event.preventDefault()

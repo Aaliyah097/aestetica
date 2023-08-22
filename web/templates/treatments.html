@@ -3,10 +3,36 @@
 {% block page_title %}Приемы{% endblock %}
 
 {% block page_content %}
-    <h3>Приемы | {{ treatments|count }}  шт.</h3>
-    <table class="table table-hover">
+{% include "notifications/notification.html" %}
+
+
+<div class="block_filter">
+    <p class="description">Расчет автоматизации ЗП</p>
+    <form action="" class="input_block">
+        <label for="" class="label_date">Выберите дату <br>
+            <input type="month" class="input_and_select" id="date_start">
+        </label>
+        <label for="" class="label_date">Выберите филиал <br>
+            <select type="date" class="input_and_select" placeholder="Выберите филиал" id="filial">
+                <option value="" disabled>Выбор филиала</option>
+                <option value="Барвиха">Барвиха</option>
+                <option value="Курская">Курская</option>
+            </select>
+        </label>
+        <br>
+        <button class="generate_button" id="generate_button">Сформировать</button>
+    </form>
+</div>
+
+
+
+<div class="table_block">
+    <h3 class="no_data">Нет данных</h3>
+    <span id="month_ZP" class="description"></span>
+    <hr>
+    <table class="table table-bordered table-hover">
         <thead>
-            <tr>
+            <tr class="table-secondary">
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Услуга</th>
@@ -24,7 +50,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for treat in treatments %}
+            {% for treat in treatments %}
             <tr>
                 <td>{{ treat.client }}</td>
                 <td>{{ treat.on_date }}</td>
@@ -41,7 +67,7 @@
                 <td>{{ treat.tooth }}</td>
                 <td>{{ treat.technician.name }}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
             <tr>
                 <td>Итого</td>
                 <td colspan="4"></td>
@@ -52,4 +78,31 @@
             </tr>
         </tbody>
     </table>
+</div>
+
+<script>
+    (function () {
+        document.querySelector('.table').style = 'display: none'
+    
+    }())
+
+    let generate_button = document.getElementById('generate_button')
+    let date_start = document.getElementById('date_start')
+    let filial = document.getElementById('filial')
+    let table = document.querySelector('.table')
+    let month_ZP =  document.querySelector('#month_ZP')
+
+    generate_button.addEventListener('click', () => {
+        event.preventDefault()
+        if (date_start.value == "" || date_start.value == null) {
+            alert('выберите данные')
+            return
+        }
+        let current_month = new Date(date_start.value).toLocaleString('default', { month: 'long' })
+        month_ZP.innerHTML = `Зарплатная ведомость за ${current_month.charAt(0).toUpperCase() + current_month.slice(1)}`
+        document.querySelector('.no_data').style = 'display: none'
+        month_ZP.style = 'margin: 0'
+        table.style = 'display: block;'
+    })
+</script>
 {% endblock %}

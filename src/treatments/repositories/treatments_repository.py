@@ -25,7 +25,7 @@ class TreatmentRepository:
 
         if settings.Config.DEBUG:
             with open('src/treatments/repositories/treatments.json', 'rb') as file:
-                response = json.load(file)[:5]
+                response = json.load(file)[:10]
         else:
             connector = Connector(
                 name=filial.db_name,

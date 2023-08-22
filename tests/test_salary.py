@@ -6,7 +6,7 @@ from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.service.salary_calculation_service import SalaryCalculationService
 
 
-def test_salary_by_staff():
+def salary_by_staff():
     staff = StaffFactory.create_staff(
         name='Манукян Артавазд Генрикович',
         staff_role=Role(
@@ -20,8 +20,10 @@ def test_salary_by_staff():
     )
 
 
+def delete_salary_by_id(_id: int):
+    SalaryRepository.delete_by_id(_id)
+
+
 def test_salary_calculation():
-    service = SalaryCalculationService()
-    service.calc(
-        filial_name='Барвиха'
-    )
+    service = SalaryCalculationService(filial='Барвиха')
+    service.doctors_cals()

@@ -5,11 +5,10 @@ from src.salary.entities.salary_grid import SalaryGrid
 
 
 class Salary:
-    def __init__(self, _id: int,
+    def __init__(self,
                  staff: Staff,
                  department: Department,
                  fix: float = 0,):
-        self.id: int = _id
         self.staff: Staff = staff
         self.department: Department = department
         self.fix: float = fix if fix >= 0 else 0
@@ -19,7 +18,7 @@ class Salary:
 
     @property
     def income(self) -> float:
-        return self.income
+        return self._income
 
     @property
     def volume(self) -> float:
@@ -47,7 +46,7 @@ class Salary:
             if dimension.limit <= value:
                 total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
             else:
-                total += round((value - prev_limit) * dimension.percent / 100)
+                total += round((value - prev_limit) * dimension.percent / 100, 2)
 
         self._income = total
 
@@ -62,7 +61,6 @@ class Salary:
 
     def serialize(self) -> dict:
         return {
-            'id': self.id,
             'staff': self.staff.serialize(),
             'department': self.department.serialize(),
             'fix': self.fix,

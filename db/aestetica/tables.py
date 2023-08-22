@@ -1,21 +1,19 @@
-import datetime
-
 from sqlalchemy import (
     String, Float, Boolean, Integer, select,
     ForeignKey, create_engine, update, Table,
-    Column, DateTime
+    Column, DateTime, UniqueConstraint, delete
 )
-from typing import List, Optional
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm import Session
+
+from sqlalchemy.orm import (
+    DeclarativeBase, backref, Mapped,
+    mapped_column, relationship, Session
+)
+
 from . import config
 
 engine = create_engine(
     config.DB_URL,
-    echo=True
+    echo=False
 )
 
 
@@ -82,6 +80,10 @@ class SalaryGrid(Base):
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     salary: Mapped[int] = mapped_column(ForeignKey('salary.id'))
+    salary_backref = relationship(
+        "Salary", backref=backref("salary", cascade="all, delete-orphan")
+    )
+
     limit: Mapped[float] = mapped_column(Float())
     percent: Mapped[float] = mapped_column(Float())
 
@@ -91,10 +93,12 @@ class Service(Base):
 
     code: Mapped[str] = mapped_column(String(20), primary_key=True, unique=True, autoincrement=False)
     name: Mapped[str] = mapped_column(String(500))
+    is_submit: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
 
 
 class Consumables(Base):
     __tablename__ = 'consumables'
+    __table_args__ = (UniqueConstraint('staff', 'service', name='staff_service_uc'),)
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     service: Mapped[str] = mapped_column(ForeignKey('services.code'))

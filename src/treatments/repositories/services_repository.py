@@ -20,6 +20,19 @@ class ServicesRepository:
             session.commit()
 
     @staticmethod
+    def get_submits() -> list[Service]:
+        query = select(ServiceTable).where(ServiceTable.is_submit == True)
+        with Base() as session:
+            return [
+                Service(
+                    name=s.name,
+                    code=s.code,
+                    is_submit=s.is_submit
+                )
+                for s in session.scalars(query).all()
+            ]
+
+    @staticmethod
     def get_by_code(code: str) -> Service | None:
         if not code:
             return None

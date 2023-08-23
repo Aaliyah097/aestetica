@@ -27,9 +27,11 @@ option {
     font-size: 20px;
     margin: 5% 0 0 1%;
 }
-.description:has(#month_ZP){
-    color: red !important;
+
+.first_desk, .first_desk{
+    font-size: 16px;
 }
+
 .input_block {
     margin: 5% 1% 0 0;
 
@@ -93,9 +95,7 @@ tr{
     cursor: pointer;
 }
 
-.toast-container {
-    z-index: 10 !important;
-}
+
 /* МЕДИА ЗАПРОСЫ */
 
 @media screen and (max-width: 500px) {
@@ -121,6 +121,11 @@ tr{
     }
 
     .logo_img {
-        width: 70%;
+        width: 100%;
+        height: 80%;
+    }
+    a.navbar-brand {
+        width: 50%;
+        height: 80%;
     }
 }

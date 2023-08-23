@@ -3,11 +3,13 @@
 {% block page_title %}Приемы{% endblock %}
 
 {% block page_content %}
+<!-- Перед включением шаблона объявлять эти переменные, которые ожидает дочерний компонент -->
+{% with message = 'Для формирования расчета необходимо выбрать дату' %}
 {% include "notifications/notification.html" %}
-
+{% endwith %}
 
 <div class="block_filter">
-    <p class="description">Расчет автоматизации ЗП</p>
+    <p class="description first_desk">Расчет автоматизации ЗП</p>
 
     <form action="" class="input_block">
         <label for="" class="label_date">Выберите дату <br>
@@ -54,7 +56,7 @@
             {% for treat in treatments %}
             <tr>
                 <td>{{ treat.client }}</td>
-                <td>{{ treat.on_date }}</td>
+                <td>{{ treat.on_date}}</td>
                 <td>{{ treat.service.name }}</td>
                 <td>{{ treat.service.code }}</td>
                 <td>{{ treat.amount }}</td>
@@ -81,28 +83,5 @@
     </table>
 </div>
 
-<script>
-    (function () {
-        document.querySelector('.table').style = 'display: none'
-    }())
-
-    let generate_button = document.getElementById('generate_button')
-    let date_start = document.getElementById('date_start')
-    let filial = document.getElementById('filial')
-    let table = document.querySelector('.table')
-    let month_ZP = document.querySelector('#month_ZP')
-
-    generate_button.addEventListener('click', () => {
-        event.preventDefault()
-        if (date_start.value == "" || date_start.value == null) {
-            alert('выберите данные')
-            return
-        }
-        let current_month = new Date(date_start.value).toLocaleString('default', { month: 'long' })
-        month_ZP.innerHTML = `Зарплатная ведомость за ${current_month.charAt(0).toUpperCase() + current_month.slice(1)}`
-        document.querySelector('.no_data').style = 'display: none'
-        month_ZP.style = 'margin: 0'
-        table.style = 'display: block;'
-    })
-</script>
+<script src="{{ url_for('static', filename='js/treatments.js') }}"></script>
 {% endblock %}

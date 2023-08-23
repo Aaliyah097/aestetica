@@ -1,10 +1,10 @@
 from src.treatments.entities.service import Service
-from src.staff.entities.users.technician import Technician
+from src.staff.entities.users.technician import Staff
 
 
 class Consumables:
     def __init__(self, service: Service,
-                 technician: Technician,
+                 technician: Staff,
                  cost: float = 0):
         self.service = service
         self.technician = technician
@@ -16,3 +16,6 @@ class Consumables:
             'technician': self.technician.serialize(),
             'cost': self.cost
         }
+
+    def __repr__(self):
+        return str(self.serialize())

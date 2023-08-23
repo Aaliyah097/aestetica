@@ -34,9 +34,13 @@
 
 <hr>
 
+# Business Logic
+![business_logic.png](assets/business_logic.png)
+
 # Requirements
 - min python v. 3.11
 - min Flask v. 2.*
+
 
 # Run app
 - pip install virtualenv
@@ -44,7 +48,6 @@
 - venv\Scripts\activate.bat OR venv\Scripts\Activate.ps1
 - pip install -r requirements.txt
 - type nul > db/aestetica/db.sqlite3
-- alembic revision --autogenerate -m"init"
 - alembic upgrade head
 - python db/sync.py
 - python app.py

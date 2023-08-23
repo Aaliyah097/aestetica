@@ -6,33 +6,38 @@ from src.treatments.entities.department import Department
 from db.aestetica.tables import (
     Salary as SalaryTable,
     SalaryGrid as SalaryGridTable,
-    Staff as StaffTable,
-    Department as DepartmentTable,
-    Base, select
+    Base, select, delete
 )
 
 
 class SalaryRepository:
     @staticmethod
+    def delete_by_id( _id: int) -> None:
+        with Base() as session:
+            salary = session.get(SalaryTable, _id)
+            if salary:
+                session.delete(SalaryTable, _id)
+            session.commit()
+
+    @staticmethod
     def get_salary(staff: Staff, department: Department) -> Salary | None:
         salary_query = select(SalaryTable).where(
-            (StaffTable.name == staff.name) &
-            (DepartmentTable.name == department.name)
+            (SalaryTable.staff == staff.name) &
+            (SalaryTable.department == department.name)
         ).limit(1)
 
         with Base() as session:
-            result = session.execute(salary_query).first()
+            result = session.scalars(salary_query).first()
             if not result:
                 return None
 
             salary = Salary(
-                _id=result[0].id,
                 staff=staff,
                 department=department,
-                fix=result[0].fix
+                fix=result.fix
             )
 
-            grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == salary.id)
+            grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == result.id)
             salary.grid = [
                 SalaryGrid(
                     _id=sg.id,

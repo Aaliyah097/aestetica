@@ -13,6 +13,13 @@ class FilialsRepository:
 
         with Base() as session:
             filial = session.get(FilialTable, name)
-            return Filial(
-                name=filial.name
-            ) if filial else None
+            if not filial:
+                return None
+
+            new_filial = Filial(name=filial.name)
+            new_filial.db_name = filial.db_name
+            new_filial.db_port = filial.db_port
+            new_filial.db_name = filial.db_name
+            new_filial.db_user = filial.db_user
+            new_filial.db_password = filial.db_password
+            return new_filial

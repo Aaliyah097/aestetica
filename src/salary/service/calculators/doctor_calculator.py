@@ -15,6 +15,8 @@ class DoctorSalaryCalculator:
         self.salary_repo: SalaryRepository = SalaryRepository()
 
     def calc(self, doctor: Staff, department: Department, treatments: list[Treatment]) -> Salary:
+        treatments.sort(key=lambda t: t.on_date, reverse=True)
+
         salary = self.salary_repo.get_salary(
             staff=doctor,
             department=department,
@@ -22,12 +24,29 @@ class DoctorSalaryCalculator:
             staff=doctor,
             department=department,
         )
+        volume = 0
+        for treatment in treatments:
+            if treatment.service not in self.submit_services:
+                volume += self.get_volume(treatment)
+            else:
+                prev_treatments = list(filter(
+                    lambda t: t.on_date <= treatment.on_date and
+                    t.client == treatment.client and
+                    t.cost != 0 and
+                    t.service not in self.submit_services,
+                    treatments
+                ))
 
-        salary.volume = sum([self.get_volume(treatment) for treatment in treatments])
+        salary.volume = volume
 
         return salary
 
     def get_volume(self, treatment: Treatment) -> float:
+        is_submit = treatment.service in self.submit_services
+        if is_submit:
+            """request prev treatment"""
+
+        # 1
         if treatment.cost_wo_discount == 0:
             volume = treatment.cost_wo_discount
         elif (treatment.discount * 100 / treatment.cost_wo_discount) < 50:
@@ -41,9 +60,7 @@ class DoctorSalaryCalculator:
                 service=treatment.service
             )
             if consumables:
-                volume -= consumables.cost
-
-        #  TODO submitting services
+                volume = (volume - consumables.cost) * 0.7
 
         return volume
 

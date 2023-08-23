@@ -11,13 +11,16 @@ from src.staff.entities.users.staff import Staff
 
 class ConsumablesRepository:
     @staticmethod
-    def get_by_technician_and_service(technician: Staff, service: Service) -> Consumables:
+    def get_by_technician_and_service(technician: Staff, service: Service) -> Consumables | None:
+        if not service or not technician:
+            return None
+
         query = select(ConsumablesTable).where(
             ConsumablesTable.staff == technician.name,
             ConsumablesTable.service == service.code
         ).limit(1)
         with Base() as session:
-            consumables = session.scalar(query).one()
+            consumables = session.scalars(query).first()
 
             return Consumables(
                 service=service,

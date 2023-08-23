@@ -22,7 +22,7 @@ class Salary:
 
     @property
     def volume(self) -> float:
-        return self.volume
+        return self._volume
 
     @volume.setter
     def volume(self, value: float):

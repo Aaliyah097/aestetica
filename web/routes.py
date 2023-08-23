@@ -10,3 +10,10 @@ def list_treatments():
         'treatments.html',
         treatments=TreatmentRepository.get_all_treatments(filial='Барвиха')
     )
+
+
+@app.route('/new-page')
+def new_page():
+    return render_template(
+        'new_page.html'
+    )

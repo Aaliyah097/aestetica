@@ -1,5 +1,7 @@
 import datetime
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Iterable
 
 from src.salary.entities.salary import Salary
 from src.salary.repositories.salary_repository import SalaryRepository
@@ -36,7 +38,7 @@ class SalaryCalculationService:
         self.date_begin = date_begin
         self.date_end = date_end
 
-    def doctors_cals(self):
+    def doctors_cals(self) -> Iterable[tuple[Staff, Department, Salary]]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(
                 filial=self.filial,
@@ -54,7 +56,7 @@ class SalaryCalculationService:
                     department=department,
                     treatments=treats
                 )
-                print(doctor.name, '->', department.name, '->', salary.income)
+                yield doctor, department, salary, treats
 
     def total_calc(self):
         pass

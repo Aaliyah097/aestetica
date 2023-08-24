@@ -7,6 +7,8 @@ from src.treatments.repositories.consumables_repository import ConsumablesReposi
 from src.treatments.repositories.services_repository import ServicesRepository
 from src.salary.repositories.salary_repository import SalaryRepository
 
+from itertools import chain
+
 
 class DoctorSalaryCalculator:
     def __init__(self):
@@ -14,41 +16,34 @@ class DoctorSalaryCalculator:
         self.submit_services: list[Service] = ServicesRepository.get_submits()
         self.salary_repo: SalaryRepository = SalaryRepository()
 
-    def calc(self, doctor: Staff, department: Department, treatments: list[Treatment]) -> Salary:
-        treatments.sort(key=lambda t: t.on_date, reverse=True)
+    def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> list[Salary]:
+        union_treatments = list(chain.from_iterable(treatments.values()))
+        union_treatments.sort(key=lambda t: t.on_date, reverse=True)
 
-        salary = self.salary_repo.get_salary(
-            staff=doctor,
-            department=department,
-        ) or Salary(
-            staff=doctor,
-            department=department,
-        )
-        volume = 0
-        for treatment in treatments:
+        salaries = {
+            dep: self.salary_repo.get_salary(staff=doctor, department=dep) or Salary(staff=doctor, department=dep)
+            for dep in treatments
+        }
+
+        for treatment in union_treatments:
             if treatment.service not in self.submit_services:
-                volume += self.get_volume(treatment)
+                salaries[treatment.department].volume = self.get_volume(treatment)
             else:
                 prev_treatments = list(filter(
                     lambda t: t.on_date <= treatment.on_date and
-                    t.client == treatment.client and
-                    t.cost != 0 and
-                    t.service not in self.submit_services,
-                    treatments
+                              t.client == treatment.client and
+                              t.cost != 0 and
+                              t.service not in self.submit_services,
+                    union_treatments
                 ))
+                if len(prev_treatments) > 0:
+                    salaries[prev_treatments[-1].department].volume = self.get_volume(prev_treatments[-1], True)
 
-        salary.volume = volume
+        return list(salaries.values())
 
-        return salary
-
-    def get_volume(self, treatment: Treatment) -> float:
-        is_submit = treatment.service in self.submit_services
-        if is_submit:
-            """request prev treatment"""
-
-        # 1
+    def get_volume(self, treatment: Treatment, is_submit: bool = False) -> float:
         if treatment.cost_wo_discount == 0:
-            volume = treatment.cost_wo_discount
+            volume = 0
         elif (treatment.discount * 100 / treatment.cost_wo_discount) < 50:
             volume = treatment.cost
         else:
@@ -59,8 +54,16 @@ class DoctorSalaryCalculator:
                 technician=treatment.technician,
                 service=treatment.service
             )
-            if consumables:
-                volume = (volume - consumables.cost) * 0.7
+            consumables_cost = consumables.cost if consumables else 0
+        else:
+            consumables_cost = 0
+
+        if is_submit:
+            volume = (volume - consumables_cost) * 0.3
+        else:
+            if consumables_cost != 0:
+                volume = (volume - consumables_cost) * 0.7
+            else:
+                volume = volume
 
         return volume
-

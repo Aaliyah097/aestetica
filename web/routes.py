@@ -18,7 +18,7 @@ def list_treatments():
     )
 
 
-@app.route('/salary/doctors')
+@app.route('/salary')
 def list_doctors_salary():
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
@@ -44,7 +44,7 @@ def list_doctors_salary():
         return str(e), 500
 
     return render_template(
-        'salary_report.html',
+        'salary_table.html',
         report=salary_reports
     )
 

@@ -95,6 +95,9 @@ tr{
     cursor: pointer;
 }
 
+td:not(:nth-child(1)){
+    text-align: center;
+}
 
 /* МЕДИА ЗАПРОСЫ */
 

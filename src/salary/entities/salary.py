@@ -26,11 +26,11 @@ class Salary:
 
     @volume.setter
     def volume(self, value: float):
-        self._volume = value
+        self._volume += value
 
         if len(self._grid) == 0:
             if isinstance(self.staff, Assistant):
-                self._income = self.fix * value
+                self._income = self.fix * self._volume
             else:
                 self._income = self.fix
 
@@ -38,15 +38,15 @@ class Salary:
 
         total = 0
         for idx, dimension in enumerate(self._grid):
-            if self._grid[0].limit > value:
-                total = round(value * self._grid[0].percent / 100, 2)
+            if self._grid[0].limit > self._volume:
+                total = round(self._volume * self._grid[0].percent / 100, 2)
                 break
 
             prev_limit = self._grid[idx - 1].limit if idx > 0 else 0
-            if dimension.limit <= value:
+            if dimension.limit <= self._volume:
                 total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
             else:
-                total += round((value - prev_limit) * dimension.percent / 100, 2)
+                total += round((self._volume - prev_limit) * dimension.percent / 100, 2)
 
         self._income = total
 

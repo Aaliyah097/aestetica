@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+    {% for salary in report %}
+        {{ salary.staff.name }}
+        {{ salary.volume }}
+        {{ salary.income }}
+        {{ salary.treatments|count }}
+        <br>
+    {% endfor %}
+{% endblock %}

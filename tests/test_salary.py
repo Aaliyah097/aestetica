@@ -26,6 +26,5 @@ def delete_salary_by_id(_id: int):
 
 def test_salary_calculation():
     service = SalaryCalculationService(filial='Барвиха')
-    for doc, dep, sal, treats in service.doctors_cals():
-        if doc.name == 'Мазманян Артур Размикович':
-            print(f"{doc.name} -> {dep.name} -> {sal.income} ({sal.volume}) -> {len(treats)}")
+    for doctor, salaries in service.doctors_cals():
+        print(doctor.name, [salary.income for salary in salaries])

@@ -5,11 +5,13 @@ class Staff:
     def __init__(self, name: str):
         self.name: str = name
         self.role: Role | None = None
+        self.is_new: bool = False
 
     def serialize(self) -> dict:
         return {
             'name': self.name,
-            'role': self.role.serialize() or None
+            'role': self.role.serialize() or None,
+            'is_new': self.is_new
         }
 
     def __repr__(self):

@@ -1,5 +1,22 @@
-# Structure
-![img.png](assets/class_diagram.png)
+# Business Logic
+![business_logic.png](assets/business_logic.png)
+
+# Components Diagram
+![component_diagram.png](assets/component_diagram.png)
+
+# Class Diagram
+![class_diagram.png](assets/class_diagram.png)
+
+# DB Scheme
+![db_scheme.png](assets/db_scheme.png)
+
+<hr>
+
+# Use cases
+- get list of employees with their salary-grid
+- get salary report for each staff in complex
+- modify salary-grid
+
 ## 1. Staff
 ### Entities
 - Role
@@ -33,9 +50,6 @@
   - Salary-grid
 
 <hr>
-
-# Business Logic
-![business_logic.png](assets/business_logic.png)
 
 # Requirements
 - min python v. 3.11

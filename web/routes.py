@@ -6,9 +6,10 @@ from flask import request
 
 from src.salary.service.salary_calculation_service import SalaryCalculationService
 from src.staff.service.staff_management_service import StaffManagementService
+from src.salary.service.salary_management_service import SalaryManagementService
 
 
-@app.route('/staff')
+@app.route('/staff', methods=['GET', ])
 def list_staff():
     return render_template(
         'staff.html',
@@ -16,7 +17,24 @@ def list_staff():
     )
 
 
-@app.route('/salary')
+@app.route('/salary/update/<int:pk>', methods=['POST', ])
+def modify_salary(pk: int):
+    fix = request.form.get('fix', None)
+    salary_grid = request.form.get('grid', None)
+    if not salary_grid or not fix:
+        return "expected params 'fix: int' and 'salary_grid: list[dict]'"
+
+    for grid in salary_grid:
+        if type(grid) != dict or 'limit' not in grid or 'percent' not in grid:
+            return "param 'grid' should be as list[dict[str, int]]: grid=[{limit: int, percent: int}, ]"
+
+    service = SalaryManagementService()
+    service.modify_salary(salary_id=pk, fix=fix or 0, grid=salary_grid or [])
+
+    return 'ok', 200
+
+
+@app.route('/salary', methods=['GET', ])
 def list_doctors_salary():
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
@@ -47,7 +65,7 @@ def list_doctors_salary():
     )
 
 
-@app.route('/new-page')
+@app.route('/new-page', methods=['GET', ])
 def new_page():
     return render_template(
         'new_page.html'

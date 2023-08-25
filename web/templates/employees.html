@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block page_title %}Расчет ЗП{% endblock %}
+{% block page_title %}Сотрудники{% endblock %}
 
 {% block page_content %}
 <!-- Перед включением шаблона объявлять эти переменные, которые ожидает дочерний компонент -->
+<!-- TODO какой текст в ошибку -->
 {% with message = 'Для формирования расчета необходимо выбрать дату' %}
 {% include "notifications/notification.html" %}
 {% endwith %}
-
 <div class="block_filter">
-    <p class="description first_desk">Расчет автоматизации ЗП</p>
+    <p class="description first_desk">Сотрудники</p>
 
     <form action="{{ url_for('list_doctors_salary') }}" method="get" class="input_block" id="form_data">
         <label for="" class="label_date">Выберите дату начала<br>
@@ -33,14 +33,4 @@
     </form>
 </div>
 
-<div class="nodata">
-    <p class="description" style="color: rgb(78, 78, 78); font-size: 25px;">Нет данных</p>
-    <hr>
-</div>
-<div class="table_block" id="table_block">
-    <!-- сюда вставляется salary_report -->
-</div>
-
-
-<script src="{{ url_for('static', filename='js/treatments.js') }}"></script>
 {% endblock %}

@@ -8,7 +8,8 @@ class Salary:
     def __init__(self,
                  staff: Staff,
                  department: Department,
-                 fix: float = 0,):
+                 fix: float = 0):
+        self.id: int | None = None
         self.staff: Staff = staff
         self.department: Department = department
         self.fix: float = fix if fix >= 0 else 0
@@ -61,6 +62,7 @@ class Salary:
 
     def serialize(self) -> dict:
         return {
+            'id': self.id,
             'staff': self.staff.serialize(),
             'department': self.department.serialize(),
             'fix': self.fix,

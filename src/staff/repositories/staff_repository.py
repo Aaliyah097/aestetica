@@ -32,13 +32,48 @@ class StaffRepository:
     def get_staff() -> list[Staff]:
         query = select(StaffTable)
 
+        employees = []
         with Base() as session:
-            return [
-                StaffFactory.create_staff(
+            for st in session.scalars(query).all():
+                staff = StaffFactory.create_staff(
                     name=st.name,
                     staff_role=Role(
                         name=st.role
                     )
                 )
-                for st in session.scalars(query).all()
-            ]
+                staff.is_new = st.is_new
+                employees.append(staff)
+        return employees
+
+    @staticmethod
+    def _get_staff_by_name(staff_name: str) -> StaffTable | None:
+        with Base() as session:
+            staff = session.get(StaffTable, staff_name)
+            session.expunge_all()
+            return staff
+
+    def get_staff_by_name(self, name: str) -> Staff:
+        staff = self._get_staff_by_name(name)
+
+        if staff:
+            return StaffFactory.create_staff(
+                name=staff.name,
+                staff_role=Role(
+                    name=staff.role
+                )
+            )
+
+    def create_staff(self, staff: Staff) -> Staff | None:
+        if self._get_staff_by_name(staff.name):
+            return
+
+        with Base() as session:
+            session.add(
+                StaffTable(
+                    name=staff.name,
+                    role=staff.role.name
+                )
+            )
+            session.commit()
+
+        return self.get_staff_by_name(staff.name)

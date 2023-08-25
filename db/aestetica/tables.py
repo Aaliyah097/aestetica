@@ -71,6 +71,9 @@ class Salary(Base):
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     staff: Mapped[str] = mapped_column((ForeignKey('staff.name')))
+    staff_backref = relationship(
+        "Staff", backref=backref("staff", cascade="all, delete-orphan")
+    )
     department: Mapped[str] = mapped_column(ForeignKey('departments.name'))
     fix: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
 
@@ -102,5 +105,8 @@ class Consumables(Base):
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     service: Mapped[str] = mapped_column(ForeignKey('services.code'))
+    service_backref = relationship(
+        "Service", backref=backref("service", cascade="all, delete-orphan")
+    )
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)

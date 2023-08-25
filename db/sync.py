@@ -9,6 +9,8 @@ from aestetica.tables import (
     Filial as FilialTable
 )
 
+from src.staff.service.staff_management_service import StaffManagementService
+
 
 def sync_services():
     with open('db/data/services.json', 'r') as file:
@@ -51,27 +53,6 @@ def sync_roles():
         session.commit()
 
 
-def sync_staff():
-    with open('db/data/staff.json', 'r') as file:
-        users = json.load(file)
-
-    with Base() as session:
-        for user in users:
-            if not user['DOCTOR_DNAME'] or not user['DOCTOR_STDTYPENAME']:
-                continue
-
-            if session.get(StaffTable, user['DOCTOR_DNAME']):
-                continue
-
-            session.add(
-                StaffTable(
-                    name=user['DOCTOR_DNAME'],
-                    role=user['DOCTOR_STDTYPENAME']
-                )
-            )
-        session.commit()
-
-
 def sync_departments():
     with open('db/data/departments.json', 'r') as file:
         departments = json.load(file)
@@ -109,8 +90,8 @@ def sync_filials():
 
 if __name__ == '__main__':
     """sync"""
-    sync_services()
-    sync_roles()
+    #sync_services()
+    #sync_roles()
     sync_staff()
-    sync_departments()
-    sync_filials()
+    #sync_departments()
+    #sync_filials()

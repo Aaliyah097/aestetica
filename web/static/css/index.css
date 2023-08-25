@@ -27,6 +27,11 @@ option {
     font-size: 20px;
     margin: 5% 0 0 1%;
 }
+.total{
+    color: var(--DescriptionColor);
+    margin: 5% 0 0 1%;
+    font-size: 16px;
+}
 
 .first_desk,
 .first_desk {
@@ -117,6 +122,11 @@ tr {
 td:not(:nth-child(1)) {
     text-align: center;
 }
+td{
+    text-align: center;
+    vertical-align: middle;
+}
+
 
 .active {
     border-bottom: 2px solid #e4e4e4;
@@ -186,6 +196,7 @@ td:not(:nth-child(1)) {
   #refreshData.transform {
     transform: rotate(360deg);
   }
+  /* ячейки одного размера */
   .table-staff{
     table-layout: fixed;
   }
@@ -253,4 +264,10 @@ td:not(:nth-child(1)) {
         font-size: 16px;
         margin: 5% 0 0 1%;
     }
+    .table-staff{
+        table-layout: auto;
+      }
+      td{
+        font-size: 14px;
+      }
 }

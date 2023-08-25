@@ -20,7 +20,72 @@ class SalaryRepository:
             session.commit()
 
     @staticmethod
-    def get_salary(staff: Staff, department: Department) -> Salary | None:
+    def _get_salary_by_id(salary_id: int) -> SalaryTable:
+        with Base() as session:
+            return session.get(SalaryTable, salary_id)
+
+    def modify_salary(self, salary_id: int, fix, grid: list[SalaryGrid]) -> None:
+        with Base() as session:
+            ex_salary = session.get(SalaryTable, salary_id)
+            if not ex_salary:
+                return
+
+            ex_salary.fix = fix
+
+            query = select(SalaryGridTable).where(SalaryGridTable.salary == salary_id)
+
+            for old_grid in session.scalars(query).all():
+                session.delete(old_grid)
+
+            for new_grid in grid:
+                new_salary_grid = SalaryGridTable(
+                    salary=salary_id,
+                    limit=new_grid.limit,
+                    percent=new_grid.percent
+                )
+                session.add(new_salary_grid)
+
+            session.commit()
+
+    def create_salary(self, staff: Staff, department: Department, fix: float = 0) -> Salary | None:
+        with Base() as session:
+            query = select(SalaryTable).where(SalaryTable.staff == staff.name,
+                                              SalaryTable.department == department.name)
+            if session.scalar(query):
+                return
+
+            salary = SalaryTable(
+                staff=staff.name,
+                department=department.name,
+                fix=fix
+            )
+            session.add(salary)
+            session.commit()
+
+            return self.get_salary(staff, department)
+
+    @staticmethod
+    def create_grid(salary: Salary, grid: list[SalaryGrid]) -> None:
+        with Base() as session:
+            for grid_row in grid:
+                query = select(SalaryGridTable).where(
+                    SalaryGridTable.salary == salary.id,
+                    SalaryGridTable.percent == grid_row.percent,
+                    SalaryGridTable.limit == grid_row.limit
+                )
+
+                if session.scalar(query):
+                    continue
+
+                salary_grid = SalaryGridTable(
+                    salary=salary.id,
+                    limit=grid_row.limit,
+                    percent=grid_row.percent
+                )
+                session.add(salary_grid)
+            session.commit()
+
+    def get_salary(self, staff: Staff, department: Department) -> Salary | None:
         salary_query = select(SalaryTable).where(
             (SalaryTable.staff == staff.name) &
             (SalaryTable.department == department.name)
@@ -36,21 +101,28 @@ class SalaryRepository:
                 department=department,
                 fix=result.fix
             )
+            salary.id = result.id
 
-            grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == result.id)
-            salary.grid = [
-                SalaryGrid(
-                    _id=sg.id,
-                    limit=sg.limit,
-                    percent=sg.percent
-                )
-                for sg in session.scalars(grid_query).all()
-            ]
+            salary.grid = self.get_grid_by_salary_id(salary.id)
 
             return salary
 
     @staticmethod
-    def get_salaries_by_staff(staff: Staff) -> list[Salary]:
+    def get_grid_by_salary_id(salary_id: int) -> list[SalaryGrid]:
+        grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == salary_id)
+        grid = []
+        with Base() as session:
+            for sg in session.scalars(grid_query).all():
+                salary_grid = SalaryGrid(
+                    limit=sg.limit,
+                    percent=sg.percent
+                )
+                salary_grid.id = sg.id
+                grid.append(salary_grid)
+
+        return grid
+
+    def get_salaries_by_staff(self, staff: Staff) -> list[Salary]:
         salary_query = select(SalaryTable).where((SalaryTable.staff == staff.name))
         salaries = []
 
@@ -61,17 +133,9 @@ class SalaryRepository:
                     department=Department(name=row.department),
                     fix=row.fix
                 )
+                salary.id = row.id
 
-                grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == row.id)
-
-                salary.grid = [
-                    SalaryGrid(
-                        _id=sg.id,
-                        limit=sg.limit,
-                        percent=sg.percent
-                    )
-                    for sg in session.scalars(grid_query).all()
-                ]
+                salary.grid = self.get_grid_by_salary_id(salary.id)
 
                 salaries.append(salary)
 

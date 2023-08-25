@@ -2,10 +2,10 @@ let originalHeaderText = '';
 
 function makeInput(th) {
     originalHeaderText = th.textContent.trim();
-    th.innerHTML = `<input type="text" id="filterInput" placeholder="Фильтр..." value="" oninput="filterTable()" style="position: absolute; padding-left: 5%; border: none; outline: none; text-decoration: none; top: 0; left: 0; height: 100%; width: 100%; ">`;
+    th.innerHTML = `<input type="text" id="filterInput" placeholder="Поиск" value="" oninput="filterTable()" style="position: absolute; padding-left: 5%; border: none; outline: none; text-decoration: none; top: 0; left: 0; height: 100%; width: 100%; ">`;
     const input = document.getElementById('filterInput');
     input.focus();
-
+    
     // Добавляем обработчик события клика на весь документ
     document.addEventListener('click', function (event) {
         if (!th.contains(event.target)) { // Если клик был не внутри th

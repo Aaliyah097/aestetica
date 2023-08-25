@@ -9,7 +9,7 @@
 {% include "notifications/notification.html" %}
 {% endwith %}
 {% include "modal/modal.html" %}
-<p class="description first_desk">Сотрудники</p>
+<!-- <p class="description first_desk">Сотрудники</p> -->
 
 <div class="block_data">
 
@@ -22,6 +22,7 @@
                 </button>
             </div>
             <hr>
+            <p class="total">Всего записей: {{ staff|length }}</p>
             <div style="max-height: 50vh; overflow: auto;">
 
                 <table class="table table-bordered table-hover table-staff">
@@ -29,6 +30,7 @@
                         <tr>
                             <th style="background: #E2E3E5;" onclick="makeInput(this)">ФИО</th>
                             <th style="background: #E2E3E5;">Роль</th>
+                            <th style="background: #E2E3E5;">Новый врач</th>
                             <th style="background: #E2E3E5;">Действие</th>
                         </tr>
                     </thead>
@@ -37,10 +39,12 @@
                         <tr>
                             <td>{{ item.staff }}</td>
                             <td>{{ item.staff.role.name }}</td>
-                            <td>{{item}}</td>
-                            <td><button class="Action" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                data-staff="{{ item.staff }}" data-role="{{ item.staff.role.name }}" data-details="{{ item }}"
-                                >Редактировать</button></td>
+                            <td>{{ "Да" if item.staff.is_new else "Нет" }}</td>
+                            <td>
+                                <button class="Action" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    data-staff="{{ item.staff }}" data-role="{{ item.staff.role.name }}"
+                                    data-details="{{ item }}">Редактировать</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

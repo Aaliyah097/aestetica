@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Сотрудники{% endblock %}
+
+{% block page_content %}
+<!-- Перед включением шаблона объявлять эти переменные, которые ожидает дочерний компонент -->
+<!-- TODO какой текст в ошибку -->
+{% with message = 'Для формирования расчета необходимо выбрать дату' %}
+{% include "notifications/notification.html" %}
+{% endwith %}
+{% include "modal/modal.html" %}
+<p class="description first_desk">Сотрудники</p>
+
+<div class="block_data">
+
+    <div class="block_data__change">
+        <div class="block_data__change__content">
+            <div class="block_data__change__content_header">
+                <p>Редактирование сотрудников</p>
+                <button class="btn_none" id="refreshData">
+                    <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
+                </button>
+            </div>
+            <hr>
+            <div style="max-height: 50vh; overflow: auto;">
+
+                <table class="table table-bordered table-hover table-staff">
+                    <thead>
+                        <tr>
+                            <th style="background: #E2E3E5;" onclick="makeInput(this)">ФИО</th>
+                            <th style="background: #E2E3E5;">Роль</th>
+                            <th style="background: #E2E3E5;">Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in staff %}
+                        <tr>
+                            <td>{{ item.staff }}</td>
+                            <td>{{ item.staff.role.name }}</td>
+                            <td>{{item}}</td>
+                            <td><button class="Action" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                data-staff="{{ item.staff }}" data-role="{{ item.staff.role.name }}" data-details="{{ item }}"
+                                >Редактировать</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br><br>
+    </div>
+    <div class="block_data__add"></div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/staff.js') }}"></script>
+
+
+{% endblock %}

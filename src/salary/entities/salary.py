@@ -52,7 +52,7 @@ class Salary:
 
     @property
     def grid(self):
-        return self.grid
+        return self._grid
 
     @grid.setter
     def grid(self, value: list[SalaryGrid]):

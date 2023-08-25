@@ -16,6 +16,12 @@ from db.infodent.repository import Repository
 
 class TreatmentRepository:
     @staticmethod
+    def get_history_treatment(filia: Filial, lt_date: datetime.date,
+                              tooth_code: int, doctor_name: str,
+                              ) -> Treatment:
+        pass
+
+    @staticmethod
     def get_all_treatments(filial: Filial | str,
                            date_begin: datetime.date = None,
                            date_end: datetime.date = None) -> list[Treatment]:

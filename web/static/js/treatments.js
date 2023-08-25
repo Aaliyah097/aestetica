@@ -1,9 +1,7 @@
-
-
 document.getElementById('form_data').addEventListener('submit', function(event) {
     event.preventDefault()
     getSalary($(this))
-    
+
 })
 
 function getSalary(form){

@@ -39,7 +39,7 @@
         opacity: 0;
     }
 
-    .show {
+    .show_notifications {
         left: 1%;
     }
 
@@ -67,7 +67,7 @@
             opacity: 0;
         }
 
-        .show {
+        .show_notifications {
             left: 1%;
         }
 
@@ -87,10 +87,10 @@
 
         setTimeout(function () {
             newNotification.querySelector(".alert").style.opacity = "1";
-            newNotification.classList.add("show");
+            newNotification.classList.add("show_notifications");
 
             setTimeout(function () {
-                newNotification.classList.remove("show");
+                newNotification.classList.remove("show_notifications");
                 newNotification.classList.add("hide");
 
                 setTimeout(function () {

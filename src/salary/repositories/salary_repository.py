@@ -48,3 +48,31 @@ class SalaryRepository:
             ]
 
             return salary
+
+    @staticmethod
+    def get_salaries_by_staff(staff: Staff) -> list[Salary]:
+        salary_query = select(SalaryTable).where((SalaryTable.staff == staff.name))
+        salaries = []
+
+        with Base() as session:
+            for row in session.scalars(salary_query):
+                salary = Salary(
+                    staff=staff,
+                    department=Department(name=row.department),
+                    fix=row.fix
+                )
+
+                grid_query = select(SalaryGridTable).where(SalaryGridTable.salary == row.id)
+
+                salary.grid = [
+                    SalaryGrid(
+                        _id=sg.id,
+                        limit=sg.limit,
+                        percent=sg.percent
+                    )
+                    for sg in session.scalars(grid_query).all()
+                ]
+
+                salaries.append(salary)
+
+        return salaries

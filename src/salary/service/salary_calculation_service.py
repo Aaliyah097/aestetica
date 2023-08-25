@@ -9,8 +9,10 @@ from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
 from src.treatments.entities.department import Department
 from src.treatments.entities.filial import Filial
+from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment
 from src.treatments.repositories.filials_repository import FilialsRepository
+from src.treatments.repositories.services_repository import ServicesRepository
 from src.treatments.repositories.treatments_repository import TreatmentRepository
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
@@ -83,3 +85,6 @@ class SalaryCalculationService:
                 result[treatment.staff][treatment.department].append(treatment)
 
         return result
+
+    def get_history_treatment(self, treatment: Treatment) -> Treatment:
+        pass

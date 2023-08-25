@@ -1,3 +1,6 @@
+from src.utils import remove_spaces
+
+
 class Role:
     names = (
         "Бухгалтерия",
@@ -13,11 +16,13 @@ class Role:
         "ADMIN",
         "Ст. медсестра",
         "Ассистент",
-        "Рабочее место доктора"
+        "Рабочее место доктора",
     )
 
     def __init__(self, name: str):
-        if name not in self.names:
+        name = remove_spaces(name)
+
+        if not name or name not in self.names:
             raise NameError(f"{name} not in {self.names}")
 
         self.name = name

@@ -1,20 +1,18 @@
-import json
 import datetime
-from dataclasses import asdict
 
 from app import app
 from flask import render_template
 from flask import request
 
-from src.treatments.repositories.treatments_repository import TreatmentRepository
 from src.salary.service.salary_calculation_service import SalaryCalculationService
+from src.staff.service.staff_management_service import StaffManagementService
 
 
-@app.route('/treatments')
-def list_treatments():
+@app.route('/staff')
+def list_staff():
     return render_template(
-        'treatments.html',
-        treatments=TreatmentRepository.get_all_treatments(filial='Барвиха')
+        'staff.html',
+        staff=StaffManagementService().get_staff_view()
     )
 
 
@@ -25,7 +23,7 @@ def list_doctors_salary():
     date_end = request.args.get('date_end', None)
 
     if not all([filial_name, date_begin, date_end]):
-        return 'Expected params are ?filial_name&date_begin&date_end', 500
+        return 'Expected params are ?filial&date_begin&date_end', 500
 
     try:
         date_begin = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()

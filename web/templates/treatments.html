@@ -11,77 +11,33 @@
 <div class="block_filter">
     <p class="description first_desk">Расчет автоматизации ЗП</p>
 
-    <form action="" class="input_block">
-        <label for="" class="label_date">Выберите дату <br>
-            <input type="month" class="input_and_select" id="date_start">
+    <form action="{{ url_for('list_doctors_salary') }}" method="get" class="input_block" id="form_data">
+        <label for="" class="label_date">Выберите дату начала<br>
+            <input type="date" class="input_and_select" id="date_start" name="date_begin" required>
         </label>
+        <label for="" class="label_date">Выберите дату конца<br>
+            <input type="date" class="input_and_select" id="date_end" name="date_end" required>
+        </label>
+        <br>
         <label for="" class="label_date">Выберите филиал <br>
-            <select type="date" class="input_and_select" placeholder="Выберите филиал" id="filial">
+            <select type="date" class="input_and_select" placeholder="Выберите филиал" id="filial" name="filial"
+                required>
                 <option value="" disabled>Выбор филиала</option>
                 <option value="Барвиха">Барвиха</option>
                 <option value="Курская">Курская</option>
             </select>
         </label>
+        <button class="generate_button" id="generate_button" type="submit">Сформировать</button>
         <br>
-        <button class="generate_button" id="generate_button">Сформировать</button>
+        
     </form>
 </div>
 
 
-
-<div class="table_block">
-    <h3 class="no_data">Нет данных</h3>
-    <span id="month_ZP" class="description"></span>
-    <hr>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr class="table-secondary">
-                <th>Клиент</th>
-                <th>Дата</th>
-                <th>Услуга</th>
-                <th>Код услуги</th>
-                <th>Кол-во</th>
-                <th>Стоимость</th>
-                <th>Скидка</th>
-                <th>Цена</th>
-                <th>Сотрудник</th>
-                <th>Роль</th>
-                <th>Филиал</th>
-                <th>Отделение</th>
-                <th>Зуб</th>
-                <th>Техник</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for treat in treatments %}
-            <tr>
-                <td>{{ treat.client }}</td>
-                <td>{{ treat.on_date}}</td>
-                <td>{{ treat.service.name }}</td>
-                <td>{{ treat.service.code }}</td>
-                <td>{{ treat.amount }}</td>
-                <td>{{ treat.cost_wo_discount }}</td>
-                <td>{{ treat.discount }}</td>
-                <td>{{ treat.cost }}</td>
-                <td>{{ treat.staff.name }}</td>
-                <td>{{ treat.staff.role.name }}</td>
-                <td>{{ treat.filial.name }}</td>
-                <td>{{ treat.department.name }}</td>
-                <td>{{ treat.tooth }}</td>
-                <td>{{ treat.technician.name }}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td>Итого</td>
-                <td colspan="4"></td>
-                <td>{{ treatments|map(attribute="cost_wo_discount")|sum }}</td>
-                <td>{{ treatments|map(attribute="discount")|sum }}</td>
-                <td>{{ treatments|map(attribute="cost")|sum }}</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="table_block" id="table_block">
+    <!-- сюда вставляется salary_report -->
 </div>
+
 
 <script src="{{ url_for('static', filename='js/treatments.js') }}"></script>
 {% endblock %}

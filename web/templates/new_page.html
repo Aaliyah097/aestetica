@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block page_title %}Что-то ещё{% endblock %}
+
+{% block page_content %}
+<!-- Перед включением шаблона объявлять эти переменные, которые ожидает дочерний компонент -->
+{% with message = 'Для формирования расчета необходимо выбрать дату' %}
+{% include "notifications/notification.html" %}
+{% endwith %}
+ <h1>привет</h1>
+
+{% endblock %}

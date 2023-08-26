@@ -68,5 +68,5 @@ def list_doctors_salary():
 @app.route('/new-page', methods=['GET', ])
 def new_page():
     return render_template(
-        'new_page.html'
+        'treatments.html'
     )

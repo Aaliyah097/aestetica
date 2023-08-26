@@ -1,0 +1,62 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+    style="position:absolute; left: -1%">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Редактирование данных сотрудника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>ФИО: <input id="staffName"></p>
+                <p>Роль: <input id="roleName"></p>
+                <p>Детали: <span id="itemDetails"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // Получаем ссылку на модальное окно по его ID
+    const modal = document.getElementById('exampleModal');
+
+    // Добавляем слушатель события 'show.bs.modal' к модальному окну
+    modal.addEventListener('show.bs.modal', function (event) {
+        // event.relatedTarget содержит ссылку на элемент, который вызвал модальное окно (в данном случае - кнопку)
+        // то есть получаю кнопку которая была вызвана
+        const button = event.relatedTarget;
+
+        // Получаем данные из атрибутов кнопки
+        const staff = button.getAttribute('data-staff');
+        const role = button.getAttribute('data-role');
+        const details = button.getAttribute('data-details');
+
+        // Получаем ссылки на элементы внутри модального окна, где будут выводиться данные
+        const staffNameSpan = modal.querySelector('#staffName');
+        const roleNameSpan = modal.querySelector('#roleName');
+        const itemDetailsSpan = modal.querySelector('#itemDetails');
+
+        // Вставляем данные в соответствующие элементы внутри модального окна
+        staffNameSpan.value = staff;
+        roleNameSpan.value = role;
+        itemDetailsSpan.textContent = details;
+    });
+</script>
+
+<style>
+    .modal-body{
+        position: relative;
+    }
+    p{
+        white-space: nowrap;
+    }
+    input{
+        width: 90%
+    }
+</style>

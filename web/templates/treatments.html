@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block page_title %}Приемы{% endblock %}
+{% block page_title %}Расчет ЗП{% endblock %}
 
 {% block page_content %}
 <!-- Перед включением шаблона объявлять эти переменные, которые ожидает дочерний компонент -->
@@ -29,13 +29,15 @@
         </label>
         <button class="generate_button" id="generate_button" type="submit">Сформировать</button>
         <br>
-        
+
     </form>
 </div>
 
-    <div id="salary_table">
+<div class="nodata">
+    <p class="description" style="color: rgb(78, 78, 78); font-size: 25px;">Нет данных</p>
+    <hr>
+</div>
 
-    </div>
 
 
 <div class="table_block" id="table_block">

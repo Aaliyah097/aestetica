@@ -43,7 +43,7 @@ class SalaryCalculationService:
             self.treatment_repo.get_all_treatments(
                 date_begin=self.date_begin,
                 date_end=self.date_end
-            )
+            )[:50]
         )
 
         salary_reports = []

@@ -18,7 +18,10 @@ option {
     cursor: pointer;
     font-size: var(--FontSizeText);
 }
-
+.no_show,
+.hidden-row {
+    display: none;
+}
 .block_filter {
     display: flex;
     justify-content: space-between;
@@ -107,13 +110,14 @@ option {
     /* min-height: 50vh; */
 }
 
+
+
 th {
     text-align: center;
     white-space: nowrap;
-    position: sticky;
+    /* position: sticky;
     top: -1px;
-    z-index: 1;
-
+    z-index: 1; */
     
 }
 
@@ -125,6 +129,7 @@ td:not(:nth-child(1)) {
     text-align: center;
 }
 td{
+    
     text-align: center;
     vertical-align: middle;
 }
@@ -203,6 +208,22 @@ td{
     table-layout: fixed;
   }
 /* Конец сотрудники */
+
+
+
+.sticks{
+    position: sticky;
+    top: -1px;
+    z-index: 1
+}
+.current_doc{
+    background: rgb(199, 255, 199, 0.4);
+}
+.attachment {
+    background: rgb(247, 247, 247);
+    border: 1px solid grey;
+}
+
 /* МЕДИА ЗАПРОСЫ */
 
 @media screen and (max-width: 500px) {

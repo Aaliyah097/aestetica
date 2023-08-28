@@ -12,6 +12,7 @@ function getSalary(form){
                     url: `${form.attr('action')}?${form.serialize()}`,
                     async: true,
                     success: function (data) {
+                        console.log(data)
                         document.querySelector('.nodata').style = 'display: none'
                         document.getElementById('table_block').innerHTML = data
                     },

@@ -1,30 +1,37 @@
-
 <p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_begin }}</p>
 <hr>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr class="table-secondary">
-                <th>Сотрудник</th>
-                <th>Оборот</th>
-                <th>ЗП</th>
-                <th>Кол-во приемов</th>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr class="table-secondary">
+            <th>Сотрудник</th>
+            <th>Оборот</th>
+            <th>ЗП</th>
+            <th>Кол-во приемов</th>
 
-            </tr>
-        </thead>
-        <tbody>
-            {% for salary in report %}
-            <tr>
-                <td>{{ salary.staff.name }}</td>
-                <!-- оборот -->
-                <td>{{ salary.volume }}</td>
-                <!-- зп -->
-                <td>{{ salary.income }}</td>
-                <!-- Кол-во приемов -->
-                <td>{{ salary.treatments|count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        </tr>
+    </thead>
+    <tbody>
+        {% for salary in report %}
+        <tr>
+            <td data-name-employee="{{ salary.staff.name }}" style="position: relative;">{{ salary.staff.name }}
+                <span data-name-employee="{{ salary.staff.name }}" style="position: absolute; right: 0" ><img
+                        src="{{url_for('static', filename='img/down-arrow.png')}}" alt=""></span>
+            </td>
+            <!-- оборот -->
+            <td>{{ salary.volume }}</td>
+            <!-- зп -->
+            <td>{{ salary.income }}</td>
+            <!-- Кол-во приемов -->
+            <td>{{ salary.treatments|count }}</td>
+        </tr>
+        <tr></tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 
 
+<script>
+ 
+    
+</script>

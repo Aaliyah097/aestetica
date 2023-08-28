@@ -37,14 +37,9 @@
                     <tbody>
                         {% for item in staff %}
                         <tr>
-                            <td>{{ item.staff }}</td>
-                            <td>{{ item.staff.role.name }}</td>
-                            <td>{{ "Да" if item.staff.is_new else "Нет" }}</td>
-                            <td>
-                                <button class="Action" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                    data-staff="{{ item.staff }}" data-role="{{ item.staff.role.name }}"
-                                    data-details="{{ item }}">Редактировать</button>
-                            </td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.role.name }}</td>
+                            <td>{{ "Да" if item.is_new else "Нет" }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -40,9 +40,9 @@ class TreatmentRepository:
 
                 history_treatment = list(filter(
                     lambda t: t.on_date <= lt_date and
-                    t.clinet == client and
+                    t.client == client and
                     t.cost != 0 and
-                    t.serivce.code not in block_services_codes and
+                    t.service.code not in block_services_codes and
                     t.staff.name == doctor_name,
                     treatments
                 ))

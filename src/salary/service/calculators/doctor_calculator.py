@@ -13,7 +13,6 @@ from itertools import chain
 class DoctorSalaryCalculator:
     def __init__(self):
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
-        self.submit_services: list[Service] = ServicesRepository.get_submits()
         self.salary_repo: SalaryRepository = SalaryRepository()
 
     def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> list[Salary]:
@@ -26,11 +25,7 @@ class DoctorSalaryCalculator:
         }
 
         for treatment in union_treatments:
-            if treatment.service not in self.submit_services:
-                salaries[treatment.department].volume = self.get_volume(treatment)
-            else:
-                if not treatment.markdown:
-                    continue
+            if treatment.markdown and treatment.markdown.to_treatment_number:
                 # TODO append toothcode
                 prev_treatments = list(filter(
                     lambda t: t.markdown.number == treatment.markdown.number,
@@ -38,6 +33,9 @@ class DoctorSalaryCalculator:
                 ))
                 if len(prev_treatments) > 0:
                     salaries[prev_treatments[-1].department].volume = self.get_volume(prev_treatments[-1], True)
+            else:
+                if not treatment.markdown.is_history:
+                    salaries[treatment.department].volume = self.get_volume(treatment)
 
         return list(salaries.values())
 

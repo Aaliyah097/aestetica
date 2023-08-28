@@ -50,12 +50,12 @@ def modify_salary(pk: int):
 
 @app.route('/salary', methods=['GET', ])
 def list_doctors_salary():
-    filial_name = request.args.get('filials', None)
+    filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
 
     if not all([filial_name, date_begin, date_end]):
-        return 'Expected params are ?filials&date_begin&date_end', 500
+        return 'Expected params are ?filial&date_begin&date_end', 500
 
     try:
         date_begin = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()

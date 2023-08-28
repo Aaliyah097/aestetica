@@ -8,7 +8,10 @@
 {% with message = 'Для формирования расчета необходимо выбрать дату' %}
 {% include "notifications/notification.html" %}
 {% endwith %}
-{% include "modal/modal.html" %}
+
+
+
+
 <!-- <p class="description first_desk">Сотрудники</p> -->
 
 <div class="block_data">
@@ -37,15 +40,17 @@
                     <tbody>
                         {% for item in staff %}
                         <tr>
-                            <td>{{ item.staff }}</td>
-                            <td>{{ item.staff.role.name }}</td>
-                            <td>{{ "Да" if item.staff.is_new else "Нет" }}</td>
+                            <td>{{ item }}</td>
+                            <td>{{ item.role.name }}</td>
+                            <td>{{ "Да" if item.is_new else "Нет" }}</td>
                             <td>
                                 <button class="Action" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                    data-staff="{{ item.staff }}" data-role="{{ item.staff.role.name }}"
-                                    data-details="{{ item }}">Редактировать</button>
+                                data-name-employee="{{ item.name }}" id="open_modal{{item.name}}"
+                                onclick="getSalaryCurrentEmloyee(this)"
+                                >Редактировать</button>
                             </td>
                         </tr>
+
                         {% endfor %}
                     </tbody>
                 </table>
@@ -58,6 +63,12 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/staff.js') }}"></script>
+<script>
 
+function Change(value){
+    let staff = value.getAttribute('data-staff-name')
+    localStorage.setItem('data', JSON.stringify(value))
+}
+</script>
 
 {% endblock %}

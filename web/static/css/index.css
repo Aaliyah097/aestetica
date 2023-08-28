@@ -9,7 +9,9 @@
     --DescriptionColor: #8E8E8E;
     --black: #212529;
 }
-
+button{
+    cursor: pointer;
+}
 input,
 select,
 option {

@@ -44,3 +44,25 @@ refreshData.addEventListener('click', () => {
 
 })
 
+function getSalaryCurrentEmloyee(value){
+    let name = value.getAttribute('data-name-employee')
+    // get_salary_by_staff
+    $.ajax(
+        {
+            type: 'get',
+            url: `/staff/salary?staff=${name}`,
+            async: true,
+            success: function (data) {
+
+                // document.getElementById(`open_modal${name}`).click()
+                document.getElementById('test').innerHTML = data
+                // console.log(data)
+            },
+            error: function (xhr, errmsg, err) {
+                notify('Ошибка!', 'Повторите попытку позднее.');
+            }
+        }
+    )
+}
+
+

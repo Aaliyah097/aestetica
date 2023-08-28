@@ -103,9 +103,6 @@ class SalaryCalculationService:
             salary_reports.append(salary_report)
         return salary_reports
 
-    def total_calc(self):
-        pass
-
     def calc_by_staff(self, doctor: Staff) -> tuple[Staff, list[Salary]]:
         pass
 

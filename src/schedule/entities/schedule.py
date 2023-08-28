@@ -1,7 +1,7 @@
 import datetime
 from src.staff.entities.users.staff import Staff
-from src.treatments.entities.filial import Filial
-from src.treatments.entities.department import Department
+from src.staff.entities.filial import Filial
+from src.staff.entities.department import Department
 
 
 class Schedule:
@@ -13,4 +13,3 @@ class Schedule:
         self.staff: Staff = staff
         self.filial: Filial = filial
         self.department: Department = department
-        self.is_performed: bool = False

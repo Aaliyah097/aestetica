@@ -2,7 +2,7 @@ from db.aestetica.tables import (
     Base,
     Filial as FilialTable
 )
-from src.treatments.entities.filial import Filial
+from src.staff.entities.filial import Filial
 
 
 class FilialsRepository:

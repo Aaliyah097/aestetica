@@ -1,12 +1,12 @@
 from src.salary.entities.salary import Salary
 from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.entities.users.staff import Staff
-from src.treatments.entities.department import Department
+from src.staff.entities.department import Department
 
 from db.aestetica.tables import (
     Salary as SalaryTable,
     SalaryGrid as SalaryGridTable,
-    Base, select, delete
+    Base, select
 )
 
 
@@ -24,7 +24,8 @@ class SalaryRepository:
         with Base() as session:
             return session.get(SalaryTable, salary_id)
 
-    def modify_salary(self, salary_id: int, fix, grid: list[SalaryGrid]) -> None:
+    @staticmethod
+    def modify_salary(salary_id: int, fix, grid: list[SalaryGrid]) -> None:
         with Base() as session:
             ex_salary = session.get(SalaryTable, salary_id)
             if not ex_salary:

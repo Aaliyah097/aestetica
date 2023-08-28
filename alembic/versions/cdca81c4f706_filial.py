@@ -1,4 +1,4 @@
-"""filial
+"""filials
 
 Revision ID: cdca81c4f706
 Revises: 8c09790bf423

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for salary in salaries %}
+    staff_name: {{ salary.staff.name }}
+    staff_role: {{ salary.staff.role.name }}
+    department: {{ salary.department.name }}
+    salary_fix: {{ salary.fix }}
+    salary.grid: <br>
+    {% for grid in salary.grid %}
+        {{ grid.limit }} - {{ grid.percent }}
+        <br>
+    {% endfor %}
+{% endfor %}
+</body>
+</html>

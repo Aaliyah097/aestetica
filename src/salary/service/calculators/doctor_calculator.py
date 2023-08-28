@@ -1,5 +1,5 @@
 from src.staff.entities.users.staff import Staff
-from src.treatments.entities.department import Department
+from src.staff.entities.department import Department
 from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment
 from src.salary.entities.salary import Salary
@@ -29,11 +29,11 @@ class DoctorSalaryCalculator:
             if treatment.service not in self.submit_services:
                 salaries[treatment.department].volume = self.get_volume(treatment)
             else:
+                if not treatment.markdown:
+                    continue
+                # TODO append toothcode
                 prev_treatments = list(filter(
-                    lambda t: t.on_date <= treatment.on_date and
-                              t.client == treatment.client and
-                              t.cost != 0 and
-                              t.service not in self.submit_services,
+                    lambda t: t.markdown.number == treatment.markdown.number,
                     union_treatments
                 ))
                 if len(prev_treatments) > 0:

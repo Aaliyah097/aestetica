@@ -5,15 +5,29 @@ from flask import render_template
 from flask import request
 
 from src.salary.service.salary_calculation_service import SalaryCalculationService
-from src.staff.service.staff_management_service import StaffManagementService
 from src.salary.service.salary_management_service import SalaryManagementService
+from src.staff.repositories.staff_repository import StaffRepository
+from src.salary.repositories.salary_repository import SalaryRepository
 
 
 @app.route('/staff', methods=['GET', ])
 def list_staff():
     return render_template(
         'staff.html',
-        staff=StaffManagementService().get_staff_view()
+        staff=StaffRepository.get_staff()
+    )
+
+
+@app.route('/staff/salary', methods=['GET', ])
+def get_salary_by_staff():
+    staff_name = request.args.get('staff', None)
+    if not staff_name:
+        return "expected param 'staff'", 500
+
+    staff = StaffRepository().get_staff_by_name(staff_name)
+    return render_template(
+        'salary.html',
+        salaries=SalaryRepository().get_salaries_by_staff(staff)
     )
 
 
@@ -36,12 +50,12 @@ def modify_salary(pk: int):
 
 @app.route('/salary', methods=['GET', ])
 def list_doctors_salary():
-    filial_name = request.args.get('filial', None)
+    filial_name = request.args.get('filials', None)
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
 
     if not all([filial_name, date_begin, date_end]):
-        return 'Expected params are ?filial&date_begin&date_end', 500
+        return 'Expected params are ?filials&date_begin&date_end', 500
 
     try:
         date_begin = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()

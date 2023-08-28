@@ -1,5 +1,5 @@
 from src.treatments.repositories.treatments_repository import TreatmentRepository
-from src.treatments.entities.filial import Filial
+from src.staff.entities.filial import Filial
 from src.treatments.entities.treatment import Treatment
 from src.treatments.repositories.consumables_repository import ConsumablesRepository
 from src.staff.repositories.staff_repository import StaffFactory

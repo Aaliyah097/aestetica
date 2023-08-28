@@ -6,10 +6,11 @@ from itertools import chain
 from src.salary.entities.salary import Salary
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
-from src.treatments.entities.department import Department
-from src.treatments.entities.filial import Filial
-from src.treatments.entities.treatment import Treatment
-from src.treatments.repositories.filials_repository import FilialsRepository
+from src.staff.entities.department import Department
+from src.staff.entities.filial import Filial
+from src.treatments.entities.service import Service
+from src.treatments.entities.treatment import Treatment, MarkDown
+from src.treatments.repositories.services_repository import ServicesRepository
 from src.treatments.repositories.treatments_repository import TreatmentRepository
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
@@ -31,15 +32,8 @@ class SalaryCalculationService:
     def __init__(self, filial: Filial | str,
                  date_begin: datetime.date = None,
                  date_end: datetime.date = None):
-        self.filial_repo: FilialsRepository = FilialsRepository()
-        self.treatment_repo: TreatmentRepository = TreatmentRepository()
-
-        if not isinstance(filial, Filial):
-            self.filial = self.filial_repo.get_by_name(filial)
-            if not filial:
-                raise NameError(f"{filial} not in {Filial.names}")
-        else:
-            self.filial = filial
+        self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
+        self.submit_services: list[Service] = ServicesRepository.get_submits()
 
         self.date_begin = date_begin
         self.date_end = date_end
@@ -47,7 +41,6 @@ class SalaryCalculationService:
     def doctors_cals(self) -> list[SalaryReport]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(
-                filial=self.filial,
                 date_begin=self.date_begin,
                 date_end=self.date_end
             )
@@ -73,15 +66,47 @@ class SalaryCalculationService:
     def calc_by_staff(self, doctor: Staff) -> tuple[Staff, list[Salary]]:
         pass
 
-    @staticmethod
-    def _split_treatments(treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
+    def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))
 
+        treatment_number = 1
+
         for treatment in treatments:
-            if isinstance(treatment.staff, Doctor):
-                result[treatment.staff][treatment.department].append(treatment)
+            to_treatment_number = None
+
+            if not isinstance(treatment.staff, Doctor):
+                continue
+
+            if treatment.service in self.submit_services:
+                history_treatment = self.treatment_repo.get_history_treatment(
+                    lt_date=treatment.on_date,
+                    tooth_code=treatment.tooth,
+                    doctor_name=treatment.staff.name,
+                    block_services_codes=tuple([service.code for service in self.submit_services]),
+                    client=treatment.client
+                )
+                if history_treatment:
+                    to_treatment_number = treatment_number
+
+                    history_markdown = MarkDown(
+                        number=treatment_number,
+                        to_treatment_number=None,
+                        is_history=True
+                    )
+
+                    history_treatment.markdown = history_markdown
+                    result[treatment.staff][treatment.department].append(history_treatment)
+
+                    treatment_number += 1
+
+            markdown = MarkDown(number=treatment_number,
+                                is_history=False,
+                                to_treatment_number=to_treatment_number)
+
+            treatment.markdown = markdown
+
+            result[treatment.staff][treatment.department].append(treatment)
+
+            treatment_number += 1
 
         return result
-
-    def get_history_treatment(self, treatment: Treatment) -> Treatment:
-        pass

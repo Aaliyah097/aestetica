@@ -12,6 +12,16 @@ class MarkDown:
         self.is_history = is_history
         self.to_treatment_number: int | None = to_treatment_number
 
+    def serialize(self) -> dict:
+        return {
+            'number': self.number,
+            'is_history': self.is_history,
+            'to_treatment_number': self.to_treatment_number
+        }
+
+    def __repr__(self):
+        return str(self.serialize())
+
 
 class Treatment:
     def __init__(self, client: str, on_date: datetime.datetime,
@@ -51,9 +61,10 @@ class Treatment:
             'discount': self.discount,
             'cost': self.cost,
             'staff': self.staff.serialize() if self.staff else None,
-            'filials': self.filial.serialize() if self.filial else None,
+            'filial': self.filial.serialize() if self.filial else None,
             'department': self.department.serialize() if self.department else None,
-            'tooth': self.tooth
+            'tooth': self.tooth,
+            'markdown': self._markdown.serialize() if self._markdown else None
         }
 
     def __repr__(self):

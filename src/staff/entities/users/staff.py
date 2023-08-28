@@ -15,7 +15,7 @@ class Staff:
         }
 
     def __repr__(self):
-        return self.name
+        return f"{self.role} {self.name}"
 
     def __eq__(self, other):
         if not other:

@@ -17,6 +17,9 @@ class Salary:
         self._volume: float = 0
         self._income: float = 0
 
+    def add_bonus(self, value: float) -> None:
+        self._income += value
+
     @property
     def income(self) -> float:
         return self._income

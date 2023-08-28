@@ -12,4 +12,4 @@ class Schedule:
         self.on_date: datetime.date = on_date
         self.staff: Staff = staff
         self.filial: Filial = filial
-        self.department: Department = department
+        self.department: Department = department or Department("Прочее")

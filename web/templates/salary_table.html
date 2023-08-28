@@ -1,5 +1,5 @@
 
-<p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_begin }}</p>
+<p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_end }}</p>
 <hr>
     <table class="table table-bordered table-hover">
         <thead>
@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for salary in report %}
+            {% for salary in doctors_report %}
             <tr>
                 <td>{{ salary.staff.name }}</td>
                 <!-- оборот -->
@@ -22,6 +22,17 @@
                 <!-- Кол-во приемов -->
                 <td>{{ salary.treatments|count }}</td>
             </tr>
+            {% endfor %}
+            {% for salary in assistants_report %}
+                <tr>
+                    <td>{{ salary.staff.name }}</td>
+                    <!-- оборот -->
+                    <td>{{ salary.volume }}</td>
+                    <!-- зп -->
+                    <td>{{ salary.income }}</td>
+                    <!-- Кол-во приемов -->
+                    <td>{{ salary.schedule|count }}</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

@@ -15,7 +15,7 @@ class StaffFactory:
                      staff_role: Role) -> Staff:
         if staff_role.name == 'Рабочее место доктора':
             new_staff = Doctor(name=name)
-        elif staff_role.name in ['Медсестра', "Ст. медсестра"]:
+        elif staff_role.name in ['Медсестра', "Ст. медсестра", "Ассистент"]:
             new_staff = Assistant(name=name)
         elif staff_role.name == 'Техник':
             new_staff = Technician(name=name)

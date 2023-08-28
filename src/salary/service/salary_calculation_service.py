@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from itertools import chain
 
 from src.salary.entities.salary import Salary
+from src.schedule.entities.schedule import Schedule
+from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.department import Department
@@ -12,16 +14,27 @@ from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment, MarkDown
 from src.treatments.repositories.services_repository import ServicesRepository
 from src.treatments.repositories.treatments_repository import TreatmentRepository
+from src.schedule.repositories.schedule_repository import ScheduleRepository
+from src.salary.repositories.bonus_repository import BonusRepository
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
+from src.salary.service.calculators.assistants_calculator import AssistantsSalaryCalculator
 
 
 @dataclass
-class SalaryReport:
+class DoctorsSalaryReport:
     staff: Staff
     income: float
     volume: float
     treatments: list[Treatment]
+
+
+@dataclass
+class AssistantSalaryReport:
+    staff: Staff
+    income: float
+    volume: float
+    schedule: list[Schedule]
 
 
 class SalaryCalculationService:
@@ -34,16 +47,46 @@ class SalaryCalculationService:
                  date_end: datetime.date = None):
         self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
         self.submit_services: list[Service] = ServicesRepository.get_submits()
+        self.schedule_repo: ScheduleRepository = ScheduleRepository(filial)
+        self.bonus_repository: BonusRepository = BonusRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
 
-    def doctors_cals(self) -> list[SalaryReport]:
+    def apply_bonuses(self, salary: Salary) -> Salary:
+        bonuses = self.bonus_repository.get_bonus(staff=salary.staff,
+                                                  date_begin=self.date_begin,
+                                                  date_end=self.date_end)
+        for bonus in bonuses:
+            salary.add_bonus(bonus.amount)
+
+        return salary
+
+    def assistants_calc(self) -> list[AssistantSalaryReport]:
+        schedules = self.schedule_repo.get_all_schedule()
+
+        salary_reports = []
+
+        for staff, schedule in self._split_schedule(schedules).items():
+            salary = AssistantsSalaryCalculator().calc(staff, schedule)
+            salary = self.apply_bonuses(salary)
+            salary_reports.append(
+                AssistantSalaryReport(
+                    staff=staff,
+                    income=salary.income,
+                    volume=salary.volume,
+                    schedule=schedule
+                )
+            )
+
+        return salary_reports
+
+    def doctors_cals(self) -> list[DoctorsSalaryReport]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(
                 date_begin=self.date_begin,
                 date_end=self.date_end
-            )[:50]
+            )[:50]  # TODO remove slice
         )
 
         salary_reports = []
@@ -51,7 +94,7 @@ class SalaryCalculationService:
 
         for doctor, departments in treatments.items():
             salaries = calculator.calc(doctor, departments)
-            salary_report = SalaryReport(
+            salary_report = DoctorsSalaryReport(
                 staff=doctor,
                 income=sum([salary.income for salary in salaries]),
                 volume=sum([salary.volume for salary in salaries]),
@@ -65,6 +108,17 @@ class SalaryCalculationService:
 
     def calc_by_staff(self, doctor: Staff) -> tuple[Staff, list[Salary]]:
         pass
+
+    @staticmethod
+    def _split_schedule(schedule: list[Schedule]) -> dict[Staff, list[Schedule]]:
+        data = defaultdict(list)
+        for sch in schedule:
+            if not isinstance(sch.staff, Assistant):
+                continue
+
+            data[sch.staff].append(sch)
+
+        return data
 
     def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))

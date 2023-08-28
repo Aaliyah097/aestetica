@@ -1,7 +1,11 @@
+import datetime
+
 from sqlalchemy import (
-    String, Float, Boolean, Integer, select,
+    String, Float, Boolean, Integer, Date,
+    select,
     ForeignKey, create_engine, update, Table,
-    Column, DateTime, UniqueConstraint, delete
+    Column, DateTime, UniqueConstraint, delete,
+    or_
 )
 
 from sqlalchemy.orm import (
@@ -110,3 +114,13 @@ class Consumables(Base):
     )
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+
+
+class Bonus(Base):
+    __tablename__ = "bonuses"
+    __table_args__ = (UniqueConstraint('staff', 'on_date', name='staff_on_date_uc'), )
+
+    id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
+    on_date: Mapped[datetime.date] = mapped_column(Date())
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)

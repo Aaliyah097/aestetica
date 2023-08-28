@@ -69,13 +69,17 @@ def list_doctors_salary():
         return str(e), 500
 
     try:
-        salary_reports = service.doctors_cals()
+        doctors_salary_reports = service.doctors_cals()
+        assistants_salary_report = service.assistants_calc()
     except Exception as e:
         return str(e), 500
 
     return render_template(
         'salary_table.html',
-        report=salary_reports
+        doctors_report=doctors_salary_reports,
+        assistants_report=assistants_salary_report,
+        date_begin=date_begin,
+        date_end=date_end
     )
 
 

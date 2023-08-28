@@ -24,8 +24,8 @@ function getSalary(form) {
                         const rows = document.querySelectorAll(`[data-name-employee-no-show="${name}"]`);
                         
                         closestRow.classList.toggle('current_doc');
+                        closestRow.classList.toggle('z-index2') 
                         rows.forEach(row => {
-
                             row.classList.toggle('no_show');
                         });
                     });

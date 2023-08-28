@@ -2,14 +2,15 @@ import json
 
 from aestetica.tables import (
     Base,
+    select,
+    or_,
     Service as ServiceTable,
     Role as RoleTable,
     Staff as StaffTable,
     Department as DepartmentTable,
-    Filial as FilialTable
+    Filial as FilialTable,
+    Salary as SalaryTable
 )
-
-from src.staff.service.staff_management_service import StaffManagementService
 
 
 def sync_services():
@@ -88,10 +89,26 @@ def sync_filials():
         session.commit()
 
 
+def update_assistants_fix():
+    with Base() as session:
+        query = select(StaffTable).where(or_(StaffTable.role == 'Ассистент',
+                                             StaffTable.role == 'Ст. медсестра',
+                                             StaffTable.role == 'Медсестра'))
+        for staff in session.scalars(query).all():
+            salary_query = select(SalaryTable).where(
+                SalaryTable.staff == staff.name,
+                SalaryTable.department == "Прочее"
+            )
+            for salary in session.scalars(salary_query).all():
+                salary.fix = 5000
+        session.commit()
+
+
 if __name__ == '__main__':
     """sync"""
-    #sync_services()
-    #sync_roles()
-    sync_staff()
-    #sync_departments()
-    #sync_filials()
+    # sync_services()
+    # sync_roles()
+    # sync_staff()
+    # sync_departments()
+    # sync_filials()
+    update_assistants_fix()

@@ -1,23 +1,35 @@
-<p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_begin }}</p>
+<p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_end }}</p>
 <hr>
 <div style="overflow: auto; max-height: 70vh">
     <table class="table table-bordered table-hover">
         <thead>
-            <tr class="table-secondary" style="position: sticky; top:0; z-index:3">
+            <tr class="table-secondary" style="position: sticky; top:-1px; z-index:3">
                 <th>Сотрудник</th>
                 <th>Оборот</th>
                 <th>ЗП</th>
                 <th>Кол-во приемов</th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
+                <th class="add"></th>
             </tr>
         </thead>
         <tbody>
-            {% for salary in report %}
-            <tr style="position: sticky; top:10px; z-index:2; background: white; height: 100%">
-                <td data-name-employee="{{ salary.staff.name }}" style="position: relative;">
-                    {{ salary.staff.name }}
-                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span"
-                        style="position: absolute; right: 0">
-                        <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+            <tr>
+                <td colspan="12" style="background: #fae08b; color: #215968; text-align: left">Врачи</td>
+            </tr>
+            {% for salary in doctors_report %}
+            <tr>
+                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
+                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
+                        <div style="display: flex; justify-content: space-between">
+                            {{ salary.staff.name }}
+                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+                        </div>
                     </span>
                 </td>
                 <td>
@@ -25,41 +37,64 @@
                 </td>
                 <td>{{ salary.income }}</td>
                 <td>{{ salary.treatments|count }}</td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
+                <td class="add"></td>
             </tr>
-           <!--   style="position: sticky; top: -1px; z-index: 1;" -->
-                <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:40px; z-index:1; height: 100%">
-                    <th>Клиент</th>
-                    <th>Дата</th>
-                    <th>Услуга</th>
-                    <th>Код услуги</th>
-                    <!-- <th>Кол-во</th>
-                    <th>Цена без скидки</th>
-                    <th>Скидка</th>
-                    <th>Итого</th>
-                    <th>Зуб</th>
-                    <th>Номер марк.</th>
-                    <th>История</th>
-                    <th>Обработка</th> -->
-                </tr>
-                {% for razbivka in salary.treatments %}
-                <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
-                    <td>{{ razbivka.client }}</td>
-                    <td> {{ razbivka.on_date }}</td>
-                    <td>{{ razbivka.service.name }}</td>
-                    <td>{{ razbivka.service.code }}</td>
-                    <td>{{ razbivka.amount }}</td>
-                    <td>{{ razbivka.cost_wo_discount }}</td>
-                    <td>{{ razbivka.discount }}</td>
-                    <td>{{ razbivka.cost }}</td>
-                    <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
-                    <td>{{ razbivka.markdown.number }}</td>
-                    <td>{{ razbivka.markdown.is_history }}</td>
-                    <td>{{ razbivka.markdown.to_treatment_number }}</td>
-                </tr>
-                {% endfor %}
-          
+            <!--   style="position: sticky; top: -1px; z-index: 1;" -->
+            <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
+                style="position: sticky; top:9vh; z-index:1">
+                <th>Клиент</th>
+                <th>Дата</th>
+                <th>Услуга</th>
+                <th>Код услуги</th>
+                <th>Кол-во</th>
+                <th>Цена без скидки</th>
+                <th>Скидка</th>
+                <th>Итого</th>
+                <th>Зуб</th>
+                <th>Номер марк.</th>
+                <th>История</th>
+                <th>Обработка</th>
+            </tr>
+            {% for razbivka in salary.treatments %}
+            <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
+                <td>{{ razbivka.client }}</td>
+                <td> {{ razbivka.on_date }}</td>
+                <td>{{ razbivka.service.name }}</td>
+                <td>{{ razbivka.service.code }}</td>
+                <td>{{ razbivka.amount }}</td>
+                <td>{{ razbivka.cost_wo_discount }}</td>
+                <td>{{ razbivka.discount }}</td>
+                <td>{{ razbivka.cost }}</td>
+                <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
+                <td>{{ razbivka.markdown.number }}</td>
+                <td>{{ razbivka.markdown.is_history }}</td>
+                <td>{{ razbivka.markdown.to_treatment_number }}</td>
+            </tr>
+            {% endfor %}
 
+
+            {% endfor %}
+            <tr>
+                <td colspan="12" style="background: #fae08b; color: #215968; text-align: left">Асистенты</td>
+            </tr>
+            <!-- медсестры -->
+            {% for salary in assistants_report %}
+            <tr>
+                <td>{{ salary.staff.name }}</td>
+                <!-- оборот -->
+                <td>{{ salary.volume }}</td>
+                <!-- зп -->
+                <td>{{ salary.income }}</td>
+                <!-- Кол-во приемов -->
+                <td>{{ salary.schedule|count }}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

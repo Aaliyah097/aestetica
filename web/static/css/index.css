@@ -9,14 +9,22 @@
     --DescriptionColor: #8E8E8E;
     --black: #212529;
 }
-
+button{
+    cursor: pointer;
+}
 input,
 select,
 option {
     cursor: pointer;
     font-size: var(--FontSizeText);
 }
-
+.no_show,
+.hidden-row {
+    display: none;
+}
+.z-index2{
+    position: sticky; top:4vh; z-index:2;  height: 100%
+}
 .block_filter {
     display: flex;
     justify-content: space-between;
@@ -105,13 +113,14 @@ option {
     /* min-height: 50vh; */
 }
 
+
+
 th {
     text-align: center;
     white-space: nowrap;
-    position: sticky;
+    /* position: sticky;
     top: -1px;
-    z-index: 1;
-
+    z-index: 1; */
     
 }
 
@@ -201,6 +210,22 @@ td{
     table-layout: fixed;
   }
 /* Конец сотрудники */
+
+
+
+.sticks{
+    position: sticky;
+    top: -1px;
+    z-index: 1
+}
+.current_doc{
+    background: rgb(211, 248, 211)
+}
+.attachment {
+    background: rgb(247, 247, 247);
+    border: 1px solid grey;
+}
+
 /* МЕДИА ЗАПРОСЫ */
 
 @media screen and (max-width: 500px) {

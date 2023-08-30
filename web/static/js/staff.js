@@ -75,7 +75,7 @@ function getBonusCurrentEmloyee(value){
     $.ajax(
         {
             type: 'get',
-            url: `/staff/salary?staff=${name}`,
+            url: `/bonus-by-staff?staff=${name}`,
             async: true,
             success: function (data) {
                 console.log(value)

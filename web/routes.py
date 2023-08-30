@@ -1,4 +1,5 @@
 import datetime
+import time 
 
 from app import app
 from flask import render_template
@@ -8,6 +9,8 @@ from src.salary.service.salary_calculation_service import SalaryCalculationServi
 from src.salary.service.salary_management_service import SalaryManagementService
 from src.staff.repositories.staff_repository import StaffRepository
 from src.salary.repositories.salary_repository import SalaryRepository
+
+
 
 
 @app.route('/staff', methods=['GET', ])
@@ -50,6 +53,7 @@ def modify_salary(pk: int):
 
 @app.route('/salary', methods=['GET', ])
 def list_doctors_salary():
+    time.sleep(2)
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
@@ -85,6 +89,7 @@ def list_doctors_salary():
 
 @app.route('/', methods=['GET', ])
 def new_page():
+   
     return render_template(
         'index.html'
     )

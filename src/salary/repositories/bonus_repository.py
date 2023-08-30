@@ -44,7 +44,7 @@ class BonusRepository:
 
     @staticmethod
     def get_by_staff(staff_name: str) -> list[Bonus]:
-        query = select(BonusTable)
+        query = select(BonusTable).where(BonusTable.staff.like(f"%{staff_name}%"))
 
         with Base() as session:
             return [

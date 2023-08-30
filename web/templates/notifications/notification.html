@@ -15,7 +15,7 @@
 
 
 <div class="notification-container">
-    <div class="alert alert-danger d-flex align-items-center" role="alert">
+    <div class="alert  d-flex align-items-center" role="alert">
         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
             <use xlink:href="#info-fill" />
         </svg>
@@ -36,6 +36,7 @@
         width: 20%;
         transform: translateY(-50%);
         transition: left 1s ease-in-out;
+        z-index: 1061 !important;
     }
 
     .alert {
@@ -82,7 +83,16 @@
 </style>
 
 <script>
-    function getNotifications(value) {
+    function getNotifications(value, classNotification='alert-danger') {
+        let element_alert = document.querySelector('.alert').classList
+        element_alert.forEach((item) => {
+           if(item == 'alert-danger' || item == 'alert-success'){
+                element_alert.remove(item)
+           }
+        })
+
+        document.querySelector('.alert').classList.add(classNotification)
+        
         if(value){
             document.getElementById('ifValue').style = 'display: none'
             document.getElementById('MessageError').innerHTML = value

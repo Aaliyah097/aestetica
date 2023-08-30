@@ -1,5 +1,7 @@
 import datetime
+
 from src.staff.entities.users.staff import Staff
+from src.staff.repositories.staff_repository import StaffRepository
 from src.salary.entities.bonus import Bonus
 from db.aestetica.tables import Bonus as BonusTable
 from db.aestetica.tables import (
@@ -19,7 +21,48 @@ class BonusRepository:
                 Bonus(
                     staff=staff,
                     on_date=b.on_date,
-                    amount=b.amount
+                    amount=b.amount,
+                    _id=b.id
                 )
                 for b in session.scalars(query).all()
             ]
+
+    @staticmethod
+    def create(staff_name: str, amount: float, on_date: datetime.date) -> None:
+        if not StaffRepository().get_staff_by_name(staff_name):
+            return
+
+        with Base() as session:
+            session.add(
+                BonusTable(
+                    staff=staff_name,
+                    amount=amount,
+                    on_date=on_date
+                )
+            )
+            session.commit()
+
+    @staticmethod
+    def get_by_staff(staff_name: str) -> list[Bonus]:
+        query = select(BonusTable)
+
+        with Base() as session:
+            return [
+                Bonus(
+                    staff=StaffRepository().get_staff_by_name(staff_name),
+                    amount=b.amount,
+                    on_date=b.on_date,
+                    _id=b.id
+                )
+                for b in session.scalars(query).all()
+            ]
+
+    @staticmethod
+    def delete(pk: int) -> None:
+        with Base() as session:
+            bonus = session.get(BonusTable, pk)
+            if not bonus:
+                return
+
+            session.delete(bonus)
+            session.commit()

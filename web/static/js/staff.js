@@ -111,24 +111,34 @@ function deleteRow(value) {
 }
 
 function createBonus(value) {
-    getNotifications('Успешно');
-    // event.preventDefault()
+    // getNotifications('Успешно');
+    event.preventDefault()
     let data_bonus = document.getElementById('on_date').value
     let value_bonus = document.getElementById('amount').value
     let name = localStorage.getItem('name')
 
+    if(!data_bonus || !value_bonus){
+        getNotifications('Ошибка! Необходимо заполнить все поля (Дата и сумма)')
+        return
+    }
     let form = new FormData()
     form.append('staff', name)
     form.append('amount', value_bonus)
     form.append('on_date', data_bonus)
-    // fetch(`/bonus`, {
-    //     method: 'POST',
-    //     body: form
-    // }).then(response => {
-    //     getNotifications();
-    // }).catch(error => {
-    //     notify('Ошибка!', 'Повторите попытку позднее.');
-    // })
+    fetch(`/bonus`, {
+        method: 'POST',
+        body: form
+    }).then(response => {
+        if(response.status != 200){
+            getNotifications('Ошибка создания премии. Повторите попытку позже! Или проверьте не создана ли уже премия на Вашу дату.')
+            return
+        }
+        $('#exampleModal').modal('hide')
+        getNotifications('Успешно! Премия создана', 'alert-success')
+    }).catch(error => {
+        // console.log('123')
+        // getNotifications('Ошибка! Повторите попытку позднее.');
+    })
 }
 
 

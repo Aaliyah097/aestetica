@@ -1,10 +1,11 @@
 {% block page_content %}
+
     <div>
         <label class="label_date" style="width: 100%">Дата<br>
-            <input type="date" class="input_and_select" style="width: 100%" id="on_date" required>
+            <input type="date" class="input_and_select" style="width: 100%" id="on_date" >
         </label>
         <label class="label_date" style="width: 100%">Сумма премии<br>
-            <input type="number" class="input_and_select" style="width: 100%" id="amount" required>
+            <input type="number" class="input_and_select" style="width: 100%" id="amount" >
         </label>
     </div>
     <br>
@@ -15,7 +16,7 @@
 <br>
 <br>
 <p class="total">Ранее выданные премии</p>
-<div style="overflow: auto;">
+<div style="overflow: auto; max-height: 40vh">
     <table class="table table-bordered table-hover">
         <thead>
             <tr class="table-secondary">

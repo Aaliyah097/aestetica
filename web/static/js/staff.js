@@ -48,7 +48,7 @@ refreshData.addEventListener('click', () => {
 
 
 function getSalaryCurrentEmloyee(value) {
-    
+
     let name = value.getAttribute('data-name-employee')
     // get_salary_by_staff
     $.ajax(
@@ -69,8 +69,13 @@ function getSalaryCurrentEmloyee(value) {
     )
 }
 
-function getBonusCurrentEmloyee(value){
+
+function getBonusCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
+    if( localStorage.getItem('name')){
+        localStorage.clear()
+    }
+    localStorage.setItem('name', name)
     // get_salary_by_staff
     $.ajax(
         {
@@ -89,6 +94,70 @@ function getBonusCurrentEmloyee(value){
         }
     )
 }
+
+function deleteRow(value) {
+    let table = document.querySelector('.table-bonus')
+    let id_row = value.getAttribute('data-delete-bonus')
+    let row = document.getElementById(id_row)
+    fetch(`/bonus/${id_row}/delete/`, {
+        method: 'POST'
+    }).then(response => {
+        if (table && row) {
+            table.removeChild(row)
+        }
+    }).catch(error => {
+        notify('Ошибка!', 'Повторите попытку позднее.');
+    })
+}
+
+function createBonus(value) {
+    getNotifications('Успешно');
+    // event.preventDefault()
+    let data_bonus = document.getElementById('on_date').value
+    let value_bonus = document.getElementById('amount').value
+    let name = localStorage.getItem('name')
+
+    let form = new FormData()
+    form.append('staff', name)
+    form.append('amount', value_bonus)
+    form.append('on_date', data_bonus)
+    // fetch(`/bonus`, {
+    //     method: 'POST',
+    //     body: form
+    // }).then(response => {
+    //     getNotifications();
+    // }).catch(error => {
+    //     notify('Ошибка!', 'Повторите попытку позднее.');
+    // })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const tabs = document.querySelectorAll('.tabs_eldenhard.nav-link');

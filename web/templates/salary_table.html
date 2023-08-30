@@ -30,8 +30,8 @@
                         </div>
                     </span>
                 </td>
-                <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|count }}</td>
                 <td class="add"></td>
                 <td class="add"></td>

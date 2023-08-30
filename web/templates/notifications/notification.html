@@ -19,8 +19,11 @@
         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
             <use xlink:href="#info-fill" />
         </svg>
-        <div>
+        <div id="ifValue">
             {{ message }}
+        </div>
+        <div id="MessageError">
+           
         </div>
     </div>
 </div>
@@ -79,7 +82,11 @@
 </style>
 
 <script>
-    function getNotifications() {
+    function getNotifications(value) {
+        if(value){
+            document.getElementById('ifValue').style = 'display: none'
+            document.getElementById('MessageError').innerHTML = value
+        }
         const notificationContainer = document.querySelector(".notification-container");
         // Создаю глубокую копию
         const newNotification = notificationContainer.cloneNode(true);

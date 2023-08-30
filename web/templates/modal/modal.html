@@ -3,39 +3,23 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Редактирование данных сотрудника</h5>
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="test"></div>
-                {% for salary in salaries %}
-              
-                <label for="" class="label_date" style="width: 100%">ФИО<br>
-                    <input type="text" class="input_and_select" id="staffName" style="width: 100%" value="salary.staff.name">
-                </label>
+                <div id="test">
+                    <!-- компонент salary -->
+                </div>
 
 
-                staff_name: {{ salary.staff.name }}
-                staff_role: {{ salary.staff.role.name }}
-                department: {{ salary.department.name }}
-                salary_fix: {{ salary.fix }}
-                salary.grid: <br>
-                {% for grid in salary.grid %}
-                {{ grid.limit }} - {{ grid.percent }}
                 <br>
-                {% endfor %}
-                {% endfor %}
-            
-                <br>
-                <label for="" class="label_date" style="width: 100%">Роль<br>
-                    <input type="text" class="input_and_select" id="roleName" style="width: 100%" value="">
-                </label>
+
             </div>
 
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <!-- <button type="button" class="btn btn-primary">Сохранить изменения</button> -->
             </div>
         </div>
     </div>
@@ -47,45 +31,3 @@
         cursor: pointer;
     }
 </style>
-
-<script>
-    // Получаем ссылку на модальное окно по его ID
-   //  let modalWindow = document.getElementById('exampleModal');
-
-    //Добавляем слушатель события 'show.bs.modal' к модальному окну
-  //   modalWindow.addEventListener('show.bs.modal', function (event) {
-        //  event.relatedTarget содержит ссылку на элемент, который вызвал модальное окно (в данном случае - кнопку)
-        //  то есть получаю кнопку которая была вызвана
-    //     const button = event.relatedTarget;
-
-        // Получаем данные из атрибутов кнопки
-  //       const staff = button.getAttribute('data-staff-name');
-  //       const role = button.getAttribute('data-role');
-  //       const details = button.getAttribute('data-details');
-  //       const fix = button.getAttribute('data-fix');
-  //       const grid = button.getAttribute('data-grid');
-
-
-
-        // Получаем ссылки на элементы внутри модального окна, где будут выводиться данные
-   //      const staffNameSpan = modalWindow.querySelector('#staffName');
-   //      const roleNameSpan = modalWindow.querySelector('#roleName');
-   //      const itemDetailsSpan = modalWindow.querySelector('#itemDetails');
-   //      const itemDetailsFix = modalWindow.querySelector('#itemFix');
-   //     itemDetailsGrid.textContent = grid
-
-
-
-
-     //    let data = []
-     //    data.push({
-    //         department: details.split(","),
-    //         fix: fix.split(","),
-    //         grid: JSON.stringify(grid)
-     //    })
-    //     console.log(data)
-  //   })
-
-
-
-</script>

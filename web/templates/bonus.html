@@ -1,6 +1,48 @@
-{% extends 'base.html' %}
 {% block page_content %}
-    {% for bonus in bonuses %}
-        {{ bonus }}
-    {% endfor %}
+    <div>
+        <label class="label_date" style="width: 100%">Дата<br>
+            <input type="date" class="input_and_select" style="width: 100%" id="on_date" required>
+        </label>
+        <label class="label_date" style="width: 100%">Сумма премии<br>
+            <input type="number" class="input_and_select" style="width: 100%" id="amount" required>
+        </label>
+    </div>
+    <br>
+    <button class="Action" style="width: auto; float: right; white-space: nowrap; padding: 1% 2%"
+        onclick="createBonus(this)">Премировать
+        сотрудника</button>
+
+<br>
+<br>
+<p class="total">Ранее выданные премии</p>
+<div style="overflow: auto;">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="table-secondary">
+                <th>ФИО</th>
+                <th>Роль</th>
+                <th>Дата</th>
+                <th>Сумма</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody class="table-bonus">
+            {% for bonus in bonuses %}
+            <tr id="{{ bonus.id }}">
+                <td>{{ bonus.staff.name }}</td>
+                <td>{{ bonus.staff.role.name }}</td>
+                <td>{{ bonus.on_date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ bonus.amount}}</td>
+                <td>
+                    <button class="btn btn-danger" style="width: 100%" data-delete-bonus="{{ bonus.id }}"
+                        onclick="deleteRow(this)">Удалить</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
 {% endblock %}

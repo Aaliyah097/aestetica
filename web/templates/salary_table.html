@@ -1,4 +1,5 @@
-<p class="description">Зарплатная ведомость {{ date_begin }} - {{ date_end }}</p>
+<p class="description">Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }}
+    - {{date_end.strftime('%d.%m.%Y') }}</p>
 <hr>
 <div style="overflow: auto; max-height: 70vh">
     <table class="table table-bordered table-hover">
@@ -13,16 +14,13 @@
                 <th class="add"></th>
                 <th class="add"></th>
                 <th class="add"></th>
-                <th class="add"></th>
-                <th class="add"></th>
-                <th class="add"></th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td colspan="12" style="background: #fae08b; color: #215968; text-align: left">Врачи</td>
             </tr>
-            {% for salary in doctors_report %}
+            {% for salary in doctors_report |sort(attribute="staff.name")%}
             <tr>
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
@@ -32,19 +30,15 @@
                         </div>
                     </span>
                 </td>
-                <td>
-                    {{ salary.volume }}
-                </td>
-                <td>{{ salary.income }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|count }}</td>
                 <td class="add"></td>
                 <td class="add"></td>
                 <td class="add"></td>
                 <td class="add"></td>
                 <td class="add"></td>
-                <td class="add"></td>
-                <td class="add"></td>
-                <td class="add"></td>
+
             </tr>
             <!--   style="position: sticky; top: -1px; z-index: 1;" -->
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -58,24 +52,19 @@
                 <th>Скидка</th>
                 <th>Итого</th>
                 <th>Зуб</th>
-                <th>Номер марк.</th>
-                <th>История</th>
-                <th>Обработка</th>
             </tr>
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>{{ razbivka.client }}</td>
-                <td> {{ razbivka.on_date }}</td>
+                <td>{{ razbivka.on_date[:10].split('-')[2] ~ '.' ~ razbivka.on_date[:10].split('-')[1] ~ '.' ~
+                    razbivka.on_date[:10].split('-')[0] }}</td>
                 <td>{{ razbivka.service.name }}</td>
                 <td>{{ razbivka.service.code }}</td>
-                <td>{{ razbivka.amount }}</td>
-                <td>{{ razbivka.cost_wo_discount }}</td>
-                <td>{{ razbivka.discount }}</td>
-                <td>{{ razbivka.cost }}</td>
+                <td>{{'{0:,}'.format(razbivka.amount).replace(',', ' ') }}</td>
+                <td>{{'{0:,} ₽'.format(razbivka.cost_wo_discount).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.discount).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
-                <td>{{ razbivka.markdown.number }}</td>
-                <td>{{ razbivka.markdown.is_history }}</td>
-                <td>{{ razbivka.markdown.to_treatment_number }}</td>
             </tr>
             {% endfor %}
 
@@ -84,17 +73,41 @@
             <tr>
                 <td colspan="12" style="background: #fae08b; color: #215968; text-align: left">Асистенты</td>
             </tr>
+
+
             <!-- медсестры -->
-            {% for salary in assistants_report %}
+            {% for salary in assistants_report |sort(attribute="staff.name") %}
             <tr>
-                <td>{{ salary.staff.name }}</td>
-                <!-- оборот -->
+                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
+                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
+                        <div style="display: flex; justify-content: space-between">
+                            {{ salary.staff.name }}
+                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+                        </div>
+                    </span>
+                </td>
+
                 <td>{{ salary.volume }}</td>
-                <!-- зп -->
-                <td>{{ salary.income }}</td>
-                <!-- Кол-во приемов -->
+                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
+
             </tr>
+            <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
+                style="position: sticky; top:9vh; z-index:1">
+                <th>Дата</th>
+                <th>ФИО</th>
+                <th>Департамент</th>
+                <th>Роль</th>
+            </tr>
+            {% for razbivka_asisst in salary.schedule %}
+            <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
+                <td>{{ razbivka_asisst.on_date[:10].split('-')[2] ~ '.' ~ razbivka_asisst.on_date[:10].split('-')[1] ~
+                    '.' ~ razbivka_asisst.on_date[:10].split('-')[0] }}</td>
+                <td>{{ razbivka_asisst.staff.name }}</td>
+                <td>{{ razbivka_asisst.department.name }}</td>
+                <td>Ассистент</td>
+            </tr>
+            {% endfor %}
             {% endfor %}
         </tbody>
     </table>

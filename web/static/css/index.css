@@ -2,6 +2,7 @@
     font-family: 'Montserrat', sans-serif;
     margin: 0;
     padding: 0;
+    max-height: 100vh;
 }
 
 :root {
@@ -37,7 +38,7 @@ option {
 }
 .total{
     color: var(--DescriptionColor);
-    margin: 5% 0 0 1%;
+    margin: 2% 0 0 1%;
     font-size: 16px;
 }
 
@@ -94,7 +95,9 @@ option {
     width: 100%;
     font-size: 15px;
 }
-
+.Action:hover{
+  font-weight: 600;
+}
 
 .generate_button:hover {
     background: #363636;
@@ -151,19 +154,21 @@ td{
 
 /* Сотрудники */
 .block_data {
+    /* display: flex;
+    justify-content: space-between; */
+    height: 100vh;
+    width: 100vw;
     display: flex;
-    justify-content: space-between;
-    width: 98vw;
-
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0);
+    justify-content: center;
+   
 }
 
-.block_data__change,
-.block_data__add {
-    width: 45vw;
-    max-height: 80vh;
+.block_data__change{
+    display: flex;
+    justify-content: center;
+    width: 80vw;
+
+    max-height: 90vh;
     margin-top: 2%;
     border-radius: 28px;
     background: #ffffff;
@@ -172,12 +177,7 @@ td{
     margin-bottom: 5%;
 }
 
-.block_data__add {
-    border-radius: 28px;
-    background: #ffffff;
-    box-shadow: -11px 11px 22px #d9d9d9,
-        11px -11px 22px #ffffff;
-}
+
 
 .block_data__change__content>table {
     padding: 5%;
@@ -201,14 +201,24 @@ td{
   #refreshData {
     transition: all 0.5s linear;
   }
-  
+  #refreshDataBonus {
+    transition: all 0.5s linear;
+  }
+
+
   #refreshData.transform {
+    transform: rotate(360deg);
+  }
+  #refreshDataBonus.transform {
     transform: rotate(360deg);
   }
   /* ячейки одного размера */
   .table-staff{
+    width: 100%;
+    
     table-layout: fixed;
   }
+
 /* Конец сотрудники */
 
 
@@ -219,13 +229,27 @@ td{
     z-index: 1
 }
 .current_doc{
-    background: rgb(211, 248, 211)
+    background: rgb(211, 248, 211);
+    font-weight: 800;
 }
 .attachment {
     background: rgb(247, 247, 247);
     border: 1px solid grey;
 }
 
+
+
+/* АНИМАЦИИ */
+
+.rotaed {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+
+
+
+/* Конец анимации */
 /* МЕДИА ЗАПРОСЫ */
 
 @media screen and (max-width: 500px) {
@@ -263,25 +287,29 @@ td{
     /* Сотрудники */
     .block_data {
         display: flex;
-        justify-content: space-between;
-        flex-direction: column;
-        width: 98vw;
-
+        justify-content: center;
+        /* flex-direction: column; */
+        width: 96vw;
+       
         position: relative;
         left: 50%;
         transform: translate(-50%, 0);
     }
 
-    .block_data__change,
-    .block_data__add {
-        width: 98vw;
+    .block_data__change{
+        /* background: red; */
+        width: 100%;
         max-height: 80vh;
-        margin-top: 4%;
-        border-radius: 28px;
+        margin-top: 10%;
+        /* border-radius: 28px; */
+        border-bottom-left-radius: 1px;
+        border-bottom-right-radius: 1px;
         background: #ffffff;
         box-shadow: 5px 5px 11px #d9d9d9,
             -5px -5px 11px #ffffff;
         margin-bottom: 5%;
+        display: flex;
+        position: relative;
     }
 
     .block_data__change__content_header>p {
@@ -291,8 +319,21 @@ td{
     }
     .table-staff{
         table-layout: auto;
+        margin-top: 1%;
       }
       td{
         font-size: 14px;
       }
+      .input_and_select {
+       
+        border-radius: 0.4rem;
+        background-color: #efefef;
+        border: #bdc3c7 0.1rem solid;
+        width: 18rem;
+        height: 3rem;
+        width: 50%;
+        padding: 0rem 1rem;
+        font-size: var(--FontSizeText)
+    }
+    
 }

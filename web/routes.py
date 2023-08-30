@@ -8,6 +8,53 @@ from src.salary.service.salary_calculation_service import SalaryCalculationServi
 from src.salary.service.salary_management_service import SalaryManagementService
 from src.staff.repositories.staff_repository import StaffRepository
 from src.salary.repositories.salary_repository import SalaryRepository
+from src.salary.repositories.bonus_repository import BonusRepository
+
+
+@app.route('/bonus-by-staff')
+def bonus_by_staff():
+    staff = request.args.get('staff', None)
+    if not staff:
+        return "expected param 'staff'"
+
+    return render_template(
+        'bonus.html',
+        bonuses=BonusRepository.get_by_staff(staff)
+    )
+
+
+@app.route('/bonus/<int:pk>/delete/', methods=['POST', ])
+def delete_bonus(pk):
+    BonusRepository.delete(pk)
+    return 'ok', 200
+
+
+@app.route('/bonus', methods=['POST', ])
+def create_bonus():
+    staff = request.form.get('staff', None)
+    amount = request.form.get('amount', None)
+    on_date = request.form.get('on_date', None)
+
+    if not all([staff, amount, on_date]):
+        return 'expected params ?staff=&amount=&on_date=', 500
+
+    try:
+        on_date = datetime.datetime.strptime(on_date, '%Y-%m-%d').date()
+    except (AttributeError, ValueError):
+        return "Expected date format is %Y-%m-%d", 500
+
+    try:
+        amount = float(amount)
+    except ValueError:
+        return "amount should be a number", 500
+
+    BonusRepository.create(
+        staff_name=staff,
+        amount=amount,
+        on_date=on_date
+    )
+
+    return 'ok', 200
 
 
 @app.route('/staff', methods=['GET', ])

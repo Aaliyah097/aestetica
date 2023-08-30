@@ -4,9 +4,10 @@ from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.technician import Technician
 from src.staff.entities.role import Role
 
-
-from db.aestetica.tables import Staff as StaffTable
-from db.aestetica.tables import Base, select
+from db.aestetica.tables import (
+    Staff as StaffTable,
+    Base, select
+)
 
 
 class StaffFactory:
@@ -48,7 +49,9 @@ class StaffRepository:
     @staticmethod
     def _get_staff_by_name(staff_name: str) -> StaffTable | None:
         with Base() as session:
-            staff = session.get(StaffTable, staff_name)
+            staff = session.scalars(select(StaffTable).where(
+                StaffTable.name.like(f"%{staff_name}%"))
+            ).first()
             session.expunge_all()
             return staff
 

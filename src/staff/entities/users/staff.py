@@ -1,9 +1,10 @@
 from src.staff.entities.role import Role
+from src.utils import remove_spaces
 
 
 class Staff:
     def __init__(self, name: str):
-        self.name: str = name
+        self.name: str = remove_spaces(name)
         self.role: Role | None = None
         self.is_new: bool = False
 

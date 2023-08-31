@@ -9,6 +9,54 @@ from src.salary.service.salary_management_service import SalaryManagementService
 from src.staff.repositories.staff_repository import StaffRepository
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.repositories.bonus_repository import BonusRepository
+from src.treatments.repositories.consumables_repository import ConsumablesRepository
+from src.treatments.repositories.services_repository import ServicesRepository
+
+
+@app.route('/staff/select')
+def select_staff():
+    return render_template(
+        'staff_select.html',
+        staff=StaffRepository.get_staff()
+    )
+
+
+@app.route('/services/select')
+def list_services():
+    return render_template(
+        'services_select.html',
+        services=ServicesRepository.get_all()
+    )
+
+
+@app.route('/consumables')
+def list_consumables():
+    return render_template(
+        'consumables.html', consumables=ConsumablesRepository().get_all()
+    )
+
+
+@app.route('/consumables/create')
+def create_consumables():
+    staff = request.args.get('staff', None)
+    service = request.args.get('service', None)
+    cost = request.args.get('cost', 0)
+
+    if not all([staff, service]):
+        return 'expected data {staff: str, service: str, cost: float}', 500
+
+    try:
+        ConsumablesRepository().create(staff, service, cost)
+    except NameError as e:
+        return str(e), 500
+
+    return 'ok', 200
+
+
+@app.route('/consumables/<int:pk>/delete')
+def delete_consumables(pk):
+    ConsumablesRepository().delete(pk)
+    return 'ok', 200
 
 
 @app.route('/bonus-by-staff')

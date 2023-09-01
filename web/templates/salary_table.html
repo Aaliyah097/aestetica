@@ -99,7 +99,7 @@
                 <th>Департамент</th>
                 <th>Роль</th>
             </tr>
-            {% for razbivka_asisst in salary.schedule %}
+            {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>{{ razbivka_asisst.on_date[:10].split('-')[2] ~ '.' ~ razbivka_asisst.on_date[:10].split('-')[1] ~
                     '.' ~ razbivka_asisst.on_date[:10].split('-')[0] }}</td>

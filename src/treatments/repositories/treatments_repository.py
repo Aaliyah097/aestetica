@@ -64,7 +64,7 @@ class TreatmentRepository:
     def convert_treatment(self, row: dict) -> Treatment:
         new_treatment = Treatment(
             client=row['CLIENTS_FULLNAME'],
-            on_date=row['TREATDATE'],
+            on_date=datetime.datetime.strptime(row['TREATDATE'], '%Y-%m-%d %H:%M:%S'),
             amount=row['AMOUNT'],
             cost_wo_discount=row['COST_WO_DISCOUNT'],
             discount=row['DISCOUNT'],

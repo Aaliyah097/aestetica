@@ -1,5 +1,6 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
+from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.department import Department
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.entities.salary_grid import SalaryGrid
@@ -60,5 +61,5 @@ class SalaryManagementService:
             self.salary_repo.create_salary(
                 staff=staff,
                 department=department,
-                fix=0
+                fix=5000 if isinstance(staff, Assistant) else 0
             )

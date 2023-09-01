@@ -11,24 +11,24 @@ from db.aestetica.tables import (
 
 class BonusRepository:
     @staticmethod
-    def get_bonus(staff: Staff, date_begin: datetime.date, date_end: datetime.date) -> list[Bonus]:
-        query = select(BonusTable).where(BonusTable.staff == staff.name,
-                                         BonusTable.on_date >= date_begin,
-                                         BonusTable.on_date <= date_end)
+    def get_bonus(staff: Staff, on_date: datetime.date) -> Bonus | None:
+        query = select(BonusTable).where(BonusTable.staff.like(f"%{staff.name}%"),
+                                         BonusTable.date_begin <= on_date,
+                                         BonusTable.date_end >= on_date).limit(1)
 
         with Base() as session:
-            return [
-                Bonus(
-                    staff=staff,
-                    on_date=b.on_date,
-                    amount=b.amount,
-                    _id=b.id
-                )
-                for b in session.scalars(query).all()
-            ]
+            bonus = session.scalar(query)
+
+            return Bonus(
+                staff=staff,
+                date_begin=bonus.date_begin,
+                date_end=bonus.date_end,
+                amount=bonus.amount,
+                _id=bonus.id
+            ) if bonus else None
 
     @staticmethod
-    def create(staff_name: str, amount: float, on_date: datetime.date) -> None:
+    def create(staff_name: str, amount: float, date_begin: datetime.date, date_end: datetime.date) -> None:
         if not StaffRepository().get_staff_by_name(staff_name):
             return
 
@@ -37,7 +37,8 @@ class BonusRepository:
                 BonusTable(
                     staff=staff_name,
                     amount=amount,
-                    on_date=on_date
+                    date_begin=date_begin,
+                    date_end=date_end
                 )
             )
             session.commit()
@@ -51,7 +52,8 @@ class BonusRepository:
                 Bonus(
                     staff=StaffRepository().get_staff_by_name(staff_name),
                     amount=b.amount,
-                    on_date=b.on_date,
+                    date_begin=b.date_begin,
+                    date_end=b.date_end,
                     _id=b.id
                 )
                 for b in session.scalars(query).all()

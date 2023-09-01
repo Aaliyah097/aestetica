@@ -6,6 +6,18 @@ from src.staff.entities.filial import Filial
 
 
 class FilialsRepository:
+    def create(self, filial: Filial) -> None:
+        if self.get_by_name(filial.name):
+            return
+
+        with Base() as session:
+            session.add(
+                FilialTable(
+                    name=filial.name
+                )
+            )
+            session.commit()
+
     @staticmethod
     def get_by_name(name: str) -> Filial | None:
         if not name:

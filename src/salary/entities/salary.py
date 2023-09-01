@@ -16,12 +16,21 @@ class Salary:
         self._grid: list[SalaryGrid] = []
         self._volume: float = 0
         self._income: float = 0
+        self._bonuses: list[float] = []
 
     def add_bonus(self, value: float) -> None:
-        self._income += value
+        try:
+            float(value)
+        except ValueError:
+            return
+
+        self._bonuses.append(value)
 
     @property
     def income(self) -> float:
+        for bonus in self._bonuses:
+            self._income += bonus
+
         return self._income
 
     @property

@@ -12,13 +12,14 @@ from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.repositories.bonus_repository import BonusRepository
 from src.treatments.repositories.consumables_repository import ConsumablesRepository
 from src.treatments.repositories.services_repository import ServicesRepository
+from src.staff.entities.users.technician import Technician
 
 
-@app.route('/staff/select')
-def select_staff():
+@app.route('/technicians')
+def list_technicians():
     return render_template(
         'staff_select.html',
-        staff=StaffRepository.get_staff()
+        staff=list(filter(lambda st: isinstance(st, Technician), StaffRepository.get_staff()))
     )
 
 
@@ -106,8 +107,6 @@ def create_bonus():
     return 'ok', 200
 
 
-
-
 @app.route('/staff', methods=['GET', ])
 def list_staff():
     return render_template(
@@ -131,9 +130,10 @@ def get_salary_by_staff():
 
 @app.route('/salary/update/<int:pk>', methods=['POST', ])
 def modify_salary(pk: int):
-    fix = request.form.get('fix', None)
-    salary_grid = request.form.get('grid', None)
-    if not salary_grid or not fix:
+    fix = request.json.get('fix', 0)
+    salary_grid = request.json.get('grid', [])
+
+    if salary_grid == [] and fix == 0:
         return "expected params 'fix: int' and 'salary_grid: list[dict]'"
 
     for grid in salary_grid:
@@ -184,7 +184,6 @@ def list_doctors_salary():
 
 @app.route('/', methods=['GET', ])
 def new_page():
-   
     return render_template(
         'index.html'
     )

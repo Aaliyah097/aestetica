@@ -15,7 +15,6 @@ class Repository:
                               tooth_code: int, doctor_name: str,
                               block_services_codes: tuple[str],
                               client: str) -> dict:
-        # TODO append tooth code
         query = f"""
         SELECT
 
@@ -69,6 +68,7 @@ class Repository:
         t.treatdate <= '{str(lt_date)}' 
         AND d.dname LIKE '%{doctor_name}%' 
         AND c.fullname LIKE '%{client}"%' 
+        AND od.toothcode = {tooth_code}
         AND w.kodoper NOT IN {block_services_codes}
         AND od.schamount_a != 0
 

@@ -137,14 +137,24 @@ class SalaryCalculationService:
                 continue
 
             if treatment.service in self.submit_services:
-                # TODO добавить код зуба
-                history_treatment = self.treatment_repo.get_history_treatment(
-                    lt_date=treatment.on_date,
-                    tooth_code=treatment.tooth,
-                    doctor_name=treatment.staff.name,
-                    block_services_codes=tuple([service.code for service in self.submit_services]),
-                    client=treatment.client
-                )
+                # TODO добавить код зуба в фильтр
+                history_treatments = sorted(list(filter(lambda t: t.on_date <= treatment.on_date and
+                                                                  t.staff.name == treatment.staff.name and
+                                                                  t.service not in self.submit_services and
+                                                                  t.client == treatment.client,
+                                                        treatments)), key=lambda t: t.on_date, reverse=True)
+
+                history_treatment = history_treatments[-1] if len(history_treatments) > 0 else None
+
+                if not history_treatment:
+                    history_treatment = self.treatment_repo.get_history_treatment(
+                        lt_date=treatment.on_date,
+                        tooth_code=treatment.tooth,
+                        doctor_name=treatment.staff.name,
+                        block_services_codes=tuple([service.code for service in self.submit_services]),
+                        client=treatment.client
+                    )
+
                 if history_treatment:
                     treatment.markdown = MarkDown(
                         is_history=False,

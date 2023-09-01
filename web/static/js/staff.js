@@ -46,7 +46,13 @@ refreshData.addEventListener('click', () => {
     }, 500)
 
 })
+refreshDataBonus.addEventListener('click', () => {
+    refreshDataBonus.classList.toggle('transform');
+    setTimeout(() => {
+        location.reload()
+    }, 500)
 
+})
 
 function getSalaryCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
@@ -151,7 +157,7 @@ function createBonus(value) {
 
 
 function CreateSalaryCurrentEmployee() {
-    // loader.style = 'display: block'
+    loader.style = 'display: block'
     console.log(loader)
     setTimeout(() => {
         // Получение элементов для текущей вкладки
@@ -182,14 +188,14 @@ function CreateSalaryCurrentEmployee() {
             'fix': parseFloat(fixValue),
             'grid': gridData
         };
-        let formData = new FormData()
-        formData.append('fix', parseFloat(fixValue))
-        formData.append('grid', JSON.stringify(gridData))
-      
 
         fetch(`/salary/update/${tabCurrentId}`, {
             method: 'POST',
-            body: formData
+            headers: {
+              
+                "Content-Type": 'application/json'
+              },
+            body: JSON.stringify(data),
         }).then(response => {
             loader.style = 'display: none'
             if (response.status == 200) {
@@ -200,7 +206,7 @@ function CreateSalaryCurrentEmployee() {
             loader.style = 'display: none'
 
         })
-    }, 1500)
+    }, 1000)
 
 }
 

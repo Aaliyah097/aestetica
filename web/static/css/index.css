@@ -156,14 +156,19 @@ td{
 .block_data {
     height: 100vh;
     display: flex;
-    justify-content: center;
+    width: 98%;
+    position: relative;
+    left: 50%; 
+    transform: translate(-50%, 0);
+    justify-content: space-between;
    
 }
 
-.block_data__change{
-    display: flex;
-    justify-content: center;
-    width: 80vw;
+.block_data__change,
+.block_data__add{
+    /* display: flex;
+    justify-content: center; */
+    width: 45vw;
 
     max-height: 90vh;
     margin-top: 2%;
@@ -249,7 +254,7 @@ td{
 /* Конец анимации */
 /* МЕДИА ЗАПРОСЫ */
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 1025px) {
     .description {
         display: none;
     }
@@ -281,11 +286,11 @@ td{
         height: 80%;
     }
 
-    /* Сотрудники */
+    /* Сотрудники MEDIA*/
     .block_data {
         display: flex;
         justify-content: center;
-        /* flex-direction: column; */
+        flex-direction: column;
         width: 96vw;
        
         position: relative;
@@ -297,7 +302,6 @@ td{
         /* background: red; */
         width: 100%;
         max-height: 80vh;
-        margin-top: 10%;
         /* border-radius: 28px; */
         border-bottom-left-radius: 1px;
         border-bottom-right-radius: 1px;
@@ -320,6 +324,7 @@ td{
       }
       td{
         font-size: 14px;
+        white-space: wrap;
       }
       .input_and_select {
        

@@ -1,10 +1,9 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.department import Department
+from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment
 from src.salary.entities.salary import Salary
-from src.treatments.repositories.consumables_repository import ConsumablesRepository
-from src.treatments.repositories.services_repository import ServicesRepository
 from src.salary.repositories.salary_repository import SalaryRepository
 
 from itertools import chain
@@ -12,7 +11,6 @@ from itertools import chain
 
 class DoctorSalaryCalculator:
     def __init__(self):
-        self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
         self.salary_repo: SalaryRepository = SalaryRepository()
 
     def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> list[Salary]:
@@ -32,7 +30,10 @@ class DoctorSalaryCalculator:
                     union_treatments
                 ))
                 if len(prev_treatments) > 0:
-                    salaries[prev_treatments[-1].department].volume = self.get_volume(prev_treatments[-1], True)
+                    salaries[prev_treatments[-1].department].volume = self.get_volume(
+                        prev_treatments[-1],
+                        True
+                    )
             else:
                 if not treatment.markdown.is_history:
                     salaries[treatment.department].volume = self.get_volume(treatment)
@@ -47,14 +48,7 @@ class DoctorSalaryCalculator:
         else:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
 
-        if treatment.technician:
-            consumables = self.consumables_repo.get_by_technician_and_service(
-                technician=treatment.technician,
-                service=treatment.service
-            )
-            consumables_cost = consumables.cost if consumables else 0
-        else:
-            consumables_cost = 0
+        consumables_cost = treatment.consumables.cost if treatment.consumables else 0
 
         if is_submit:
             volume = (volume - consumables_cost) * 0.3

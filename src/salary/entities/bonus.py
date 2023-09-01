@@ -5,11 +5,13 @@ from src.staff.entities.users.staff import Staff
 
 class Bonus:
     def __init__(self, staff: Staff,
-                 on_date: datetime.date,
+                 date_begin: datetime.date,
+                 date_end: datetime.date,
                  amount: float = 0,
                  _id: int = None):
         self.staff: Staff = staff
-        self.on_date: datetime.date = on_date
+        self.date_begin: datetime.date = date_begin
+        self.date_end: datetime.date = date_end
         self.amount = amount or 0
         self.id: int | None = _id
 
@@ -17,7 +19,8 @@ class Bonus:
         return {
             'id': self.id,
             'staff': self.staff.serialize(),
-            'on_date': self.on_date,
+            'date_begin': self.date_begin,
+            'date_end': self.date_end,
             'amount': self.amount
         }
 

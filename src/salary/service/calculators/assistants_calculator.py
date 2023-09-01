@@ -22,6 +22,10 @@ class AssistantsSalaryCalculator:
                 continue
 
             salary.volume = 1
+
+            if sch.bonus:
+                salary.add_bonus(sch.bonus)
+
             on_date_set.add(sch.on_date)
 
         return salary

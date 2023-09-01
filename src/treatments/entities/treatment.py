@@ -3,6 +3,7 @@ from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.technician import Technician
 from src.staff.entities.filial import Filial
 from src.staff.entities.department import Department
+from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 
 
@@ -40,6 +41,7 @@ class Treatment:
         self.department: Department | None = None
         self.tooth: int | None = None if type(tooth) in [int, float] and tooth == 0 else tooth
         self.technician: Technician | None = None
+        self.consumables: Consumables | None = None
 
         self._markdown: MarkDown | None = None
 
@@ -64,7 +66,8 @@ class Treatment:
             'filial': self.filial.serialize() if self.filial else None,
             'department': self.department.serialize() if self.department else None,
             'tooth': self.tooth,
-            'markdown': self._markdown.serialize() if self._markdown else None
+            'markdown': self._markdown.serialize() if self._markdown else None,
+            'consumables': self.consumables.serialize() if self.consumables else None
         }
 
     def __repr__(self):

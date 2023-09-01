@@ -42,7 +42,20 @@ class ServicesRepository:
             return Service(
                 name=service.name,
                 code=service.code
+            ) if service else None
+
+    def create(self, service: Service) -> None:
+        if self.get_by_code(service.code):
+            return
+
+        with Base() as session:
+            session.add(
+                ServiceTable(
+                    name=service.name,
+                    code=service.code
+                )
             )
+            session.commit()
 
     @staticmethod
     def get_all() -> list[Service]:

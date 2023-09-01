@@ -63,5 +63,5 @@
 - pip install -r requirements.txt
 - type nul > db/aestetica/db.sqlite3
 - alembic upgrade head
-- python db/sync.py
+- pytest tests/test_sync.py -s
 - python app.py

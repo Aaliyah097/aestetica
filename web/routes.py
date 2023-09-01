@@ -83,13 +83,15 @@ def delete_bonus(pk):
 def create_bonus():
     staff = request.form.get('staff', None)
     amount = request.form.get('amount', None)
-    on_date = request.form.get('on_date', None)
+    date_begin = request.form.get('date_begin', None)
+    date_end = request.form.get('date_end', None)
 
-    if not all([staff, amount, on_date]):
-        return 'expected params ?staff=&amount=&on_date=', 500
+    if not all([staff, amount, date_begin, date_end]):
+        return 'expected params ?staff=&amount=&date_begin=&date_end=', 500
 
     try:
-        on_date = datetime.datetime.strptime(on_date, '%Y-%m-%d').date()
+        date_begin = datetime.datetime.strptime(date_begin, '%Y-%m-%d').date()
+        date_end = datetime.datetime.strptime(date_end, '%Y-%m-%d').date()
     except (AttributeError, ValueError):
         return "Expected date format is %Y-%m-%d", 500
 
@@ -101,7 +103,8 @@ def create_bonus():
     BonusRepository.create(
         staff_name=staff,
         amount=amount,
-        on_date=on_date
+        date_begin=date_begin,
+        date_end=date_end
     )
 
     return 'ok', 200
@@ -147,7 +150,7 @@ def modify_salary(pk: int):
 
 
 @app.route('/salary', methods=['GET', ])
-def list_doctors_salary():
+def list_salary():
     time.sleep(2)
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
@@ -162,16 +165,21 @@ def list_doctors_salary():
     except (AttributeError, ValueError):
         return "Expected date format is %Y-%m-%d", 500
 
-    try:
-        service = SalaryCalculationService(filial_name, date_begin, date_end)
-    except NameError as e:
-        return str(e), 500
+    # try:
+    #     service = SalaryCalculationService(filial_name, date_begin, date_end)
+    # except NameError as e:
+    #     return str(e), 500
 
-    try:
-        doctors_salary_reports = service.doctors_cals()
-        assistants_salary_report = service.assistants_calc()
-    except Exception as e:
-        return str(e), 500
+    service = SalaryCalculationService(filial_name, date_begin, date_end)
+
+    # try:
+    #     doctors_salary_reports = service.doctors_cals()
+    #     assistants_salary_report = service.assistants_calc()
+    # except Exception as e:
+    #     return str(e), 500
+
+    doctors_salary_reports = service.doctors_cals()
+    assistants_salary_report = service.assistants_calc()
 
     return render_template(
         'salary_table.html',

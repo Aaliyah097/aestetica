@@ -28,7 +28,7 @@ class ScheduleRepository:
 
     def _schedule_from_row(self, row: dict) -> Schedule:
         return Schedule(
-            on_date=row['WDATE'],
+            on_date=datetime.datetime.strptime(row['WDATE'], '%Y-%m-%d %H:%M:%S').date(),
             staff=StaffFactory.create_staff(
                 name=row['DNAME'],
                 staff_role=Role(name=row['DOCTOR_STDTYPENAME'])

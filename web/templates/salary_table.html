@@ -52,12 +52,14 @@
                 <th>Скидка</th>
                 <th>Итого</th>
                 <th>Зуб</th>
+                <th>Расходники</th>
             </tr>
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>{{ razbivka.client }}</td>
-                <td>{{ razbivka.on_date[:10].split('-')[2] ~ '.' ~ razbivka.on_date[:10].split('-')[1] ~ '.' ~
-                    razbivka.on_date[:10].split('-')[0] }}</td>
+{#                <td>{{ razbivka.on_date[:10].split('-')[2] ~ '.' ~ razbivka.on_date[:10].split('-')[1] ~ '.' ~#}
+{#                    razbivka.on_date[:10].split('-')[0] }}</td>#}
+                <td>{{ razbivka.on_date }}</td>
                 <td>{{ razbivka.service.name }}</td>
                 <td>{{ razbivka.service.code }}</td>
                 <td>{{'{0:,}'.format(razbivka.amount).replace(',', ' ') }}</td>
@@ -65,6 +67,7 @@
                 <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.discount).replace(',', ' ') }}</td>
                 <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
+                <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
             </tr>
             {% endfor %}
 
@@ -97,15 +100,16 @@
                 <th>Дата</th>
                 <th>ФИО</th>
                 <th>Департамент</th>
-                <th>Роль</th>
+                <th>Надбавка</th>
             </tr>
             {% for razbivka_asisst in salary.schedule %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
-                <td>{{ razbivka_asisst.on_date[:10].split('-')[2] ~ '.' ~ razbivka_asisst.on_date[:10].split('-')[1] ~
-                    '.' ~ razbivka_asisst.on_date[:10].split('-')[0] }}</td>
+{#                <td>{{ razbivka_asisst.on_date[:10].split('-')[2] ~ '.' ~ razbivka_asisst.on_date[:10].split('-')[1] ~#}
+{#                    '.' ~ razbivka_asisst.on_date[:10].split('-')[0] }}</td>#}
+                <td>{{ razbivka_asisst.on_date }}</td>
                 <td>{{ razbivka_asisst.staff.name }}</td>
                 <td>{{ razbivka_asisst.department.name }}</td>
-                <td>Ассистент</td>
+                <td>{{ razbivka_asisst.bonus }}</td>
             </tr>
             {% endfor %}
             {% endfor %}

@@ -13,3 +13,4 @@ class Schedule:
         self.staff: Staff = staff
         self.filial: Filial = filial
         self.department: Department = department or Department("Прочее")
+        self.bonus: float = 0

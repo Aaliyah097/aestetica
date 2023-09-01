@@ -119,9 +119,10 @@ class Consumables(Base):
 # TODO одну дату изменить на диапазон дат
 class Bonus(Base):
     __tablename__ = "bonuses"
-    __table_args__ = (UniqueConstraint('staff', 'on_date', name='staff_on_date_uc'), )
+    __table_args__ = (UniqueConstraint('staff', 'date_begin', 'date_end', name='staff_dates_uc'), )
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
-    on_date: Mapped[datetime.date] = mapped_column(Date())
+    date_begin: Mapped[datetime.date] = mapped_column(Date())
+    date_end: Mapped[datetime.date] = mapped_column(Date())
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)

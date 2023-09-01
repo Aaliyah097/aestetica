@@ -37,7 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in staff |sort(attribute="name")%}
+                        {% for item in staff |sort(attribute="role.name")%}
                         <tr>
 
                             <td>{{ item.name }}</td>
@@ -47,7 +47,7 @@
                                 <div class="btn-group" style="width: 100%;">
                                     <button type="button" class="Action" data-bs-toggle="dropdown" aria-expanded="false"
                                         style="white-space: nowrap;">
-                                        Действие <span>▽</span>
+                                        Действия <span>▽</span>
                                     </button>
                                     <ul class="dropdown-menu" style="width: 100%">
                                         <li>

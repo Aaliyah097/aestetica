@@ -7,23 +7,6 @@ from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 
 
-class MarkDown:
-    def __init__(self, number: int, is_history: bool, to_treatment_number: int | None = None):
-        self.number: int = number
-        self.is_history = is_history
-        self.to_treatment_number: int | None = to_treatment_number
-
-    def serialize(self) -> dict:
-        return {
-            'number': self.number,
-            'is_history': self.is_history,
-            'to_treatment_number': self.to_treatment_number
-        }
-
-    def __repr__(self):
-        return str(self.serialize())
-
-
 class Treatment:
     def __init__(self, client: str, on_date: datetime.datetime,
                  service: Service,
@@ -42,16 +25,7 @@ class Treatment:
         self.tooth: int | None = None if type(tooth) in [int, float] and tooth == 0 else tooth
         self.technician: Technician | None = None
         self.consumables: Consumables | None = None
-
-        self._markdown: MarkDown | None = None
-
-    @property
-    def markdown(self) -> MarkDown:
-        return self._markdown
-
-    @markdown.setter
-    def markdown(self, value: MarkDown) -> None:
-        self._markdown = value
+        self.markdown: MarkDown = MarkDown()
 
     def serialize(self) -> dict:
         return {
@@ -66,8 +40,25 @@ class Treatment:
             'filial': self.filial.serialize() if self.filial else None,
             'department': self.department.serialize() if self.department else None,
             'tooth': self.tooth,
-            'markdown': self._markdown.serialize() if self._markdown else None,
+            'markdown': self.markdown.serialize() if self.markdown else None,
             'consumables': self.consumables.serialize() if self.consumables else None
+        }
+
+    def __repr__(self):
+        return str(self.serialize())
+
+
+class MarkDown:
+    def __init__(self, is_history: bool = False, prev_treatment: Treatment | None = None):
+        self.is_history = is_history
+        self.volume: float = 0
+        self.prev_treatment: Treatment | None = prev_treatment
+
+    def serialize(self) -> dict:
+        return {
+            'is_history': self.is_history,
+            'prev_treatment': self.prev_treatment.serialize() if self.prev_treatment else None,
+            'volume': self.volume
         }
 
     def __repr__(self):

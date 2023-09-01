@@ -165,18 +165,7 @@ def list_salary():
     except (AttributeError, ValueError):
         return "Expected date format is %Y-%m-%d", 500
 
-    # try:
-    #     service = SalaryCalculationService(filial_name, date_begin, date_end)
-    # except NameError as e:
-    #     return str(e), 500
-
     service = SalaryCalculationService(filial_name, date_begin, date_end)
-
-    # try:
-    #     doctors_salary_reports = service.doctors_cals()
-    #     assistants_salary_report = service.assistants_calc()
-    # except Exception as e:
-    #     return str(e), 500
 
     doctors_salary_reports = service.doctors_cals()
     assistants_salary_report = service.assistants_calc()
@@ -185,6 +174,8 @@ def list_salary():
         'salary_table.html',
         doctors_report=doctors_salary_reports,
         assistants_report=assistants_salary_report,
+        total_income=sum([salary.income for salary in doctors_salary_reports]) +
+                     sum([salary.income for salary in assistants_salary_report]),
         date_begin=date_begin,
         date_end=date_end
     )

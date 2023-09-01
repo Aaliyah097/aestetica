@@ -46,7 +46,24 @@ class TreatmentRepository:
                     t.staff.name == doctor_name,
                     treatments
                 ))
-                return history_treatment[-1] if len(history_treatment) > 0 else None
+                ht = history_treatment[-1] if len(history_treatment) > 0 else None
+
+                if not ht:
+                    with open('src/treatments/repositories/history_treatments.json', 'rb') as file:
+                        treatments = [self.convert_treatment(row) for row in json.load(file)]
+
+                        treatments.sort(key=lambda t: t.on_date, reverse=True)
+
+                        history_treatment = list(filter(
+                            lambda t: t.on_date <= lt_date and
+                                      t.client == client and
+                                      t.cost != 0 and
+                                      t.service.code not in block_services_codes and
+                                      t.staff.name == doctor_name,
+                            treatments
+                        ))
+                        ht = history_treatment[-1] if len(history_treatment) > 0 else None
+                return ht
         else:
             response = Repository(self.connector).get_history_treatment(
                 lt_date=lt_date,

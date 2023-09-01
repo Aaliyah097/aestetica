@@ -14,3 +14,15 @@ class Schedule:
         self.filial: Filial = filial
         self.department: Department = department or Department("Прочее")
         self.bonus: float = 0
+
+    def serialize(self) -> dict:
+        return {
+            'on_date': self.on_date,
+            'staff': self.staff.serialize() if self.staff else None,
+            'filial': self.filial.serialize() if self.filial else None,
+            'department': self.department.serialize() if self.department else None,
+            'bonus': self.bonus
+        }
+
+    def __repr__(self):
+        return str(self.serialize())

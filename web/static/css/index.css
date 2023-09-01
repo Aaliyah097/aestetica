@@ -86,17 +86,16 @@ option {
     font-size: var(--FontSizeText);
 }
 .Action {
-    border-radius: 0.4rem;
-    background-color: var(--black);
-    color: white;
+    border: none;
+    background-color: transparent;
     text-align: center;
-    /* padding: 0rem 1rem; */
     height: 100%;
     width: 100%;
     font-size: 15px;
+    color: #32327a;
 }
 .Action:hover{
-  font-weight: 600;
+    font-weight: bold;
 }
 
 .generate_button:hover {

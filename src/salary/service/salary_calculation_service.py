@@ -1,7 +1,6 @@
 import datetime
 from collections import defaultdict
 from dataclasses import dataclass
-from itertools import chain
 
 from src.salary.entities.salary import Salary
 from src.schedule.entities.schedule import Schedule
@@ -21,7 +20,6 @@ from src.salary.repositories.bonus_repository import BonusRepository
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
 from src.salary.service.calculators.assistants_calculator import AssistantsSalaryCalculator
 from src.treatments.repositories.consumables_repository import ConsumablesRepository
-from src.salary.entities.bonus import Bonus
 
 
 @dataclass
@@ -29,6 +27,7 @@ class DoctorsSalaryReport:
     staff: Staff
     income: float
     volume: float
+    fix: float
     treatments: list[Treatment]
 
 
@@ -37,6 +36,7 @@ class AssistantSalaryReport:
     staff: Staff
     income: float
     volume: float
+    fix: float
     schedule: list[Schedule]
 
 
@@ -76,6 +76,7 @@ class SalaryCalculationService:
                     staff=staff,
                     income=salary.income,
                     volume=salary.volume,
+                    fix=salary.fix,
                     schedule=schedule
                 )
             )
@@ -87,19 +88,20 @@ class SalaryCalculationService:
             self.treatment_repo.get_all_treatments(
                 date_begin=self.date_begin,
                 date_end=self.date_end
-            ) # TODO remove slice
+            )
         )
 
         salary_reports = []
         calculator = DoctorSalaryCalculator()
 
         for doctor, departments in treatments.items():
-            salaries = calculator.calc(doctor, departments)
+            salaries, marked_treatments = calculator.calc(doctor, departments)
             salary_report = DoctorsSalaryReport(
                 staff=doctor,
                 income=sum([salary.income for salary in salaries]),
                 volume=sum([salary.volume for salary in salaries]),
-                treatments=sorted(list(chain.from_iterable(departments.values())), key=lambda t: t.on_date)
+                fix=0,
+                treatments=marked_treatments
             )
             salary_reports.append(salary_report)
         return salary_reports
@@ -128,17 +130,14 @@ class SalaryCalculationService:
     def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))
 
-        treatment_number = 1
-
         for treatment in treatments:
             treatment.consumables = self.get_consumables(treatment)
-
-            to_treatment_number = None
 
             if not isinstance(treatment.staff, Doctor):
                 continue
 
             if treatment.service in self.submit_services:
+                # TODO добавить код зуба
                 history_treatment = self.treatment_repo.get_history_treatment(
                     lt_date=treatment.on_date,
                     tooth_code=treatment.tooth,
@@ -147,27 +146,17 @@ class SalaryCalculationService:
                     client=treatment.client
                 )
                 if history_treatment:
-                    to_treatment_number = treatment_number
-
-                    history_markdown = MarkDown(
-                        number=treatment_number,
-                        to_treatment_number=None,
-                        is_history=True
+                    treatment.markdown = MarkDown(
+                        is_history=False,
+                        prev_treatment=history_treatment
                     )
 
-                    history_treatment.markdown = history_markdown
-                    result[treatment.staff][treatment.department].append(history_treatment)
-
-                    treatment_number += 1
-
-            markdown = MarkDown(number=treatment_number,
-                                is_history=False,
-                                to_treatment_number=to_treatment_number)
-
-            treatment.markdown = markdown
+                    if history_treatment.on_date.date() <= self.date_begin:
+                        history_treatment.markdown = MarkDown(
+                            is_history=True
+                        )
+                        result[treatment.staff][treatment.department].append(history_treatment)
 
             result[treatment.staff][treatment.department].append(treatment)
-
-            treatment_number += 1
 
         return result

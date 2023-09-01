@@ -1,7 +1,5 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.department import Department
-from src.treatments.entities.consumables import Consumables
-from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment
 from src.salary.entities.salary import Salary
 from src.salary.repositories.salary_repository import SalaryRepository
@@ -13,8 +11,9 @@ class DoctorSalaryCalculator:
     def __init__(self):
         self.salary_repo: SalaryRepository = SalaryRepository()
 
-    def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> list[Salary]:
+    def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> tuple[list[Salary], list[Treatment]]:
         union_treatments = list(chain.from_iterable(treatments.values()))
+
         union_treatments.sort(key=lambda t: t.on_date, reverse=True)
 
         salaries = {
@@ -23,24 +22,28 @@ class DoctorSalaryCalculator:
         }
 
         for treatment in union_treatments:
-            if treatment.markdown and treatment.markdown.to_treatment_number:
-                # TODO append toothcode
-                prev_treatments = list(filter(
-                    lambda t: t.markdown.number == treatment.markdown.number,
-                    union_treatments
-                ))
-                if len(prev_treatments) > 0:
-                    salaries[prev_treatments[-1].department].volume = self.get_volume(
-                        prev_treatments[-1],
-                        True
-                    )
+            volume = 0
+            if treatment.markdown.is_history:
+                continue
+
+            if treatment.markdown.prev_treatment:
+                volume = self.get_volume(
+                    treatment.markdown.prev_treatment,
+                    True
+                )
+                salaries[treatment.markdown.prev_treatment.department].volume = volume
             else:
                 if not treatment.markdown.is_history:
-                    salaries[treatment.department].volume = self.get_volume(treatment)
+                    volume = self.get_volume(treatment)
+                    salaries[treatment.department].volume = volume
 
-        return list(salaries.values())
+            if treatment.markdown:
+                treatment.markdown.volume = volume
 
-    def get_volume(self, treatment: Treatment, is_submit: bool = False) -> float:
+        return list(salaries.values()), union_treatments
+
+    @staticmethod
+    def get_volume(treatment: Treatment, is_submit: bool = False) -> float:
         if treatment.cost_wo_discount == 0:
             volume = 0
         elif (treatment.discount * 100 / treatment.cost_wo_discount) < 50:

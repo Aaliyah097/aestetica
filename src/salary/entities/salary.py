@@ -31,11 +31,11 @@ class Salary:
         for bonus in self._bonuses:
             self._income += bonus
 
-        return self._income
+        return round(self._income, 2)
 
     @property
     def volume(self) -> float:
-        return self._volume
+        return round(self._volume, 2)
 
     @volume.setter
     def volume(self, value: float):
@@ -46,7 +46,6 @@ class Salary:
                 self._income = self.fix * self._volume
             else:
                 self._income = self.fix
-
             return
 
         total = 0

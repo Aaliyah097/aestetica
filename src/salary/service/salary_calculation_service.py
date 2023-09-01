@@ -62,6 +62,13 @@ class SalaryCalculationService:
 
         return salary
 
+    # Считаться должно так:
+    """
+    Берем ставку фиксы,
+    Прибавляем за период бонусы к ставке
+    (Ставку и бонус) умножаем на количество дней в периоде отработанным
+    И перенести это все в калькулятор по ассистентам
+    """
     def assistants_calc(self) -> list[AssistantSalaryReport]:
         schedules = self.schedule_repo.get_all_schedule()
 
@@ -81,6 +88,9 @@ class SalaryCalculationService:
 
         return salary_reports
 
+    # добавить в результаты отчета расходники и прочее,
+    # чтобы была максимально подробная информация
+    # для проверки расчета на экране
     def doctors_cals(self) -> list[DoctorsSalaryReport]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(

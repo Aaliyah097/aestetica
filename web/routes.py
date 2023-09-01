@@ -107,8 +107,6 @@ def create_bonus():
     return 'ok', 200
 
 
-
-
 @app.route('/staff', methods=['GET', ])
 def list_staff():
     return render_template(
@@ -132,9 +130,10 @@ def get_salary_by_staff():
 
 @app.route('/salary/update/<int:pk>', methods=['POST', ])
 def modify_salary(pk: int):
-    fix = request.form.get('fix', None)
-    salary_grid = request.form.get('grid', None)
-    if not salary_grid or not fix:
+    fix = request.json.get('fix', 0)
+    salary_grid = request.json.get('grid', [])
+
+    if salary_grid == [] and fix == 0:
         return "expected params 'fix: int' and 'salary_grid: list[dict]'"
 
     for grid in salary_grid:
@@ -185,7 +184,6 @@ def list_doctors_salary():
 
 @app.route('/', methods=['GET', ])
 def new_page():
-   
     return render_template(
         'index.html'
     )

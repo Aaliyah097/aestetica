@@ -116,6 +116,7 @@ class Consumables(Base):
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
 
 
+# TODO одну дату изменить на диапазон дат
 class Bonus(Base):
     __tablename__ = "bonuses"
     __table_args__ = (UniqueConstraint('staff', 'on_date', name='staff_on_date_uc'), )

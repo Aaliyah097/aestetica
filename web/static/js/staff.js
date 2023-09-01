@@ -1,3 +1,4 @@
+const loader = document.querySelector('.bgDark')
 let originalHeaderText = '';
 
 function makeInput(th) {
@@ -48,8 +49,8 @@ refreshData.addEventListener('click', () => {
 
 
 function getSalaryCurrentEmloyee(value) {
-
     let name = value.getAttribute('data-name-employee')
+    let name_modal = value.getAttribute('data-name-modal')
     // get_salary_by_staff
     $.ajax(
         {
@@ -57,10 +58,12 @@ function getSalaryCurrentEmloyee(value) {
             url: `/staff/salary?staff=${name}`,
             async: true,
             success: function (data) {
-                console.log(value)
                 // document.getElementById(`open_modal${name}`).click()
+                console.log(name)
                 document.getElementById('test').innerHTML = data
-                document.getElementById('exampleModalLabel').innerHTML = value.getAttribute('data-name-modal')
+                // console.log(name)
+                document.getElementById('exampleModalLabel').innerHTML = name_modal
+                document.querySelector('.name_staff').innerText = ""
             },
             error: function (xhr, errmsg, err) {
                 notify('Ошибка!', 'Повторите попытку позднее.');
@@ -72,11 +75,12 @@ function getSalaryCurrentEmloyee(value) {
 
 function getBonusCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
-    if( localStorage.getItem('name')){
+    let name_modal = value.getAttribute('data-name-modal')
+
+    if (localStorage.getItem('name')) {
         localStorage.clear()
     }
     localStorage.setItem('name', name)
-    // get_salary_by_staff
     $.ajax(
         {
             type: 'get',
@@ -84,9 +88,12 @@ function getBonusCurrentEmloyee(value) {
             async: true,
             success: function (data) {
                 console.log(value)
-                // document.getElementById(`open_modal${name}`).click()
+                document.querySelector('.name_staff').innerHTML = 'Сотрудник: ' + localStorage.getItem('name')
+
+                document.querySelector('.save-button').style = 'display: none'
                 document.getElementById('test').innerHTML = data
-                document.getElementById('exampleModalLabel').innerHTML = value.getAttribute('data-name-modal')
+                // console.log(localStorage.getItem('name'))
+                document.getElementById('exampleModalLabel').innerHTML = name_modal
             },
             error: function (xhr, errmsg, err) {
                 notify('Ошибка!', 'Повторите попытку позднее.');
@@ -111,13 +118,14 @@ function deleteRow(value) {
 }
 
 function createBonus(value) {
+    // console.log(bonuses)
     // getNotifications('Успешно');
     event.preventDefault()
     let data_bonus = document.getElementById('on_date').value
     let value_bonus = document.getElementById('amount').value
     let name = localStorage.getItem('name')
 
-    if(!data_bonus || !value_bonus){
+    if (!data_bonus || !value_bonus) {
         getNotifications('Ошибка! Необходимо заполнить все поля (Дата и сумма)')
         return
     }
@@ -129,16 +137,71 @@ function createBonus(value) {
         method: 'POST',
         body: form
     }).then(response => {
-        if(response.status != 200){
+        if (response.status != 200) {
             getNotifications('Ошибка создания премии. Повторите попытку позже! Или проверьте не создана ли уже премия на Вашу дату.')
             return
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')
     }).catch(error => {
-        // console.log('123')
-        // getNotifications('Ошибка! Повторите попытку позднее.');
+
     })
+}
+
+
+
+function CreateSalaryCurrentEmployee() {
+    // loader.style = 'display: block'
+    console.log(loader)
+    setTimeout(() => {
+        // Получение элементов для текущей вкладки
+        const tabContent = document.querySelector('.tab-pane.active');
+        const fixValueInput = tabContent.querySelector('.fix-value');
+        const percentInputs = tabContent.querySelectorAll('.grid-percent');
+        const limitInputs = tabContent.querySelectorAll('.grid-limit');
+        const gridIds = tabContent.querySelectorAll('.grid-id');
+        const tabCurrentId = tabContent.querySelector('.salary_id').innerText
+
+        // Получение значений из полей и вывод в консоль
+        const fixValue = fixValueInput.value;
+
+        const gridData = [];
+
+        percentInputs.forEach((percentInput, index) => {
+            const percent = percentInput.value;
+            const limit = limitInputs[index].value;
+            const id = gridIds[index].textContent; // Получение текстового содержимого элемента
+            gridData.push({
+                id: Number(id),
+                percent: parseFloat(percent),
+                limit: parseFloat(limit)
+            });
+        });
+
+        const data = {
+            'fix': parseFloat(fixValue),
+            'grid': gridData
+        };
+        let formData = new FormData()
+        formData.append('fix', parseFloat(fixValue))
+        formData.append('grid', JSON.stringify(gridData))
+      
+
+        fetch(`/salary/update/${tabCurrentId}`, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            loader.style = 'display: none'
+            if (response.status == 200) {
+                getNotifications('Успешно! Данные изменены', 'alert-success')
+            }
+
+        }).catch((error) => {
+            loader.style = 'display: none'
+
+        })
+    }, 1500)
+
 }
 
 
@@ -169,19 +232,18 @@ function createBonus(value) {
 
 
 
+// const tabs = document.querySelectorAll('.tabs_eldenhard.nav-link');
+// const tabContents = document.querySelectorAll('.tab-pane');
+// console.log(tabs)
+// tabs.forEach(tab => {
+//     tab.addEventListener('click', () => {
+//         tabs.forEach(t => t.classList.remove('active'));
+//         tab.classList.add('active');
 
-const tabs = document.querySelectorAll('.tabs_eldenhard.nav-link');
-const tabContents = document.querySelectorAll('.tab-pane');
-console.log(tabs)
-tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        tabContents.forEach(content => content.classList.remove('active'));
-        const targetId = tab.getAttribute('data-bs-target').substr(1);
-        const targetContent = document.getElementById(targetId);
-        targetContent.classList.add('active');
-    });
-});
+//         tabContents.forEach(content => content.classList.remove('active'));
+//         const targetId = tab.getAttribute('data-bs-target').substr(1);
+//         const targetContent = document.getElementById(targetId);
+//         targetContent.classList.add('active');
+//     });
+// });
 

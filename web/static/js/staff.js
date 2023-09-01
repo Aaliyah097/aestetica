@@ -1,6 +1,8 @@
 const loader = document.querySelector('.bgDark')
 let originalHeaderText = '';
 
+
+
 function makeInput(th) {
     originalHeaderText = th.textContent.trim();
     th.style = 'position: relative'

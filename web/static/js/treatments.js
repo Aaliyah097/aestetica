@@ -40,7 +40,7 @@ function getSalary(form) {
               
                     loader.style = 'display: none'
             
-                
+   
 
             },
             error: function (xhr, errmsg, err) {
@@ -50,6 +50,9 @@ function getSalary(form) {
         }
     )
 }
+
+
+
 
 
 

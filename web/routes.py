@@ -15,29 +15,6 @@ from src.treatments.repositories.services_repository import ServicesRepository
 from src.staff.entities.users.technician import Technician
 
 
-@app.route('/technicians')
-def list_technicians():
-    return render_template(
-        'staff_select.html',
-        staff=list(filter(lambda st: isinstance(st, Technician), StaffRepository.get_staff()))
-    )
-
-
-@app.route('/services/select')
-def list_services():
-    return render_template(
-        'services_select.html',
-        services=ServicesRepository.get_all()
-    )
-
-
-@app.route('/consumables')
-def list_consumables():
-    return render_template(
-        'consumables.html', consumables=ConsumablesRepository().get_all()
-    )
-
-
 @app.route('/consumables/create')
 def create_consumables():
     staff = request.args.get('staff', None)
@@ -114,7 +91,10 @@ def create_bonus():
 def list_staff():
     return render_template(
         'staff.html',
-        staff=StaffRepository.get_staff()
+        staff=StaffRepository.get_staff(),
+        services=ServicesRepository.get_all(),
+        consumables=ConsumablesRepository().get_all(),
+        technicians=list(filter(lambda st: isinstance(st, Technician), StaffRepository.get_staff()))
     )
 
 

@@ -141,7 +141,8 @@ class SalaryCalculationService:
                 history_treatments = sorted(list(filter(lambda t: t.on_date <= treatment.on_date and
                                                                   t.staff.name == treatment.staff.name and
                                                                   t.service not in self.submit_services and
-                                                                  t.client == treatment.client,
+                                                                  t.client == treatment.client and
+                                                                  t.cost != 0,
                                                         treatments)), key=lambda t: t.on_date, reverse=True)
 
                 history_treatment = history_treatments[-1] if len(history_treatments) > 0 else None

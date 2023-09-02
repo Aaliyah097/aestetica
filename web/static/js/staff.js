@@ -238,8 +238,6 @@ function CreateSalaryCurrentEmployee() {
 
 
 
-
-
 // const tabs = document.querySelectorAll('.tabs_eldenhard.nav-link');
 // const tabContents = document.querySelectorAll('.tab-pane');
 // console.log(tabs)

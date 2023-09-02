@@ -122,6 +122,10 @@ class TreatmentRepository:
             new_treatment = self.convert_treatment(
                 row=row
             )
-            data.append(new_treatment)
+            if settings.Config.DEBUG:
+                if date_begin <= new_treatment.on_date.date() <= date_end:
+                    data.append(new_treatment)
+            else:
+                data.append(new_treatment)
 
         return data

@@ -15,11 +15,11 @@ from src.treatments.repositories.services_repository import ServicesRepository
 from src.staff.entities.users.technician import Technician
 
 
-@app.route('/consumables/create')
+@app.route('/consumables/create', methods=['POST', ])
 def create_consumables():
-    staff = request.args.get('staff', None)
-    service = request.args.get('service', None)
-    cost = request.args.get('cost', 0)
+    staff = request.form.get('staff', None)
+    service = request.form.get('service', None)
+    cost = request.form.get('cost', 0)
 
     if not all([staff, service]):
         return 'expected data {staff: str, service: str, cost: float}', 500

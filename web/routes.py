@@ -15,7 +15,7 @@ from src.treatments.repositories.services_repository import ServicesRepository
 from src.staff.entities.users.technician import Technician
 
 
-@app.route('/consumables/create')
+@app.route('/consumables/create', methods=['POST', ])
 def create_consumables():
     staff = request.args.get('staff', None)
     service = request.args.get('service', None)

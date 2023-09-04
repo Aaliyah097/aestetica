@@ -100,7 +100,7 @@
                     <label class="label_date" style="width: 100%">Услуги <br>
                         <select class="js-select2" name="service" required>
                             {% for s in services | sort(attribute='code') %}
-                            <option value="" selected>выберите услугу</option>
+                            <!-- <option value="" selected disabled>выберите услугу</option> -->
                             <option value="{{ s.code }}">{{ s.code }} {{ s.name }}</option>
                             {% endfor %}
 
@@ -114,8 +114,8 @@
                             {% endfor %}
                         </select>
                     </label>
-                    <label class="label_date" style="width: 100%" required>Сумма <br>
-                        <input type="number" placeholder="введите сумму" class="selectPriceCost" name="cost">
+                    <label class="label_date" style="width: 100%">Сумма <br>
+                        <input type="number" placeholder="введите сумму" class="selectPriceCost" name="cost" required>
                     </label>
 
                 </div>

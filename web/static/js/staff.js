@@ -242,9 +242,9 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
     })
     .then(response => {
         if (response.ok) {
-            console.log('Данные успешно отправлены');
+            getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
         } else {
-            console.error('Ошибка при отправке данных');
+            getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
         }
     })
     .catch(error => {

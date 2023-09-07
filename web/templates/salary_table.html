@@ -1,8 +1,9 @@
-<p class="description">Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }}
-    - {{date_end.strftime('%d.%m.%Y') }}</p>
+<p class="description">Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }} - {{date_end.strftime('%d.%m.%Y') }}</p>
 <hr>
+
+
 <div style="overflow: auto; max-height: 70vh">
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover" id="DownloadMainTable">
         <thead>
         <tr class="table-secondary" style="position: sticky; top:-1px; z-index:3">
             <th>Сотрудник</th>

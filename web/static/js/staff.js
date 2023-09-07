@@ -142,7 +142,8 @@ function createBonus(value) {
     // console.log(bonuses)
     // getNotifications('Успешно');
     event.preventDefault()
-    let data_bonus = document.getElementById('on_date').value
+    let data_bonus = document.getElementById('date_begin').value
+    let data_bonus_end = document.getElementById('date_end').value
     let value_bonus = document.getElementById('amount').value
     let name = localStorage.getItem('name')
 
@@ -153,7 +154,8 @@ function createBonus(value) {
     let form = new FormData()
     form.append('staff', name)
     form.append('amount', value_bonus)
-    form.append('on_date', data_bonus)
+    form.append('date_begin', data_bonus)
+    form.append('date_end', data_bonus_end)
     fetch(`/bonus`, {
         method: 'POST',
         body: form
@@ -164,6 +166,7 @@ function createBonus(value) {
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')
+        setTimeout(() => {location.reload()},1500)
     }).catch(error => {
 
     })
@@ -243,6 +246,7 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
     .then(response => {
         if (response.ok) {
             getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
+            document.getElementById('costPriceAddSebe').value = ""
         } else {
             getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
         }

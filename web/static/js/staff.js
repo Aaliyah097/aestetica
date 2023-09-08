@@ -80,8 +80,8 @@ function getSalaryCurrentEmloyee(value) {
             async: true,
             success: function (data) {
                 // document.getElementById(`open_modal${name}`).click()
-                console.log(name)
                 document.getElementById('test').innerHTML = data
+                document.querySelector('.save-button').style = 'display: block'
                 // console.log(name)
                 document.getElementById('exampleModalLabel').innerHTML = name_modal
                 document.querySelector('.name_staff').innerText = ""

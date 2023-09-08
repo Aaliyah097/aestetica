@@ -62,9 +62,9 @@ showChange.addEventListener('click', () => {
     if (element.style.display == "none") {
         element.style.display = "block"; //Показываем элемент
     }
-    else { 
+    else {
         element.style = "display : none;"
-     };
+    };
 })
 
 // showChange.addEventListener('click', ())
@@ -79,10 +79,8 @@ function getSalaryCurrentEmloyee(value) {
             url: `/staff/salary?staff=${name}`,
             async: true,
             success: function (data) {
-                // document.getElementById(`open_modal${name}`).click()
                 document.getElementById('test').innerHTML = data
                 document.querySelector('.save-button').style = 'display: block'
-                // console.log(name)
                 document.getElementById('exampleModalLabel').innerHTML = name_modal
                 document.querySelector('.name_staff').innerText = ""
             },
@@ -166,7 +164,7 @@ function createBonus(value) {
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')
-        setTimeout(() => {location.reload()},1500)
+        setTimeout(() => { location.reload() }, 1500)
     }).catch(error => {
 
     })
@@ -229,33 +227,49 @@ function CreateSalaryCurrentEmployee() {
 }
 
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
-    console.log(formData)
-    let arr = ({
-        staff:'',
-        service:'',
-        cost: ''
-    })
-    
+
     fetch('/consumables/create', {
-        method: 'POST', 
-        body: formData, 
+        method: 'POST',
+        body: formData,
     })
-    .then(response => {
-        if (response.ok) {
-            getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
-            document.getElementById('costPriceAddSebe').value = ""
-        } else {
-            getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
-        }
-    })
-    .catch(error => {
-        console.error('Произошла ошибка:', error);
-    });
+        .then(response => {
+            if (response.ok) {
+                getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
+                document.getElementById('costPriceAddSebe').value = ""
+            } else {
+                getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
+            }
+        })
+        .catch(error => {
+            console.error('Произошла ошибка:', error);
+        });
 });
 
+function handleEditClick(serviceCode, technicianName, pk) {
+    const newValue = document.getElementById(`costInput_${pk}`).value;
+    ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
+}
+
+function ChangeCostMaterials(serviceCode, technicianName, newValue, id_row) {
+    let formData = new FormData()
+    formData.append('service', serviceCode)
+    formData.append('staff', technicianName)
+    formData.append('cost', newValue)
+
+    fetch(`/consumables/${id_row}/delete`, {
+        method: 'GET'
+    }).then(response => {
+        fetch('/consumables/create', {
+            method: 'POST',
+            body: formData,
+        }).then(response => {
+            getNotifications('Успешно! Данные изменены', 'alert-success')
+        })
+    })
+}
 
 
 
@@ -267,32 +281,4 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const tabs = document.querySelectorAll('.tabs_eldenhard.nav-link');
-// const tabContents = document.querySelectorAll('.tab-pane');
-// console.log(tabs)
-// tabs.forEach(tab => {
-//     tab.addEventListener('click', () => {
-//         tabs.forEach(t => t.classList.remove('active'));
-//         tab.classList.add('active');
-
-//         tabContents.forEach(content => content.classList.remove('active'));
-//         const targetId = tab.getAttribute('data-bs-target').substr(1);
-//         const targetContent = document.getElementById(targetId);
-//         targetContent.classList.add('active');
-//     });
-// });
 

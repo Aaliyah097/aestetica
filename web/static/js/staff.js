@@ -79,10 +79,8 @@ function getSalaryCurrentEmloyee(value) {
             url: `/staff/salary?staff=${name}`,
             async: true,
             success: function (data) {
-                // document.getElementById(`open_modal${name}`).click()
-                console.log(name)
                 document.getElementById('test').innerHTML = data
-                // console.log(name)
+                document.querySelector('.save-button').style = 'display: block'
                 document.getElementById('exampleModalLabel').innerHTML = name_modal
                 document.querySelector('.name_staff').innerText = ""
             },

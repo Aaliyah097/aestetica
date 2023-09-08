@@ -1,15 +1,18 @@
 {% block page_content %}
     
     <div>
-        <label class="label_date" style="width: 100%">Дата<br>
-            <input type="date" class="input_and_select" style="width: 100%" id="on_date" >
+        <label class="label_date" style="width: 100%">Дата начала<br>
+            <input type="date" class="input_and_select" style="width: 100%" id="date_begin" >
+        </label>
+        <label class="label_date" style="width: 100%">Дата конца<br>
+            <input type="date" class="input_and_select" style="width: 100%" id="date_end" >
         </label>
         <label class="label_date" style="width: 100%">Сумма премии<br>
             <input type="number" class="input_and_select" style="width: 100%" id="amount" >
         </label>
     </div>
     <br>
-    <button class="Action" style="width: auto; float: right; white-space: nowrap; padding: 1% 2%"
+    <button class="btn btn-success" style="width: auto; float: right; white-space: nowrap; padding: 1% 2%"
         onclick="createBonus(this)">Премировать
         сотрудника</button>
 
@@ -22,7 +25,8 @@
             <tr class="table-secondary">
                 <th>ФИО</th>
                 <th>Роль</th>
-                <th>Дата</th>
+                <th>Дата начала</th>
+                <th>Дата конца</th>
                 <th>Сумма</th>
                 <th>Действие</th>
             </tr>
@@ -32,7 +36,8 @@
             <tr id="{{ bonus.id }}">
                 <td>{{ bonus.staff.name }}</td>
                 <td>{{ bonus.staff.role.name }}</td>
-                <td>{{ bonus.on_date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ bonus.date_begin.strftime('%d.%m.%Y') }}</td>
+                <td>{{ bonus.date_end.strftime('%d.%m.%Y') }}</td>
                 <td>{{ bonus.amount}}</td>
                 <td>
                     <button class="btn btn-danger" style="width: 100%" data-delete-bonus="{{ bonus.id }}"

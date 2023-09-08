@@ -17,63 +17,69 @@
         <div class="block_data__change__content">
             <div class="block_data__change__content_header">
                 <p>Редактирование сотрудников</p>
-                <button class="btn_none" id="refreshData">
+                <button class="btn_none" id="refreshData" onclick="transfromThisElement('refreshData')">
                     <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
+                </button>
+                <button class="btn_none" id="showChange">
+                    <img src="{{url_for('static', filename='img/arrowdown.png')}}" alt="">
                 </button>
             </div>
             <hr>
             <p class="total">Всего записей: {{ staff|length }}</p>
             <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
+                <div class="block_watched">
+                    <table class="table table-bordered table-hover table-staff">
+                        <thead>
+                            <tr class="sticks   ">
+                                <th style="background: #E2E3E5;" onclick="makeInput(this)">ФИО</th>
+                                <th style="background: #E2E3E5;">Роль</th>
+                                <th style="background: #E2E3E5;">Новый врач</th>
+                                <th style="background: #E2E3E5;">Действие</th>
 
-                <table class="table table-bordered table-hover table-staff">
-                    <thead>
-                        <tr class="sticks   ">
-                            <th style="background: #E2E3E5;" onclick="makeInput(this)">ФИО</th>
-                            <th style="background: #E2E3E5;">Роль</th>
-                            <th style="background: #E2E3E5;">Новый врач</th>
-                            <th style="background: #E2E3E5;">Действие</th>
 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in staff |sort(attribute="role.name")%}
+                            <tr>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in staff |sort(attribute="role.name")%}
-                        <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.role.name }}</td>
+                                <td>{{ "Да" if item.is_new else "Нет" }}</td>
+                                <td>
+                                    <div class="btn-group" style="width: 100%;">
+                                        <button type="button" class="Action" data-bs-toggle="dropdown"
+                                            aria-expanded="false" style="white-space: nowrap;">
+                                            Действия <span>▽</span>
+                                        </button>
+                                        <ul class="dropdown-menu" style="width: 100%">
+                                            <li>
+                                                <a class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
+                                                    id="open_modal{{item.name}}"
+                                                    data-name-modal="Редактирование сотрудника"
+                                                    onclick="getSalaryCurrentEmloyee(this)">Редактирование</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
+                                                    id="open_modal{{item.name}}"
+                                                    data-name-modal="Премирование сотрудника"
+                                                    onclick="getBonusCurrentEmloyee(this)">Премирование</a>
+                                            </li>
+                                        </ul>
+                                    </div>
 
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.role.name }}</td>
-                            <td>{{ "Да" if item.is_new else "Нет" }}</td>
-                            <td>
-                                <div class="btn-group" style="width: 100%;">
-                                    <button type="button" class="Action" data-bs-toggle="dropdown" aria-expanded="false"
-                                        style="white-space: nowrap;">
-                                        Действия <span>▽</span>
-                                    </button>
-                                    <ul class="dropdown-menu" style="width: 100%">
-                                        <li>
-                                            <a class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
-                                                id="open_modal{{item.name}}" data-name-modal="Редактирование сотрудника"
-                                                onclick="getSalaryCurrentEmloyee(this)">Редактирование</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" data-bs-toggle="modal"
-                                                data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
-                                                id="open_modal{{item.name}}" data-name-modal="Премирование сотрудника"
-                                                onclick="getBonusCurrentEmloyee(this)">Премирование</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    <!--  -->
+                                </td>
 
-                                <!--  -->
-                            </td>
+                            </tr>
 
-                        </tr>
-
-                        {% endfor %}
-                        <br>
-                    </tbody>
-                </table>
+                            {% endfor %}
+                            <br>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <br><br>
@@ -81,38 +87,55 @@
     <div class="block_data__add">
         <div class="block_data__change__content">
             <div class="block_data__change__content_header">
-                <p>Редактирование техников</p>
-                <button class="btn_none" id="refreshDataBonus">
+                <p>Редактирование расходников</p>
+                <button class="btn_none" id="refreshDataBonus" onclick="transfromThisElement('refreshDataBonus')">
                     <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
                 </button>
             </div>
             <hr>
-            <p class="total">Всего записей:</p>
-            <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
 
-            </div>
+
+            <form action="" id="saveConsumables">
+                <div class="block_data__add__content">
+                    <label class="label_date" style="width: 100%">Услуги <br>
+                        <select class="js-select2" name="service" required>
+                            {% for s in services | sort(attribute='code') %}
+                            <!-- <option value="" selected disabled>выберите услугу</option> -->
+                            <option value="{{ s.code }}">{{ s.code }} {{ s.name }}</option>
+                            {% endfor %}
+
+                        </select>
+                    </label>
+
+                    <label class="label_date" style="width: 100%">Техники <br>
+                        <select class="selectPriceCost" name="staff" required>
+                            {% for t in technicians %}
+                            <option value="{{ t.name }}">{{ t.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="label_date" style="width: 100%">Сумма <br>
+                        <input type="number" placeholder="введите сумму" class="selectPriceCost" name="cost" id="costPriceAddSebe" required>
+                    </label>
+
+                </div>
+
+                <div style="display: flex; justify-content: end; margin: 3%">
+                    <button class="btn btn-dark" type="submit">Сохранить данные</button>
+
+                </div>
         </div>
+        </form>
+        <!-- <button class="btn btn-success" style="display: flex; justify-content: end">Сохранить данные</button> -->
+
         <br><br>
     </div>
 
-{# TODO #}
-Услуги
-    {% for s in services %}
-        {{ s.code }}
-    {% endfor %}
-    <br>
-    Расходниеи
-    {% for c in consumables %}
-        {{ c.id }}
-    {% endfor %}
-    <br>
-Техники
-    {% for t in technicians %}
-        {{ t.name }}
-    {% endfor %}
+
+
 
 </div>
 
-    <script src="{{ url_for('static', filename='js/staff.js') }}"></script>
+<script src="{{ url_for('static', filename='js/staff.js') }}"></script>
 
 {% endblock %}

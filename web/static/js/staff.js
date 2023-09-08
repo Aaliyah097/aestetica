@@ -1,7 +1,14 @@
 const loader = document.querySelector('.bgDark')
 let originalHeaderText = '';
 
+$(document).ready(function () {
+    $('.js-select2').select2({
+        placeholder: "Выберите услугу",
+        maximumSelectionLength: 2,
+        language: "ru"
+    });
 
+});
 
 function makeInput(th) {
     originalHeaderText = th.textContent.trim();
@@ -40,21 +47,27 @@ function filterTable() {
 }
 
 
-
-refreshData.addEventListener('click', () => {
-    refreshData.classList.toggle('transform');
+function transfromThisElement(id) {
+    console.log(id)
+    let element = document.getElementById(id)
+    element.classList.toggle('transform');
     setTimeout(() => {
         location.reload()
     }, 500)
+}
 
+showChange.addEventListener('click', () => {
+    showChange.classList.toggle('transform')
+    let element = document.querySelector('.block_watched')
+    if (element.style.display == "none") {
+        element.style.display = "block"; //Показываем элемент
+    }
+    else { 
+        element.style = "display : none;"
+     };
 })
-refreshDataBonus.addEventListener('click', () => {
-    refreshDataBonus.classList.toggle('transform');
-    setTimeout(() => {
-        location.reload()
-    }, 500)
 
-})
+// showChange.addEventListener('click', ())
 
 function getSalaryCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
@@ -129,7 +142,8 @@ function createBonus(value) {
     // console.log(bonuses)
     // getNotifications('Успешно');
     event.preventDefault()
-    let data_bonus = document.getElementById('on_date').value
+    let data_bonus = document.getElementById('date_begin').value
+    let data_bonus_end = document.getElementById('date_end').value
     let value_bonus = document.getElementById('amount').value
     let name = localStorage.getItem('name')
 
@@ -140,7 +154,8 @@ function createBonus(value) {
     let form = new FormData()
     form.append('staff', name)
     form.append('amount', value_bonus)
-    form.append('on_date', data_bonus)
+    form.append('date_begin', data_bonus)
+    form.append('date_end', data_bonus_end)
     fetch(`/bonus`, {
         method: 'POST',
         body: form
@@ -151,6 +166,7 @@ function createBonus(value) {
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')
+        setTimeout(() => {location.reload()},1500)
     }).catch(error => {
 
     })
@@ -194,9 +210,9 @@ function CreateSalaryCurrentEmployee() {
         fetch(`/salary/update/${tabCurrentId}`, {
             method: 'POST',
             headers: {
-              
+
                 "Content-Type": 'application/json'
-              },
+            },
             body: JSON.stringify(data),
         }).then(response => {
             loader.style = 'display: none'
@@ -212,8 +228,33 @@ function CreateSalaryCurrentEmployee() {
 
 }
 
-
-
+document.getElementById('saveConsumables').addEventListener('submit', function (e) {
+    e.preventDefault(); 
+    const form = e.target;
+    const formData = new FormData(form);
+    console.log(formData)
+    let arr = ({
+        staff:'',
+        service:'',
+        cost: ''
+    })
+    
+    fetch('/consumables/create', {
+        method: 'POST', 
+        body: formData, 
+    })
+    .then(response => {
+        if (response.ok) {
+            getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
+            document.getElementById('costPriceAddSebe').value = ""
+        } else {
+            getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
+        }
+    })
+    .catch(error => {
+        console.error('Произошла ошибка:', error);
+    });
+});
 
 
 

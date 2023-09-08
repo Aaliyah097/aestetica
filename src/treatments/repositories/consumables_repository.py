@@ -72,4 +72,4 @@ class ConsumablesRepository:
             if not consumables:
                 return
             session.delete(consumables)
-        session.commit()
+            session.commit()

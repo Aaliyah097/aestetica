@@ -2,7 +2,7 @@ import datetime
 import time 
 
 from app import app
-from flask import render_template
+from flask import render_template, redirect
 from flask import request
 
 from src.salary.service.salary_calculation_service import SalaryCalculationService
@@ -35,7 +35,7 @@ def create_consumables():
 @app.route('/consumables/<int:pk>/delete')
 def delete_consumables(pk):
     ConsumablesRepository().delete(pk)
-    return 'ok', 200
+    return redirect('/staff')
 
 
 @app.route('/bonus-by-staff')

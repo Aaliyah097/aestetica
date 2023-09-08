@@ -10,7 +10,11 @@
     --DescriptionColor: #8E8E8E;
     --black: #212529;
 }
-
+.prompt{
+    color: var(--DescriptionColor);
+    padding: 3% 2%;
+    font-size: 13px;
+}
 button,
 button:active,
 button:focus  {
@@ -194,7 +198,7 @@ td {
     max-height: 90vh;
 }
 .block_data__add {
-    max-height: 35vh;
+    max-height: 90vh;
 }
 .block_data__add__content {
     position: relative;
@@ -292,18 +296,12 @@ td {
     border: 1px solid #969696;
     border-radius: 3px;
     padding: 2px 20px 2px 8px;
-   
-    
-    /* color: #444;
-    line-height: 28px;
-    display: block;
-    padding-left: 8px;
-    padding-right: 20px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap; */
-}
 
+}
+.selectPriceCost:focus{
+    outline: none;
+    border: 2px solid #969696;
+}
 /* Конец сотрудники */
 
 
@@ -311,7 +309,8 @@ td {
 .sticks {
     position: sticky;
     top: -1px;
-    z-index: 1
+    z-index: 1;
+    background: #E2E3E5;
 }
 
 .current_doc {

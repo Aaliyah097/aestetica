@@ -129,3 +129,9 @@ class TreatmentRepository:
                 data.append(new_treatment)
 
         return data
+
+    def get_month_volume(self, month: int, year: int) -> float:
+        if settings.Config.DEBUG:
+            return 15_000_000
+        else:
+            return Repository(self.connector).get_month_volume(month, year)

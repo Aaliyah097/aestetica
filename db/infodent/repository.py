@@ -167,3 +167,23 @@ class Repository:
                 data=cursor.fetchall()
             )
 
+    def get_month_volume(self, month: int, year: int) -> float:
+        query = """
+        SELECT 
+        
+        SUM(od.schamount_a) cost_wo_discount
+        
+        FROM treat t
+        
+        left join treatsch ts on ts.treatcode = t.treatcode
+        left join orderdet od on od.orderno = t.orderno and ts.schnum = od.schnum
+
+        WHERE extract(month from t.treatdate) = %s AND extract(year from t.treatdate) = %s
+        """ % (month, year)
+
+        with self.connector as cursor:
+            cursor.execute(query)
+            return self.map_headings(
+                columns=[column[0] for column in cursor.description],
+                data=cursor.fetchall()
+            )[0]['COST_WO_DISCOUNT']

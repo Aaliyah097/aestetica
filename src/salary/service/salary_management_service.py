@@ -42,8 +42,9 @@ class SalaryManagementService:
                     continue
 
                 default_grids = {
-                    1500000: 25,
-                    2500000: 30
+                    1500000: 20,
+                    2500000: 25,
+                    3000000: 30
                 }
 
                 self.salary_repo.create_grid(

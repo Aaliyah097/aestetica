@@ -1,4 +1,8 @@
-<p class="description">Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }} - {{date_end.strftime('%d.%m.%Y') }}</p>
+<p class="description">
+    Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }} - {{date_end.strftime('%d.%m.%Y') }}
+    <br>
+    Оборот за месяц: {{ '{0:,} ₽'.format(month_volume|round(2, 'ceil')).replace(',', ' ')}}
+</p>
 <hr>
 
 
@@ -7,10 +11,11 @@
         <thead>
         <tr class="table-secondary" style="position: sticky; top:-1px; z-index:3">
             <th>Сотрудник</th>
-            <th>Оборот</th>
+            <th>Оборот/Оклад</th>
             <th>ЗП</th>
             <th>Кол-во </th>
-            <th class="add" colspan="9"></th>
+            <th>Премия</th>
+            <th class="add" colspan="8"></th>
         </tr>
         </thead>
         <tbody>
@@ -19,7 +24,8 @@
             <td >Руб.</td>
             <td >Руб.</td>
             <td >Приемы</td>
-            <td colspan="9"></td>
+            <th>Руб.</th>
+            <td colspan="8"></td>
         </tr>
         {% for salary in doctors_report |sort(attribute="staff.name")%}
             <tr>
@@ -34,7 +40,8 @@
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}</td>
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
-                <td class="add" colspan="9"></td>
+                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
                 style="position: sticky; top:9vh; z-index:1">
@@ -87,8 +94,8 @@
         {#margins by all doctors#}
         <tr style="background: #a7c9a7; color: white; text-align: left">
             <td style="text-align: left;">Итого</td>
-            <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='volume')).replace(',', ' ') }}</td>
-            <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='income')).replace(',', ' ') }}</td>
+            <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ') }}</td>
+            <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
             <td></td>
             <td colspan="9"></td>
         </tr>
@@ -99,7 +106,8 @@
             <td>Дни</td>
             <td>Руб.</td>
             <td>Выходы</td>
-            <td colspan="9"></td>
+            <th>Руб.</th>
+            <td colspan="8"></td>
         </tr>
 
         {% for salary in assistants_report |sort(attribute="staff.name") %}
@@ -116,6 +124,7 @@
                 <td>{{ salary.volume }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
+                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
                 <td class="add" colspan="8"></td>
 
             </tr>
@@ -138,7 +147,7 @@
             <tr class="no_show attachment" style="background: #699b69; color: white" data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
                 <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')).replace(',', ' ') }}</td>
+                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2, 'floor')).replace(',', ' ') }}</td>
             </tr>
         {% endfor %}
 
@@ -146,16 +155,60 @@
         <tr style="background: #a7c9a7; color: white; text-align: left">
             <td style="text-align: left;">Итого</td>
             <td></td>
-            <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')).replace(',', ' ') }}</td>
+            <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
             <td></td>
             <td colspan="9"></td>
         </tr>
+
+        {#Прочие персонал#}
+        {% for group, salary_reports in other_reports.items() %}
+        <tr style="background: #fae08b; color: #215968; text-align: left">
+            <td data-name-employee="{{ group }}" style="position: relative; white-space: nowrap">
+                    <span data-name-employee="{{ group }}" class="toggle-span">
+                        <div style="display: flex; justify-content: space-between">
+                            {{ group }}
+                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+                        </div>
+                    </span>
+                </td>
+            <td>Руб.</td>
+            <td>Руб.</td>
+            <td></td>
+            <th>Руб.</th>
+            <td colspan="8"></td>
+        </tr>
+        {% for salary in salary_reports %}
+            <tr class="no_show attachment" data-name-employee-no-show="{{ group }}">
+                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
+                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
+                        <div style="display: flex; justify-content: space-between">
+                            {{ salary.staff.name }}
+                        </div>
+                    </span>
+                </td>
+
+                <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
+                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>-</td>
+                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td class="add" colspan="8"></td>
+            </tr>
+        {% endfor %}
+            {#margins by group#}
+            <tr style="background: #a7c9a7; color: white; text-align: left">
+                <td style="text-align: left;">Итого</td>
+                <td></td>
+                <td>{{ '{0:,} ₽'.format(salary_reports|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
+                <td></td>
+                <td colspan="9"></td>
+            </tr>
+        {% endfor %}
 
         {#margins by all staff#}
         <tr style="background: #99c099; color: white; text-align: left; font-weight: bold; font-size: 22px">
             <td style="text-align: left;">Всего</td>
             <td></td>
-            <td>{{ '{0:,} ₽'.format(total_income).replace(',', ' ') }}</td>
+            <td>{{ '{0:,} ₽'.format(total_income|round(2, 'floor')).replace(',', ' ') }}</td>
             <td></td>
             <td colspan="9"></td>
         </tr>

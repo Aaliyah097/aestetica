@@ -2,20 +2,30 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 
-from src.salary.entities.salary import Salary
 from src.schedule.entities.schedule import Schedule
+
 from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
+from src.staff.entities.users.technician import Technician
+from src.staff.entities.users.senior_assistant import SeniorAssistant
+from src.staff.entities.users.manager import Manager
+from src.staff.entities.users.administrator import Administrator
+
 from src.staff.entities.department import Department
 from src.staff.entities.filial import Filial
+
 from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment, MarkDown
+
 from src.treatments.repositories.services_repository import ServicesRepository
 from src.treatments.repositories.treatments_repository import TreatmentRepository
 from src.schedule.repositories.schedule_repository import ScheduleRepository
+
 from src.salary.repositories.bonus_repository import BonusRepository
+from src.staff.repositories.staff_repository import StaffRepository
+from src.salary.entities.salary import Salary
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
 from src.salary.service.calculators.assistants_calculator import AssistantsSalaryCalculator
@@ -23,21 +33,28 @@ from src.treatments.repositories.consumables_repository import ConsumablesReposi
 
 
 @dataclass
-class DoctorsSalaryReport:
+class SalaryReport:
     staff: Staff
     income: float
     volume: float
     fix: float
-    treatments: list[Treatment]
 
 
 @dataclass
-class AssistantSalaryReport:
-    staff: Staff
-    income: float
-    volume: float
-    fix: float
+class DoctorsSalaryReport(SalaryReport):
+    treatments: list[Treatment]
+    award: float = 0
+
+
+@dataclass
+class AssistantSalaryReport(SalaryReport):
     schedule: list[Schedule]
+    award: float = 0
+
+
+@dataclass
+class OtherSalaryReport(SalaryReport):
+    award: float = 0
 
 
 class SalaryCalculationService:
@@ -53,9 +70,43 @@ class SalaryCalculationService:
         self.schedule_repo: ScheduleRepository = ScheduleRepository(filial)
         self.bonus_repository: BonusRepository = BonusRepository()
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
+        self.staff_repo: StaffRepository = StaffRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
+
+        self.month_volume: float = self.treatment_repo.get_month_volume(
+            date_begin.month, date_begin.year
+        )
+
+        roles = set([st.__class__ for st in self.staff_repo.get_staff()])
+        self.team_members = defaultdict(int)
+        for role in roles:
+            self.team_members[role] += self.staff_repo.get_amount_by_role(role)
+
+    def calc_award(self, staff: Staff) -> float:
+        award = 0
+        if self.month_volume < 14_000_000:
+            return award
+
+        if isinstance(staff, Administrator) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant):
+            members_count = self.team_members[Administrator] + \
+                            self.team_members[Assistant] + \
+                            self.team_members[SeniorAssistant]
+            award += round((self.month_volume * 0.01) / members_count, 2)
+        elif isinstance(staff, Manager):
+            members_count = self.team_members[Manager]
+            award += round((self.month_volume * 0.015) / members_count, 2)
+
+        if staff.name == 'Сиразова Руфия Талгатовна':
+            award += 10000
+
+        return award
+
+    # TODO применить премии ко всем ЗП
+    # TODO Расчитать ЗП для всего прочего персонала
+    # TODO Вывести ЗП для всего прочего персонала в таблицу
+    # TODO Добавить поле Премия в таблицу
 
     # Считаться должно так:
     """
@@ -71,16 +122,40 @@ class SalaryCalculationService:
 
         for staff, schedule in self._split_schedule(schedules).items():
             salary = AssistantsSalaryCalculator().calc(staff, schedule)
+            award = self.calc_award(staff)
+            salary.add_award(award)
+
             salary_reports.append(
                 AssistantSalaryReport(
                     staff=staff,
                     income=salary.income,
                     volume=salary.volume,
                     fix=salary.fix,
-                    schedule=schedule
+                    schedule=schedule,
+                    award=award
                 )
             )
+        return salary_reports
 
+    def other_staff_calc(self) -> list[OtherSalaryReport]:
+        salary_reports = []
+
+        for staff in self.staff_repo.get_staff():
+            if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) or isinstance(staff, Technician):
+                continue
+            salary = Salary(staff, Department("Прочее"))
+            award = self.calc_award(staff)
+            salary.add_award(award)
+
+            salary_reports.append(
+                OtherSalaryReport(
+                    staff=staff,
+                    income=salary.income,
+                    award=award,
+                    volume=0,
+                    fix=salary.fix
+                )
+            )
         return salary_reports
 
     def doctors_cals(self) -> list[DoctorsSalaryReport]:
@@ -110,7 +185,7 @@ class SalaryCalculationService:
         data = defaultdict(list)
 
         for sch in schedule:
-            if not isinstance(sch.staff, Assistant):
+            if not isinstance(sch.staff, Assistant) and not isinstance(sch.staff, SeniorAssistant):
                 continue
 
             bonus = self.bonus_repository.get_bonus(sch.staff, on_date=sch.on_date)

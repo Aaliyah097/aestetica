@@ -1,5 +1,6 @@
 import datetime
-import time 
+import time
+from collections import defaultdict
 
 from app import app
 from flask import render_template, redirect
@@ -35,7 +36,15 @@ def create_consumables():
 @app.route('/consumables/<int:pk>/delete')
 def delete_consumables(pk):
     ConsumablesRepository().delete(pk)
-    return redirect('/staff')
+    return 200, 'ok'
+
+
+@app.route('/consumables/<int:pk>/update')
+def update_consumables(pk):
+    cost = request.form.get('cost', 0)
+
+    ConsumablesRepository().update(pk, cost)
+    return 200, 'ok'
 
 
 @app.route('/bonus-by-staff')
@@ -150,12 +159,22 @@ def list_salary():
     doctors_salary_reports = service.doctors_cals()
     assistants_salary_report = service.assistants_calc()
 
+    other_salary_reports = service.other_staff_calc()
+
+    groups = defaultdict(list)
+
+    for salary in other_salary_reports:
+        groups[salary.staff.role.name].append(salary)
+
     return render_template(
         'salary_table.html',
         doctors_report=doctors_salary_reports,
         assistants_report=assistants_salary_report,
+        other_reports=groups,
         total_income=sum([salary.income for salary in doctors_salary_reports]) +
-                     sum([salary.income for salary in assistants_salary_report]),
+                     sum([salary.income for salary in assistants_salary_report]) +
+                     sum([salary.income for salary in other_salary_reports]),
+        month_volume=service.month_volume,
         date_begin=date_begin,
         date_end=date_end
     )

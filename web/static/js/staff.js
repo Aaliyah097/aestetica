@@ -239,6 +239,7 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
         body: formData,
     })
         .then(response => {
+            console.log(response)
             if (response.ok) {
                 getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
                 document.getElementById('costPriceAddSebe').value = ""
@@ -252,27 +253,21 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
         });
 });
 
-function handleEditClick(serviceCode, technicianName, pk) {
+function handleEditClick(pk) {
+   
     const newValue = document.getElementById(`costInput_${pk}`).value;
-    ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
-}
-
-function ChangeCostMaterials(serviceCode, technicianName, newValue, id_row) {
     let formData = new FormData()
-    formData.append('service', serviceCode)
-    formData.append('staff', technicianName)
     formData.append('cost', newValue)
 
-    fetch(`/consumables/${id_row}/delete`, {
-        method: 'GET'
+    fetch(`/consumables/${pk}/update/`, {
+        method: 'POST',
+        body: formData
     }).then(response => {
-        fetch('/consumables/create', {
-            method: 'POST',
-            body: formData,
-        }).then(response => {
-            getNotifications('Успешно! Данные изменены', 'alert-success')
-        })
+        console.log(response.data)
+    }).catch(error => {
+        console.log(error)
     })
+    // ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
 }
 
 

@@ -31,7 +31,7 @@
                     <table class="table table-bordered table-hover table-staff">
                         <thead>
                             <tr class="sticks   ">
-                                <th  onclick="makeInput(this)">ФИО</th>
+                                <th onclick="makeInput(this)">ФИО</th>
                                 <th>Роль</th>
                                 <th>Новый врач</th>
                                 <th>Действие</th>
@@ -79,7 +79,7 @@
                     </table>
                 </div>
             </div>
-           <p class="prompt">* Для поиска врача в таблице, нажмите в шапке таблицы на поле ФИО</p> 
+            <p class="prompt">* Для поиска врача в таблице, нажмите в шапке таблицы на поле ФИО</p>
 
         </div>
         <br><br>
@@ -126,6 +126,10 @@
                 </div>
             </form>
             <p style="margin-top: 2%;" class="total">Всего записей: {{ consumables|length }}</p>
+
+
+
+
             <div style="max-height: 45vh; max-width: 96vw; overflow: auto;">
                 <div class="block_watched">
                     <table class="table table-bordered table-hover table-staff">
@@ -144,7 +148,8 @@
                                 <td>{{ cons.service.code }} {{ cons.service.name }}</td>
                                 <td>{{ cons.technician.name }}</td>
                                 <td style="position: relative;">
-                                    <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}" class="selectPriceCost" style="max-width: 100%;">
+                                    <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}"
+                                        class="selectPriceCost" style="max-width: 100%;">
                                 </td>
                                 <td>
                                     <div class="btn-group" style="width: 100%;">
@@ -156,14 +161,10 @@
                                             <li>
 
                                                 <a class="dropdown-item" style="width: 100%"
-                                                onclick="handleEditClick('{{ cons.service.code }}', '{{ cons.technician.name }}', '{{ cons.pk }}')">Редактировать</a>
-
+                                                    onclick="handleEditClick('{{ cons.pk }}')">Редактировать</a>
                                             </li>
                                             <li>
-                                                <form method="get" action="/consumables/{{ cons.pk }}/delete">
-                                                    <button class="dropdown-item" style="width: 100%"
-                                                        type="submit">Удалить</button>
-                                                </form>
+                                                <button class="dropdown-item" style="width: 100%">Удалить</button>
                                             </li>
                                         </ul>
                                     </div>
@@ -177,6 +178,10 @@
                     <br><br>
                 </div>
             </div>
+
+
+
+
         </div>
     </div>
 </div>

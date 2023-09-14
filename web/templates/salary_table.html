@@ -162,7 +162,7 @@
 
         {#Прочие персонал#}
         {% for group, salary_reports in other_reports.items() %}
-        <tr style="background: #fae08b; color: #215968; text-align: left">
+        <tr style="background: rgb(255, 246, 217); color: #215968; text-align: left">
             <td data-name-employee="{{ group }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ group }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
@@ -195,7 +195,7 @@
             </tr>
         {% endfor %}
             {#margins by group#}
-            <tr style="background: #a7c9a7; color: white; text-align: left">
+            <tr style="background: rgb(147, 177, 147); color: white; text-align: left">
                 <td style="text-align: left;">Итого</td>
                 <td></td>
                 <td>{{ '{0:,} ₽'.format(salary_reports|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
@@ -205,7 +205,7 @@
         {% endfor %}
 
         {#margins by all staff#}
-        <tr style="background: #99c099; color: white; text-align: left; font-weight: bold; font-size: 22px">
+        <tr style="background: rgb(93, 121, 93); color: white; text-align: left; font-weight: bold; font-size: 22px">
             <td style="text-align: left;">Всего</td>
             <td></td>
             <td>{{ '{0:,} ₽'.format(total_income|round(2, 'floor')).replace(',', ' ') }}</td>

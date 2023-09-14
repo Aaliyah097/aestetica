@@ -229,16 +229,25 @@ function CreateSalaryCurrentEmployee() {
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
 
+    const formData = new FormData(form);
+    // if(formData.get('staff') == 'null'){
+    //     formData.set('staff', null)
+    // }
     fetch('/consumables/create', {
         method: 'POST',
         body: formData,
     })
         .then(response => {
-            if (response.ok) {
+            console.log(response)
+            if (response.status == 200) {
                 getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
                 document.getElementById('costPriceAddSebe').value = ""
+                setTimeout(() => {
+                    location.reload()
+                }, 1000)
+
+
             } else {
                 getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
             }
@@ -248,30 +257,33 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
         });
 });
 
-function handleEditClick(serviceCode, technicianName, pk) {
-    const newValue = document.getElementById(`costInput_${pk}`).value;
-    ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
-}
+function handleEditClick(pk) {
 
-function ChangeCostMaterials(serviceCode, technicianName, newValue, id_row) {
+    const newValue = document.getElementById(`costInput_${pk}`).value;
     let formData = new FormData()
-    formData.append('service', serviceCode)
-    formData.append('staff', technicianName)
     formData.append('cost', newValue)
 
-    fetch(`/consumables/${id_row}/delete`, {
-        method: 'GET'
+    fetch(`/consumables/${pk}/update`, {
+        method: 'POST',
+        body: formData
     }).then(response => {
-        fetch('/consumables/create', {
-            method: 'POST',
-            body: formData,
-        }).then(response => {
-            getNotifications('Успешно! Данные изменены', 'alert-success')
-        })
+        getNotifications('Успешно! Данные обновлены.', 'alert-success')
+    }).catch(error => {
+        getNotifications('Ошибка! Данные не обновлены.', 'alert-danger')
     })
+    // ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
 }
 
-
+function deleteThisRow(id) {
+    fetch(`/consumables/${id}/delete`, {
+        method: 'POST',
+    }).then(response => {
+        location.reload()
+        // getNotifications('Успешно! Данные удалены.', 'alert-success')
+    }).catch(error => {
+        // getNotifications('Ошибка! Данные не удалены.', 'alert-danger')
+    })
+}
 
 
 

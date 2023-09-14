@@ -36,18 +36,18 @@ def create_consumables():
     return 'ok', 200
 
 
-@app.route('/consumables/<int:pk>/delete')
+@app.route('/consumables/<int:pk>/delete', methods=['POST', ])
 def delete_consumables(pk):
     ConsumablesRepository().delete(pk)
-    return 200, 'ok'
+    return 'ok', 200
 
 
-@app.route('/consumables/<int:pk>/update')
+@app.route('/consumables/<int:pk>/update', methods=['POST', ])
 def update_consumables(pk):
     cost = request.form.get('cost', 0)
 
     ConsumablesRepository().update(pk, cost)
-    return 200, 'ok'
+    return 'ok', 200
 
 
 @app.route('/bonus-by-staff')

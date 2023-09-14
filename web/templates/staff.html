@@ -109,8 +109,8 @@
 
                     <label class="label_date" style="width: 100%">Техники <br>
                         <select class="selectPriceCost" name="staff">
-                            {% for t in technicians %}
                             <option value="">Отсутствует</option>
+                            {% for t in technicians %}
                             <option value="{{ t.name }}">{{ t.name }}</option>
                             {% endfor %}
                         </select>
@@ -164,7 +164,7 @@
                                                     onclick="handleEditClick('{{ cons.pk }}')">Редактировать</a>
                                             </li>
                                             <li>
-                                                <button class="dropdown-item" style="width: 100%">Удалить</button>
+                                                <button class="dropdown-item" style="width: 100%" onclick="deleteThisRow('{{ cons.pk  }}')">Удалить</button>
                                             </li>
                                         </ul>
                                     </div>

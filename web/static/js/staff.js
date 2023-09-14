@@ -229,7 +229,7 @@ function CreateSalaryCurrentEmployee() {
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
     e.preventDefault();
     const form = e.target;
-    
+
     const formData = new FormData(form);
     // if(formData.get('staff') == 'null'){
     //     formData.set('staff', null)
@@ -240,10 +240,14 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
     })
         .then(response => {
             console.log(response)
-            if (response.ok) {
+            if (response.status == 200) {
                 getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
                 document.getElementById('costPriceAddSebe').value = ""
-                // location.reload()
+                setTimeout(() => {
+                    location.reload()
+                }, 1000)
+
+
             } else {
                 getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
             }
@@ -254,23 +258,32 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
 });
 
 function handleEditClick(pk) {
-   
+
     const newValue = document.getElementById(`costInput_${pk}`).value;
     let formData = new FormData()
     formData.append('cost', newValue)
 
-    fetch(`/consumables/${pk}/update/`, {
+    fetch(`/consumables/${pk}/update`, {
         method: 'POST',
         body: formData
     }).then(response => {
-        console.log(response.data)
+        getNotifications('Успешно! Данные обновлены.', 'alert-success')
     }).catch(error => {
-        console.log(error)
+        getNotifications('Ошибка! Данные не обновлены.', 'alert-danger')
     })
     // ChangeCostMaterials(serviceCode, technicianName, newValue, pk);
 }
 
-
+function deleteThisRow(id) {
+    fetch(`/consumables/${id}/delete`, {
+        method: 'POST',
+    }).then(response => {
+        location.reload()
+        // getNotifications('Успешно! Данные удалены.', 'alert-success')
+    }).catch(error => {
+        // getNotifications('Ошибка! Данные не удалены.', 'alert-danger')
+    })
+}
 
 
 

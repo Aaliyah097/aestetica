@@ -22,7 +22,10 @@ def create_consumables():
     service = request.form.get('service', None)
     cost = request.form.get('cost', 0)
 
-    if not all([staff, service]):
+    if staff == "":
+        staff = None
+
+    if not service:
         return 'expected data {staff: str, service: str, cost: float}', 500
 
     try:

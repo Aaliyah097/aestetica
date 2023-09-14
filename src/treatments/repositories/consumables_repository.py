@@ -50,7 +50,7 @@ class ConsumablesRepository:
                 cost=consumables.cost
             ) if consumables else None
 
-    def create(self, technician_name: str| None, service_code: str, cost: float = 0) -> None:
+    def create(self, technician_name: str, service_code: str, cost: float = 0) -> None:
         if technician_name:
             staff = StaffRepository().get_staff_by_name(technician_name)
             if not staff:
@@ -62,6 +62,7 @@ class ConsumablesRepository:
         if not service:
             raise NameError(f"Услуга с кодом '{service_code}' не существует")
 
+        print(self.get_by_technician_and_service(staff, service), technician_name)
         if self.get_by_technician_and_service(staff, service):
             return None
 

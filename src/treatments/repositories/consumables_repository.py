@@ -26,14 +26,21 @@ class ConsumablesRepository:
             ]
 
     @staticmethod
-    def get_by_technician_and_service(technician: Staff, service: Service) -> Consumables | None:
-        if not service or not technician:
+    def get_by_technician_and_service(technician: Staff | None, service: Service) -> Consumables | None:
+        if not service:
             return None
 
-        query = select(ConsumablesTable).where(
-            ConsumablesTable.staff == technician.name,
-            ConsumablesTable.service == service.code
-        ).limit(1)
+        if technician:
+            query = select(ConsumablesTable).where(
+                ConsumablesTable.staff == technician.name,
+                ConsumablesTable.service == service.code
+            ).limit(1)
+        else:
+            query = select(ConsumablesTable).where(
+                ConsumablesTable.staff.is_(None),
+                ConsumablesTable.service == service.code
+            ).limit(1)
+
         with Base() as session:
             consumables = session.scalars(query).first()
 
@@ -44,14 +51,18 @@ class ConsumablesRepository:
             ) if consumables else None
 
     def create(self, technician_name: str, service_code: str, cost: float = 0) -> None:
-        staff = StaffRepository().get_staff_by_name(technician_name)
-        if not staff:
-            raise NameError(f"Сотрудник с именем '{technician_name}' не существует")
+        if technician_name:
+            staff = StaffRepository().get_staff_by_name(technician_name)
+            if not staff:
+                raise NameError(f"Сотрудник с именем '{technician_name}' не существует")
+        else:
+            staff = None
 
         service = ServicesRepository().get_by_code(service_code)
         if not service:
             raise NameError(f"Услуга с кодом '{service_code}' не существует")
 
+        print(self.get_by_technician_and_service(staff, service), technician_name)
         if self.get_by_technician_and_service(staff, service):
             return None
 
@@ -72,4 +83,13 @@ class ConsumablesRepository:
             if not consumables:
                 return
             session.delete(consumables)
+            session.commit()
+
+    @staticmethod
+    def update(pk: int, cost: float) -> None:
+        with Base() as session:
+            consumables = session.get(ConsumablesTable, pk)
+            if not consumables:
+                return
+            consumables.cost = cost
             session.commit()

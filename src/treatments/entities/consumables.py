@@ -15,8 +15,8 @@ class Consumables:
     def serialize(self) -> dict:
         return {
             'id': self.pk,
-            'service': self.service.serialize(),
-            'technician': self.technician.serialize(),
+            'service': self.service.serialize() if self.service else None,
+            'technician': self.technician.serialize() if self.technician else None,
             'cost': self.cost
         }
 

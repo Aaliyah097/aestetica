@@ -105,14 +105,13 @@ class Service(Base):
 
 class Consumables(Base):
     __tablename__ = 'consumables'
-    __table_args__ = (UniqueConstraint('staff', 'service', name='staff_service_uc'),)
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     service: Mapped[str] = mapped_column(ForeignKey('services.code'))
     service_backref = relationship(
         "Service", backref=backref("service", cascade="all, delete-orphan")
     )
-    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'), nullable=True)
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
 
 

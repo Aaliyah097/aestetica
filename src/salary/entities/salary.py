@@ -26,6 +26,14 @@ class Salary:
 
         self._bonuses.append(value)
 
+    def add_award(self, value: float) -> None:
+        try:
+            float(value)
+        except ValueError:
+            return
+
+        self._income += value
+
     @property
     def income(self) -> float:
         for bonus in self._bonuses:

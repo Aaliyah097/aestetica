@@ -2,6 +2,10 @@ from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.technician import Technician
+from src.staff.entities.users.senior_assistant import SeniorAssistant
+from src.staff.entities.users.administrator import Administrator
+from src.staff.entities.users.manager import Manager
+
 from src.staff.entities.role import Role
 
 from db.aestetica.tables import (
@@ -16,10 +20,16 @@ class StaffFactory:
                      staff_role: Role) -> Staff:
         if staff_role.name == 'Рабочее место доктора':
             new_staff = Doctor(name=name)
-        elif staff_role.name in ['Медсестра', "Ст. медсестра", "Ассистент"]:
+        elif staff_role.name in ['Медсестра', "Ассистент"]:
             new_staff = Assistant(name=name)
         elif staff_role.name == 'Техник':
             new_staff = Technician(name=name)
+        elif staff_role.name == "Ст. медсестра":
+            new_staff = SeniorAssistant(name=name)
+        elif staff_role.name == "Администратор":
+            new_staff = Administrator(name=name)
+        elif staff_role.name == 'ADMIN':
+            new_staff = Manager(name=name)
         else:
             new_staff = Staff(name=name)
 
@@ -29,6 +39,11 @@ class StaffFactory:
 
 
 class StaffRepository:
+    def get_amount_by_role(self, staff_class: type) -> int:
+        return len(list(filter(
+            lambda st: isinstance(st, staff_class),
+            self.get_staff())))
+
     @staticmethod
     def get_staff() -> list[Staff]:
         query = select(StaffTable)

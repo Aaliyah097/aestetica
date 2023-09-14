@@ -6,6 +6,7 @@ document.getElementById('form_data').addEventListener('submit', function (event)
 })
 
 function getSalary(form) {
+    document.getElementById('table_block').innerHTML = ""
     loader.style = 'display: block'
     $.ajax(
         {

@@ -33,13 +33,13 @@
             aria-labelledby="{{ salary.department.name|replace(' ', '_') }}-tab">
         
             <label for="fixValue" class="label_date" style="width: 100%">Фикс. сотрудника <span class="salary_id" style="color: transparent;">{{ salary.id }}</span><br>
-                <input type="text" class="input_and_select fix-value" style="width: 100%" value="{{ salary.fix }}">
+                <input type="text" class="salary_input fix-value" style="width: 100%" value="{{ salary.fix }}">
             </label>
         
             <div class="grid_input">
                 {% for grid in salary.grid %}
                 <label class="label_date">% <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                    <input type="text" class="input_and_select grid-percent"  value="{{ grid.percent }}">
+                    <input type="text" class="salary_input grid-percent"  value="{{ grid.percent }}">
                 </label>
                 {% endfor %}
             </div>
@@ -47,7 +47,7 @@
             <div class="grid_input">
                 {% for grid in salary.grid %}
                 <label class="label_date">Лимит <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                    <input type="text" class="input_and_select grid-limit" value="{{ grid.limit }}">
+                    <input type="text" class="salary_input grid-limit" value="{{ grid.limit }}">
                 </label>
                 {% endfor %}
             </div>
@@ -66,5 +66,14 @@
         justify-content: space-between;
         margin-top: 2%;
 
+    }
+    .salary_input{
+        width: 100%;
+        border-radius: 0.4rem;
+        background-color: #efefef;
+        border: #bdc3c7 1px solid;
+        height: 3rem;
+        padding: 0rem 0.2rem;
+        font-size: 14px;
     }
 </style>

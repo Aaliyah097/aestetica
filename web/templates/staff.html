@@ -108,8 +108,9 @@
                     </label>
 
                     <label class="label_date" style="width: 100%">Техники <br>
-                        <select class="selectPriceCost" name="staff" required>
+                        <select class="selectPriceCost" name="staff">
                             {% for t in technicians %}
+                            <option value="null">Отсутствует</option>
                             <option value="{{ t.name }}">{{ t.name }}</option>
                             {% endfor %}
                         </select>

@@ -229,8 +229,11 @@ function CreateSalaryCurrentEmployee() {
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
     e.preventDefault();
     const form = e.target;
+    
     const formData = new FormData(form);
-
+    if(formData.get('staff') == 'null'){
+        formData.set('staff', null)
+    }
     fetch('/consumables/create', {
         method: 'POST',
         body: formData,
@@ -239,6 +242,7 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
             if (response.ok) {
                 getNotifications(`Успешно! Данные по услуге сохранены`, 'alert-success')
                 document.getElementById('costPriceAddSebe').value = ""
+                // location.reload()
             } else {
                 getNotifications('Ошибка! Проверьте введенные данные или попроуйте позже', 'alert-danger')
             }

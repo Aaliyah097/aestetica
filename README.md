@@ -10,6 +10,10 @@
 # DB Scheme
 ![db_scheme.png](assets/db_scheme.png)
 
+# Result
+![result.png](assets/result.png)
+![result.png](assets/result2.png)
+
 <hr>
 
 # Use cases

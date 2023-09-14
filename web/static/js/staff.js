@@ -231,9 +231,9 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
     const form = e.target;
     
     const formData = new FormData(form);
-    if(formData.get('staff') == 'null'){
-        formData.set('staff', null)
-    }
+    // if(formData.get('staff') == 'null'){
+    //     formData.set('staff', null)
+    // }
     fetch('/consumables/create', {
         method: 'POST',
         body: formData,

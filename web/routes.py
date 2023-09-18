@@ -1,5 +1,4 @@
 import datetime
-import time
 from collections import defaultdict
 
 from app import app
@@ -143,7 +142,6 @@ def modify_salary(pk: int):
 
 @app.route('/salary', methods=['GET', ])
 def list_salary():
-    time.sleep(2)
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
@@ -161,8 +159,8 @@ def list_salary():
 
     doctors_salary_reports = service.doctors_cals()
     assistants_salary_report = service.assistants_calc()
-
     other_salary_reports = service.other_staff_calc()
+    anesthetists_salary_report = service.anesthetists_calc()
 
     groups = defaultdict(list)
 
@@ -173,6 +171,7 @@ def list_salary():
         'salary_table.html',
         doctors_report=doctors_salary_reports,
         assistants_report=assistants_salary_report,
+        anesthetists_report=anesthetists_salary_report,
         other_reports=groups,
         total_income=sum([salary.income for salary in doctors_salary_reports]) +
                      sum([salary.income for salary in assistants_salary_report]) +

@@ -14,7 +14,7 @@ def get_staff_from_repository():
 def create_staff():
     service = StaffManagementService()
 
-    with open('db/data/staff.json', 'r') as file:
+    with open('db/data/staff.json', 'rb') as file:
         users = json.load(file)
 
         for user in users:
@@ -27,7 +27,20 @@ def create_staff():
             )
 
 
-def test_get_staff_amount_by_role():
+def get_staff_amount_by_role():
     amount = StaffRepository().get_amount_by_role(Doctor)
     assert amount != 0
     print(amount)
+
+
+def delete_staff():
+    repo = StaffRepository()
+    staff = repo.get_staff()
+
+    for st in staff:
+        repo.delete_staff(st)
+
+
+def test():
+    create_staff()
+    # delete_staff()

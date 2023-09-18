@@ -1,5 +1,6 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.department import Department
 from src.salary.entities.salary_grid import SalaryGrid
 
@@ -50,7 +51,7 @@ class Salary:
         self._volume += value
 
         if len(self._grid) == 0:
-            if isinstance(self.staff, Assistant):
+            if isinstance(self.staff, Assistant) or isinstance(self.staff, Anesthetist):
                 self._income = self.fix * self._volume
             else:
                 self._income = self.fix

@@ -4,6 +4,7 @@ import json
 import settings
 from src.treatments.entities.treatment import Treatment
 from src.staff.repositories.staff_repository import StaffFactory
+from src.staff.repositories.staff_repository import StaffRepository
 from src.staff.entities.role import Role
 from src.staff.entities.filial import Filial
 from src.staff.entities.department import Department
@@ -26,6 +27,8 @@ class TreatmentRepository:
             user=filial.db_user,
             password=filial.db_password
         )
+        staff = StaffRepository().get_staff()
+        self.staff = {st.name: st for st in staff}
 
     def get_history_treatment(self, lt_date: datetime.date,
                               tooth_code: int, doctor_name: str,
@@ -40,10 +43,10 @@ class TreatmentRepository:
 
                 history_treatment = list(filter(
                     lambda t: t.on_date <= lt_date and
-                    t.client == client and
-                    t.cost != 0 and
-                    t.service.code not in block_services_codes and
-                    t.staff.name == doctor_name,
+                              t.client == client and
+                              t.cost != 0 and
+                              t.service.code not in block_services_codes and
+                              t.staff.name == doctor_name,
                     treatments
                 ))
                 ht = history_treatment[-1] if len(history_treatment) > 0 else None
@@ -88,12 +91,18 @@ class TreatmentRepository:
             service=ServicesRepository.get_by_code(row['KODOPER']),
             tooth=row['TOOTHCODE']
         )
-        new_treatment.staff = StaffFactory.create_staff(
+
+        new_st = StaffFactory.create_staff(
             name=row['DNAME'],
             staff_role=Role(
                 name=row['DOCTOR_STDTYPENAME']
             )
         )
+        if new_st.name in self.staff:
+            new_st = self.staff[new_st.name]
+
+        new_treatment.staff = new_st
+
         new_treatment.filial = self.filial
         new_treatment.department = Department(
             name=row['DEPNAME']
@@ -135,3 +144,9 @@ class TreatmentRepository:
             return 15_000_000
         else:
             return Repository(self.connector).get_month_volume(month, year)
+
+    def get_month_volume_payments(self, date_begin: datetime.date, date_end: datetime.date) -> float:
+        if settings.Config.DEBUG:
+            return 15_000_000
+        else:
+            return Repository(self.connector).get_month_volume_payments(date_begin, date_end)

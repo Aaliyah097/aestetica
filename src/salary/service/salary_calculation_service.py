@@ -1,10 +1,12 @@
 import datetime
 from collections import defaultdict
 from dataclasses import dataclass
+import calendar
 
 from src.schedule.entities.schedule import Schedule
 
 from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.technician import Technician
@@ -29,6 +31,8 @@ from src.salary.entities.salary import Salary
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
 from src.salary.service.calculators.assistants_calculator import AssistantsSalaryCalculator
+from src.salary.service.calculators.anesthetist_calculator import AnesthetistCalculator
+
 from src.treatments.repositories.consumables_repository import ConsumablesRepository
 
 
@@ -75,8 +79,12 @@ class SalaryCalculationService:
         self.date_begin = date_begin
         self.date_end = date_end
 
-        self.month_volume: float = self.treatment_repo.get_month_volume(
-            date_begin.month, date_begin.year
+        month = date_begin.month
+        year = date_begin.year
+        first_day, last_day = calendar.monthrange(year, month)
+
+        self.month_volume: float = self.treatment_repo.get_month_volume_payments(
+            datetime.date(year, month, first_day), datetime.date(year, month, last_day)
         )
 
         roles = set([st.__class__ for st in self.staff_repo.get_staff()])
@@ -93,20 +101,19 @@ class SalaryCalculationService:
             members_count = self.team_members[Administrator] + \
                             self.team_members[Assistant] + \
                             self.team_members[SeniorAssistant]
+            if members_count == 0:
+                members_count = 1
             award += round((self.month_volume * 0.01) / members_count, 2)
         elif isinstance(staff, Manager):
             members_count = self.team_members[Manager]
+            if members_count == 0:
+                members_count = 1
             award += round((self.month_volume * 0.015) / members_count, 2)
 
         if staff.name == 'Сиразова Руфия Талгатовна':
             award += 10000
 
         return award
-
-    # TODO применить премии ко всем ЗП
-    # TODO Расчитать ЗП для всего прочего персонала
-    # TODO Вывести ЗП для всего прочего персонала в таблицу
-    # TODO Добавить поле Премия в таблицу
 
     # Считаться должно так:
     """
@@ -116,8 +123,7 @@ class SalaryCalculationService:
     И перенести это все в калькулятор по ассистентам
     """
     def assistants_calc(self) -> list[AssistantSalaryReport]:
-        schedules = self.schedule_repo.get_all_schedule()
-
+        schedules = self.schedule_repo.get_all_schedule(self.date_begin, self.date_end)
         salary_reports = []
 
         for staff, schedule in self._split_schedule(schedules).items():
@@ -141,7 +147,8 @@ class SalaryCalculationService:
         salary_reports = []
 
         for staff in self.staff_repo.get_staff():
-            if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) or isinstance(staff, Technician):
+            if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) \
+                    or isinstance(staff, Technician) or isinstance(staff, Anesthetist):
                 continue
             salary = Salary(staff, Department("Прочее"))
             award = self.calc_award(staff)
@@ -156,6 +163,39 @@ class SalaryCalculationService:
                     fix=salary.fix
                 )
             )
+        return salary_reports
+
+    def anesthetists_calc(self) -> list[DoctorsSalaryReport]:
+        treatments = self.treatment_repo.get_all_treatments(
+            date_begin=self.date_begin,
+            date_end=self.date_end
+        )
+
+        treatments = list(filter(
+            lambda t: isinstance(t.staff, Anesthetist),
+            treatments
+        ))
+
+        salary_reports = []
+
+        data = defaultdict(list)
+        for t in treatments:
+            data[t.staff].append(t)
+
+        calculator = AnesthetistCalculator()
+        for staff, treatments in data.items():
+            salary = calculator.calc(staff, treatments)
+            salary_reports.append(
+                DoctorsSalaryReport(
+                    staff=staff,
+                    income=salary.income,
+                    award=0,
+                    volume=salary.volume,
+                    fix=salary.fix,
+                    treatments=treatments
+                )
+            )
+
         return salary_reports
 
     def doctors_cals(self) -> list[DoctorsSalaryReport]:
@@ -212,8 +252,8 @@ class SalaryCalculationService:
                 continue
 
             if treatment.service in self.submit_services:
-                # TODO добавить код зуба в фильтр
                 history_treatments = sorted(list(filter(lambda t: t.on_date <= treatment.on_date and
+                                                                  t.tooth == treatment.tooth and
                                                                   t.staff.name == treatment.staff.name and
                                                                   t.service not in self.submit_services and
                                                                   t.client == treatment.client and

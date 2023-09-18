@@ -37,7 +37,9 @@
                         </div>
                     </span>
                 </td>
-                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}</td>
+                <td style="white-space: nowrap;">
+                    {{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}
+                </td>
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
@@ -74,7 +76,7 @@
                     <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
                     <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                     <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
-                    <td style="white-space: nowrap;">{{razbivka.technician if razbivka.technician else '—' }}</td>
+                    <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
                     <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.markdown.volume).replace(',', ' ') }}</td>
                 </tr>
             {% endfor %}
@@ -99,6 +101,91 @@
             <td></td>
             <td colspan="9"></td>
         </tr>
+
+        {# anesthetists #}
+        <tr style="background: #fae08b; color: #215968; text-align: left">
+            <td style="text-align: left;">Анестезиологи</td>
+            <td >ч.</td>
+            <td >Руб.</td>
+            <td >Приемы</td>
+            <th>Руб.</th>
+            <td colspan="8"></td>
+        </tr>
+        {% for salary in anesthetists_report |sort(attribute="staff.name")%}
+            <tr>
+                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
+                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
+                        <div style="display: flex; justify-content: space-between">
+                            {{ salary.staff.name }}
+                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+                        </div>
+                    </span>
+                </td>
+                <td style="white-space: nowrap;">
+                    {{ '{0:,}'.format(salary.volume).replace(',', ' ')}}
+                </td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
+                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td class="add" colspan="8"></td>
+            </tr>
+            <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
+                style="position: sticky; top:9vh; z-index:1">
+                <th>Клиент</th>
+                <th>Дата</th>
+                <th>Департамент</th>
+                <th>Услуга</th>
+                <th>Код услуги</th>
+                <th>Кол-во</th>
+                <th>Цена без скидки</th>
+                <th>Скидка</th>
+                <th>Итого</th>
+                <th>Зуб</th>
+                <th>Расходники</th>
+                <th>Техник</th>
+                <th></th>
+            </tr>
+            {% for razbivka in salary.treatments %}
+                <tr class="no_show attachment {{'isHistory' if  razbivka.markdown.is_history  }}" data-name-employee-no-show="{{ salary.staff.name }}"
+
+                    data-isHistory="{{ razbivka.markdown.is_history }}">
+                    <td>{{ razbivka.client }}</td>
+                    <td>{{ razbivka.on_date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ razbivka.department }}</td>
+                    <td>{{ razbivka.service.name }}</td>
+                    <td>{{ razbivka.service.code }}</td>
+                    <td>{{razbivka.amount}}</td>
+                    <td>{{'{0:,} ₽'.format(razbivka.cost_wo_discount).replace(',', ' ') }}</td>
+                    <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.discount).replace(',', ' ') }}</td>
+                    <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
+                    <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
+                    <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
+                    <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
+                    <td style="white-space: nowrap;"></td>
+                </tr>
+            {% endfor %}
+            {#margins by anesthetists#}
+            <tr class="no_show attachment" style="background: #a7c9a7; color: white" data-name-employee-no-show="{{ salary.staff.name }}">
+                <td>Итого</td>
+                <td colspan="5"></td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='cost_wo_discount')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='discount')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='cost')).replace(',', ' ') }}</td>
+                <td></td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')).replace(',', ' ') }}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        {#margins by all anesthetists#}
+        <tr style="background: #a7c9a7; color: white; text-align: left">
+            <td style="text-align: left;">Итого</td>
+            <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ') }}</td>
+            <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
+            <td></td>
+            <td colspan="9"></td>
+        </tr>
+        {# end comment #}
 
         {#assistants#}
         <tr style="background: #fae08b; color: #215968; text-align: left">

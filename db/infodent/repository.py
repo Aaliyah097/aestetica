@@ -15,6 +15,9 @@ class Repository:
                               tooth_code: int, doctor_name: str,
                               block_services_codes: tuple[str],
                               client: str) -> dict:
+        if tooth_code == None:
+            tooth_code = "null"
+
         query = f"""
         SELECT
 
@@ -70,11 +73,13 @@ class Repository:
         AND d.dname LIKE '%{doctor_name}%' 
         AND c.fullname LIKE '%{client}"%' 
         AND od.toothcode = {tooth_code}
-        AND w.kodoper NOT IN {block_services_codes}
         AND od.schamount_a != 0
-
-        ORDER BY t.treatdate DESC
         """
+
+        for code in block_services_codes:
+            query += f"AND w.kodoper <> '{code}'"
+
+        query += "ORDER BY t.treatdate DESC"
 
         with self.connector as cursor:
             cursor.execute(query)
@@ -135,6 +140,7 @@ class Repository:
         od.schamount_a cost_wo_discount,
         od.schamount cost,
         (od.schamount_a - od.schamount) discount,
+        od.toothcode,
         
         d.dname,
         d.dcode,
@@ -152,7 +158,7 @@ class Repository:
         left join doctor dm on dm.dcode = t.mechanic
         left join sectorref sec on sec.sectid = t.sectid
         left join sectorref seccl on seccl.sectid = c.sectid
-        left join filials f on f.filid = t.filials
+        left join filials f on f.filid = t.filial
         left join jpersons jp on jp.jid = f.jid
         left join treatsch ts on ts.treatcode = t.treatcode
         left join orderdet od on od.orderno = t.orderno and ts.schnum = od.schnum
@@ -307,8 +313,8 @@ class Repository:
             )
             total = 0
             for pay in payments:
-                total += float(pay['CASH_AMOUNT']) or 0
-                total += float(pay['CCARD_AMOUNT']) or 0
-                total += float(pay['AVANS_AMOUNT']) or 0
+                total += pay['CASH_AMOUNT'] or 0
+                total += pay['CCARD_AMOUNT'] or 0
+                total += pay['AVANS_AMOUNT'] or 0
 
             return total

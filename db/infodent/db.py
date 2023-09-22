@@ -16,7 +16,7 @@ class Connector:
 
     def __enter__(self):
         self.con = fdb.connect(
-            dsn=self.address + ":" + self.port + self.name,
+            dsn=str(self.address) + ":" + str(self.name),
             user=self.user,
             password=self.password
         )

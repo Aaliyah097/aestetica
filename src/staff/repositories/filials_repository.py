@@ -29,7 +29,7 @@ class FilialsRepository:
                 return None
 
             new_filial = Filial(name=filial.name)
-            new_filial.db_name = filial.db_name
+            new_filial.db_address = filial.db_address
             new_filial.db_port = filial.db_port
             new_filial.db_name = filial.db_name
             new_filial.db_user = filial.db_user

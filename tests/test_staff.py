@@ -57,7 +57,7 @@ def create_staff_by_name(name: str, role_name: str):
 
 def test():
     """"""
-    # create_staff()
+    #create_staff()
     # delete_staff()
-    # delete_staff_by_name("Арашкович Кирилл Александрович")
-    # create_staff_by_name("Стоноженко Юлия Васильевна", "Старший администратор")
+    delete_staff_by_name("Мерцалова Анастасия")
+    # create_staff_by_name("Колчина Анна Александровна", "Маркетинг")

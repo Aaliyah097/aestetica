@@ -161,6 +161,7 @@ def list_salary():
     assistants_salary_report = service.assistants_calc()
     other_salary_reports = service.other_staff_calc()
     anesthetists_salary_report = service.anesthetists_calc()
+    administrators_salary_report = service.administrators_calc()
 
     groups = defaultdict(list)
 
@@ -172,6 +173,7 @@ def list_salary():
         doctors_report=doctors_salary_reports,
         assistants_report=assistants_salary_report,
         anesthetists_report=anesthetists_salary_report,
+        administrators_report=administrators_salary_report,
         other_reports=groups,
         total_income=sum([salary.income for salary in doctors_salary_reports]) +
                      sum([salary.income for salary in assistants_salary_report]) +

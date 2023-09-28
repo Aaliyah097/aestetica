@@ -2,7 +2,7 @@ import datetime
 import json
 
 import settings
-from src.staff.repositories.staff_repository import StaffFactory
+from src.staff.repositories.staff_repository import StaffFactory, StaffRepository
 from src.staff.entities.department import Department
 from src.staff.entities.role import Role
 from src.schedule.entities.schedule import Schedule
@@ -25,9 +25,11 @@ class ScheduleRepository:
                 user=filial.db_user,
                 password=filial.db_password
             )
+        staff = StaffRepository().get_staff()
+        self.staff = {st.name: st for st in staff}
 
     def _schedule_from_row(self, row: dict) -> Schedule:
-        return Schedule(
+        schedule = Schedule(
             on_date=datetime.datetime.strptime(row['WDATE'], '%Y-%m-%d %H:%M:%S').date() if type(row['WDATE']) == str else row['WDATE'].date(),
             staff=StaffFactory.create_staff(
                 name=row['DNAME'],
@@ -36,6 +38,11 @@ class ScheduleRepository:
             filial=self.filial,
             department=Department(name=row['DEPNAME']) if row['DEPNAME'] else None
         )
+
+        if schedule.staff.name in self.staff:
+            schedule.staff = self.staff[schedule.staff.name]
+
+        return schedule
 
     def get_all_schedule(self,
                          date_begin: datetime.date = None,

@@ -1,4 +1,5 @@
-from src.staff.repositories.staff_repository import StaffRepository
+from src.staff.entities.role import Role
+from src.staff.repositories.staff_repository import StaffRepository, StaffFactory
 from src.staff.service.staff_management_service import StaffManagementService
 from src.staff.entities.users.technician import Technician
 from src.staff.entities.users.doctor import Doctor
@@ -41,6 +42,22 @@ def delete_staff():
         repo.delete_staff(st)
 
 
+def delete_staff_by_name(name: str):
+    repo = StaffRepository()
+    staff = repo.get_staff_by_name(name)
+    repo.delete_staff(staff)
+
+
+def create_staff_by_name(name: str, role_name: str):
+    role = Role(role_name)
+    staff = StaffFactory.create_staff(name, role)
+    service = StaffManagementService()
+    service.create_staff(name, role_name)
+
+
 def test():
-    create_staff()
+    """"""
+    # create_staff()
     # delete_staff()
+    # delete_staff_by_name("Арашкович Кирилл Александрович")
+    # create_staff_by_name("Стоноженко Юлия Васильевна", "Старший администратор")

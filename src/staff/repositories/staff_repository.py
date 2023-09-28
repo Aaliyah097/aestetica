@@ -6,6 +6,7 @@ from src.staff.entities.users.senior_assistant import SeniorAssistant
 from src.staff.entities.users.administrator import Administrator
 from src.staff.entities.users.manager import Manager
 from src.staff.entities.users.anesthetist import Anesthetist
+from src.staff.entities.users.householder import Householder
 
 from src.staff.entities.role import Role
 
@@ -33,6 +34,8 @@ class StaffFactory:
             new_staff = Manager(name=name)
         elif staff_role.name == 'Анестезиолог':
             new_staff = Anesthetist(name=name)
+        elif staff_role.name == 'Завхоз':
+            new_staff = Householder(name=name)
         else:
             new_staff = Staff(name=name)
 

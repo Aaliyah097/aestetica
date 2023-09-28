@@ -46,7 +46,8 @@ class TreatmentRepository:
                               t.client == client and
                               t.cost != 0 and
                               t.service.code not in block_services_codes and
-                              t.staff.name == doctor_name,
+                              t.staff.name == doctor_name and
+                              t.service.code != '6.29',
                     treatments
                 ))
                 ht = history_treatment[-1] if len(history_treatment) > 0 else None

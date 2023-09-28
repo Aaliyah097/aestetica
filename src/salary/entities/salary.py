@@ -58,16 +58,17 @@ class Salary:
             return
 
         total = 0
-        for idx, dimension in enumerate(self._grid):
-            if self._grid[0].limit > self._volume:
-                total = round(self._volume * self._grid[0].percent / 100, 2)
-                break
 
-            prev_limit = self._grid[idx - 1].limit if idx > 0 else 0
-            if dimension.limit <= self._volume:
-                total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
-            else:
-                total += round((self._volume - prev_limit) * dimension.percent / 100, 2)
+        if self._grid[0].limit > self._volume:
+            total = round(self._volume * self._grid[0].percent / 100, 2)
+        else:
+            for idx, dimension in enumerate(self._grid):
+                prev_limit = self._grid[idx - 1].limit if idx > 0 else 0
+                if dimension.limit <= self._volume:
+                    total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
+                else:
+                    total += round((self._volume - prev_limit) * dimension.percent / 100, 2)
+                    break
 
         self._income = total
 

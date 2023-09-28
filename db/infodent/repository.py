@@ -68,12 +68,13 @@ class Repository:
         left join departments deps on t.depnum = deps.depnum
         left join conftype cf ON d.stdtype = cf.stdtype
 
-        WHERE 
+        WHERE
         t.treatdate <= '{str(lt_date)}' 
         AND d.dname LIKE '%{doctor_name}%' 
         AND c.fullname LIKE '%{client}"%' 
         AND od.toothcode = {tooth_code}
         AND od.schamount_a != 0
+        AND w.kodoper != '6.29'
         """
 
         for code in block_services_codes:

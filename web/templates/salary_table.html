@@ -6,7 +6,7 @@
 <hr>
 
 
-<div style="overflow: auto; max-height: 70vh">
+<div style="overflow: auto; max-height: 80vh; margin-bottom: 2%">
     <table class="table table-bordered table-hover" id="DownloadMainTable">
         <thead>
         <tr class="table-secondary" style="position: sticky; top:-1px; z-index:3">
@@ -202,7 +202,7 @@
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }}
+                            {{ salary.staff.name }}  ({{ salary.staff.role.name }})
                             <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
                         </div>
                     </span>
@@ -243,66 +243,6 @@
             <td style="text-align: left;">Итого</td>
             <td></td>
             <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
-            <td></td>
-            <td colspan="9"></td>
-        </tr>
-
-        {#administrators#}
-        <tr style="background: #fae08b; color: #215968; text-align: left">
-            <td style="text-align: left;">Администраторы</td>
-            <td>Дни</td>
-            <td>Руб.</td>
-            <td>Выходы</td>
-            <th>Руб.</th>
-            <td colspan="8"></td>
-        </tr>
-
-        {% for salary in administrators_report |sort(attribute="staff.name") %}
-            <tr>
-                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
-                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
-                        <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }}
-                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
-                        </div>
-                    </span>
-                </td>
-
-                <td>{{ salary.volume }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
-                <td>{{ salary.schedule|count }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
-                <td class="add" colspan="8"></td>
-
-            </tr>
-            <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
-                <th>Дата</th>
-                <th>Департамент</th>
-                <th>Ставка</th>
-                <th colspan="2">Надбавка</th>
-            </tr>
-            {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
-                <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
-                    <td>{{ razbivka_asisst.on_date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ razbivka_asisst.department.name }}</td>
-                    <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                    <td colspan="2">{{ razbivka_asisst.bonus }}</td>
-                </tr>
-            {% endfor %}
-            {#margins by administrator#}
-            <tr class="no_show attachment" style="background: #699b69; color: white" data-name-employee-no-show="{{ salary.staff.name }}">
-                <td>Итого</td>
-                <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2, 'floor')).replace(',', ' ') }}</td>
-            </tr>
-        {% endfor %}
-
-        {#margins by all administrators#}
-        <tr style="background: #a7c9a7; color: white; text-align: left">
-            <td style="text-align: left;">Итого</td>
-            <td></td>
-            <td>{{ '{0:,} ₽'.format(administrators_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
             <td></td>
             <td colspan="9"></td>
         </tr>

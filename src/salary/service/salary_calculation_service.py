@@ -6,6 +6,7 @@ import calendar
 from src.schedule.entities.schedule import Schedule
 
 from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.householder import Householder
 from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
@@ -115,29 +116,6 @@ class SalaryCalculationService:
 
         return award
 
-    def administrators_calc(self) -> list[AssistantSalaryReport]:
-        schedules = self.schedule_repo.get_all_schedule(self.date_begin, self.date_end)
-        salary_reports = []
-
-        for staff, schedule in self._split_schedule(schedules).items():
-            if not isinstance(staff, Administrator):
-                continue
-            salary = AssistantsSalaryCalculator().calc(staff, schedule)
-            award = self.calc_award(staff)
-            salary.add_award(award)
-
-            salary_reports.append(
-                AssistantSalaryReport(
-                    staff=staff,
-                    income=salary.income,
-                    volume=salary.volume,
-                    fix=salary.fix,
-                    schedule=schedule,
-                    award=award
-                )
-            )
-        return salary_reports
-
     # Считаться должно так:
     """
     Берем ставку фиксы,
@@ -150,7 +128,8 @@ class SalaryCalculationService:
         salary_reports = []
 
         for staff, schedule in self._split_schedule(schedules).items():
-            if not isinstance(staff, Assistant) and not isinstance(staff, SeniorAssistant):
+            if not isinstance(staff, Assistant) and not isinstance(staff, SeniorAssistant) \
+                    and not isinstance(staff, Administrator) and not isinstance(staff, Householder):
                 continue
             salary = AssistantsSalaryCalculator().calc(staff, schedule)
             award = self.calc_award(staff)
@@ -173,7 +152,8 @@ class SalaryCalculationService:
 
         for staff in self.staff_repo.get_staff():
             if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) \
-                    or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator):
+                    or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator) \
+                    or isinstance(staff, Householder):
                 continue
             salary = Salary(staff, Department("Прочее"))
             award = self.calc_award(staff)

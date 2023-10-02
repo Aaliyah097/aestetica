@@ -59,5 +59,5 @@ def test():
     """"""
     #create_staff()
     # delete_staff()
-    delete_staff_by_name("Мерцалова Анастасия")
-    # create_staff_by_name("Колчина Анна Александровна", "Маркетинг")
+    # delete_staff_by_name("Сара Шихшабекова")
+    # create_staff_by_name("Шихшабекова Сарият Зуграбовна", "Ассистент")

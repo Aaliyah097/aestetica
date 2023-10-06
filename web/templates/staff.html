@@ -136,18 +136,23 @@
                             <tr class="sticks">
                                 <th>Услуга</th>
                                 <th>Техник</th>
-                                <th>Сумма</th>
+                                <th>Сумма cт.</th>
+                                <th>Сумма нов</th>
                                 <th>Действие</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for cons in consumables |sort(attribute="service.code")%}
                             <tr>
-
+                                {{ cons }}
                                 <td>{{ cons.service.code }} {{ cons.service.name }}</td>
                                 <td>{{ cons.technician.name }}</td>
                                 <td style="position: relative;">
                                     <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}"
+                                        class="selectPriceCost" style="max-width: 100%;">
+                                </td>
+                                <td style="position: relative;">
+                                    <input type="text" value="{{ cons.cost }}" 
                                         class="selectPriceCost" style="max-width: 100%;">
                                 </td>
                                 <td>

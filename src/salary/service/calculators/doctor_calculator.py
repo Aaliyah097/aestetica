@@ -3,6 +3,7 @@ from src.staff.entities.department import Department
 from src.treatments.entities.treatment import Treatment
 from src.salary.entities.salary import Salary
 from src.salary.repositories.salary_repository import SalaryRepository
+from src.staff.entities.filial import Filial
 
 from itertools import chain
 
@@ -11,13 +12,14 @@ class DoctorSalaryCalculator:
     def __init__(self):
         self.salary_repo: SalaryRepository = SalaryRepository()
 
-    def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]]) -> tuple[list[Salary], list[Treatment]]:
+    def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]], filial: Filial) -> tuple[list[Salary], list[Treatment]]:
         union_treatments = list(chain.from_iterable(treatments.values()))
 
         union_treatments.sort(key=lambda t: t.on_date, reverse=True)
 
         salaries = {
-            dep: self.salary_repo.get_salary(staff=doctor, department=dep) or Salary(staff=doctor, department=dep)
+            dep: self.salary_repo.get_salary(staff=doctor, department=dep, filial=filial)
+                 or Salary(staff=doctor, department=dep, filial=filial)
             for dep in treatments
         }
 

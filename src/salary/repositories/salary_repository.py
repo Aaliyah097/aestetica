@@ -1,7 +1,10 @@
+from collections import defaultdict
+
 from src.salary.entities.salary import Salary
 from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.department import Department
+from src.staff.entities.filial import Filial
 
 from db.aestetica.tables import (
     Salary as SalaryTable,
@@ -86,10 +89,32 @@ class SalaryRepository:
                 session.add(salary_grid)
             session.commit()
 
-    def get_salary(self, staff: Staff, department: Department) -> Salary | None:
+    @staticmethod
+    def create_grid_(salary_id: int, grid: list[SalaryGrid]) -> None:
+        with Base() as session:
+            for grid_row in grid:
+                query = select(SalaryGridTable).where(
+                    SalaryGridTable.salary == salary_id,
+                    SalaryGridTable.percent == grid_row.percent,
+                    SalaryGridTable.limit == grid_row.limit
+                )
+
+                if session.scalar(query):
+                    continue
+
+                salary_grid = SalaryGridTable(
+                    salary=salary_id,
+                    limit=grid_row.limit,
+                    percent=grid_row.percent
+                )
+                session.add(salary_grid)
+            session.commit()
+
+    def get_salary(self, staff: Staff, department: Department, filial: Filial) -> Salary | None:
         salary_query = select(SalaryTable).where(
             (SalaryTable.staff == staff.name) &
-            (SalaryTable.department == department.name)
+            (SalaryTable.department == department.name) &
+            (SalaryTable.filial == filial.name)
         ).limit(1)
 
         with Base() as session:
@@ -100,7 +125,8 @@ class SalaryRepository:
             salary = Salary(
                 staff=staff,
                 department=department,
-                fix=result.fix
+                fix=result.fix,
+                filial=filial
             )
             salary.id = result.id
 
@@ -123,21 +149,24 @@ class SalaryRepository:
 
         return grid
 
-    def get_salaries_by_staff(self, staff: Staff) -> list[Salary]:
+    def get_salaries_by_staff(self, staff: Staff) -> list[list[Salary]]:
         salary_query = select(SalaryTable).where((SalaryTable.staff == staff.name))
-        salaries = []
+        salaries = defaultdict(list)
 
         with Base() as session:
             for row in session.scalars(salary_query):
                 salary = Salary(
                     staff=staff,
                     department=Department(name=row.department),
-                    fix=row.fix
+                    fix=row.fix,
+                    filial=Filial(row.filial)
                 )
                 salary.id = row.id
 
                 salary.grid = self.get_grid_by_salary_id(salary.id)
 
-                salaries.append(salary)
+                salaries[row.filial].append(salary)
 
-        return salaries
+        list_salaries = [s for f, s in salaries.items()]
+
+        return list_salaries

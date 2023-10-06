@@ -1,11 +1,20 @@
 import json
 
 from settings import Config
-from src.staff.repositories.filials_repository import FilialsRepository
-from src.treatments.repositories.services_repository import ServicesRepository
+
 from db.infodent.repository import Repository, Connector
 
 from src.treatments.entities.service import Service
+
+from src.staff.repositories.filials_repository import FilialsRepository
+from src.treatments.repositories.services_repository import ServicesRepository
+from src.salary.repositories.salary_repository import SalaryRepository
+
+from db.aestetica.tables import (
+    Base,
+    Salary as SalaryTable,
+    and_
+)
 
 
 def sync_services():
@@ -43,5 +52,36 @@ def sync_services():
             )
 
 
+def sync_staff():
+    salary_repository = SalaryRepository()
+    with Base() as session:
+        salaries = session.query(SalaryTable).all()
+        for salary in salaries:
+            grid = salary_repository.get_grid_by_salary_id(salary.id)
+            new_salary = SalaryTable(
+                staff=salary.staff,
+                department=salary.department,
+                fix=salary.fix,
+                filial='Барвиха'
+            )
+            session.add(new_salary)
+            session.commit()
+
+            new_salary = session.query(SalaryTable).filter(
+                and_(
+                    SalaryTable.staff == salary.staff,
+                    SalaryTable.department == salary.department,
+                    SalaryTable.filial == 'Барвиха'
+                )
+            ).first()
+
+            salary_repository.create_grid_(new_salary.id, grid)
+        session.commit()
+
+
+def test():
+    sync_staff()
+
+
 if __name__ == '__main__':
-    sync_services()
+    sync_staff()

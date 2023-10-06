@@ -69,3 +69,9 @@
 - alembic upgrade head
 - pytest tests/test_sync.py -s
 - python app.py
+
+
+# Errors
+Event: alembic migrations
+Error: ValueError: Constraint must have a name
+Solution: https://github.com/sqlalchemy/alembic/issues/1195 (kitty7c6 answer)

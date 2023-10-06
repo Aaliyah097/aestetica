@@ -48,7 +48,7 @@ class ScheduleRepository:
                          date_begin: datetime.date = None,
                          date_end: datetime.date = None) -> list[Schedule]:
         if settings.Config.DEBUG:
-            with open('src/schedule/repositories/schedule.json', 'rb') as file:
+            with open('db/data/schedule.json', 'rb') as file:
                 response = json.load(file)
         else:
             response = Repository(self.connector).get_schedule(date_begin, date_end)

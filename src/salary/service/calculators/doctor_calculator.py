@@ -46,10 +46,15 @@ class DoctorSalaryCalculator:
     def get_volume(treatment: Treatment, is_submit: bool = False) -> float:
         if treatment.cost_wo_discount == 0:
             volume = 0
-        elif (treatment.discount * 100 / treatment.cost_wo_discount) < 50:
-            volume = treatment.cost
-        else:
+        elif treatment.staff.name == "Колотова Анастасия Валентиновна":
+            if (treatment.discount * 100 / treatment.cost_wo_discount) > 10:
+                volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
+            else:
+                volume = treatment.cost
+        elif (treatment.discount * 100 / treatment.cost_wo_discount) > 50:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
+        else:
+            volume = treatment.cost
 
         consumables_cost = treatment.consumables.cost if treatment.consumables else 0
 

@@ -113,6 +113,7 @@ class Consumables(Base):
     )
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'), nullable=True)
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+    cost_new: Mapped[float] = mapped_column(Float(), default=0, nullable=True)
 
 
 class Bonus(Base):
@@ -124,3 +125,4 @@ class Bonus(Base):
     date_end: Mapped[datetime.date] = mapped_column(Date())
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+    comment: Mapped[str] = mapped_column(String(255), default=None, nullable=True)

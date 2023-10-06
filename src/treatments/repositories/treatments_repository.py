@@ -30,13 +30,15 @@ class TreatmentRepository:
         staff = StaffRepository().get_staff()
         self.staff = {st.name: st for st in staff}
 
+        self.services = {s.code: s for s in ServicesRepository.get_all()}
+
     def get_history_treatment(self, lt_date: datetime.date,
                               tooth_code: int, doctor_name: str,
                               block_services_codes: tuple[str],
                               client: str
                               ) -> Treatment | None:
         if settings.Config.DEBUG:
-            with open('src/treatments/repositories/treatments.json', 'rb') as file:
+            with open('db/data/treatments.json', 'rb') as file:
                 treatments = [self.convert_treatment(row) for row in json.load(file)]
 
                 treatments.sort(key=lambda t: t.on_date, reverse=True)
@@ -53,7 +55,7 @@ class TreatmentRepository:
                 ht = history_treatment[-1] if len(history_treatment) > 0 else None
 
                 if not ht:
-                    with open('src/treatments/repositories/history_treatments.json', 'rb') as file:
+                    with open('db/data/history_treatments.json', 'rb') as file:
                         treatments = [self.convert_treatment(row) for row in json.load(file)]
 
                         treatments.sort(key=lambda t: t.on_date, reverse=True)
@@ -89,7 +91,7 @@ class TreatmentRepository:
             amount=row['AMOUNT'],
             cost_wo_discount=row['COST_WO_DISCOUNT'],
             discount=row['DISCOUNT'],
-            service=ServicesRepository.get_by_code(row['KODOPER']),
+            service=self.services.get(row['KODOPER'], None),
             tooth=row['TOOTHCODE']
         )
 
@@ -121,7 +123,7 @@ class TreatmentRepository:
                            date_begin: datetime.date = None,
                            date_end: datetime.date = None) -> list[Treatment]:
         if settings.Config.DEBUG:
-            with open('src/treatments/repositories/treatments.json', 'rb') as file:
+            with open('db/data/treatments.json', 'rb') as file:
                 response = json.load(file)
         else:
             response = Repository(self.connector).get_treatments(date_begin, date_end)

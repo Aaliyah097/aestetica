@@ -24,11 +24,12 @@ class BonusRepository:
                 date_begin=bonus.date_begin,
                 date_end=bonus.date_end,
                 amount=bonus.amount,
-                _id=bonus.id
+                _id=bonus.id,
+                comment=bonus.comment
             ) if bonus else None
 
     @staticmethod
-    def create(staff_name: str, amount: float, date_begin: datetime.date, date_end: datetime.date) -> None:
+    def create(staff_name: str, amount: float, date_begin: datetime.date, date_end: datetime.date, comment: str = None) -> None:
         if not StaffRepository().get_staff_by_name(staff_name):
             return
 
@@ -38,7 +39,8 @@ class BonusRepository:
                     staff=staff_name,
                     amount=amount,
                     date_begin=date_begin,
-                    date_end=date_end
+                    date_end=date_end,
+                    comment=comment
                 )
             )
             session.commit()
@@ -54,7 +56,8 @@ class BonusRepository:
                     amount=b.amount,
                     date_begin=b.date_begin,
                     date_end=b.date_end,
-                    _id=b.id
+                    _id=b.id,
+                    comment=b.comment
                 )
                 for b in session.scalars(query).all()
             ]

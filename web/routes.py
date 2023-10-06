@@ -14,12 +14,35 @@ from src.treatments.repositories.consumables_repository import ConsumablesReposi
 from src.treatments.repositories.services_repository import ServicesRepository
 from src.staff.entities.users.technician import Technician
 
+from src.sync import sync_services
+
+
+@app.route('/sync/services', methods=['GET'])
+def services_sync():
+    sync_services()
+    return 'ok', 200
+
+
+@app.route('/services/update', methods=['POST'])
+def services_update():
+    name = request.json.get('name', None)
+    is_submit = request.json.get('is_submit', None)
+    code = request.json.get('code', None)
+
+    if code == None:
+        return "'code' is not defined", 500
+
+    ServicesRepository().update(code=code, name=name, is_submit=is_submit)
+
+    return 'ok', 200
+
 
 @app.route('/consumables/create', methods=['POST', ])
 def create_consumables():
     staff = request.form.get('staff', None)
     service = request.form.get('service', None)
     cost = request.form.get('cost', 0)
+    cost_new = request.form.get('cost_new', 0)
 
     if staff == "":
         staff = None
@@ -28,7 +51,7 @@ def create_consumables():
         return 'expected data {staff: str, service: str, cost: float}', 500
 
     try:
-        ConsumablesRepository().create(staff, service, cost)
+        ConsumablesRepository().create(staff, service, cost, cost_new)
     except NameError as e:
         return str(e), 500
 
@@ -44,8 +67,9 @@ def delete_consumables(pk):
 @app.route('/consumables/<int:pk>/update', methods=['POST', ])
 def update_consumables(pk):
     cost = request.form.get('cost', 0)
+    cost_new = request.form.get('cost_new', 0)
 
-    ConsumablesRepository().update(pk, cost)
+    ConsumablesRepository().update(pk, cost, cost_new)
     return 'ok', 200
 
 
@@ -73,6 +97,7 @@ def create_bonus():
     amount = request.form.get('amount', None)
     date_begin = request.form.get('date_begin', None)
     date_end = request.form.get('date_end', None)
+    comment = request.form.get('comment', None)
 
     if not all([staff, amount, date_begin, date_end]):
         return 'expected params ?staff=&amount=&date_begin=&date_end=', 500
@@ -92,7 +117,8 @@ def create_bonus():
         staff_name=staff,
         amount=amount,
         date_begin=date_begin,
-        date_end=date_end
+        date_end=date_end,
+        comment=comment
     )
 
     return 'ok', 200

@@ -69,3 +69,18 @@ class ServicesRepository:
                 )
                 for s in session.scalars(query).all()
             ]
+
+    @staticmethod
+    def update(code: str, name: str = None, is_submit: bool = None) -> None:
+        with Base() as session:
+            service = session.get(ServiceTable, code)
+            if not service:
+                return
+
+            if name:
+                service.name = name
+
+            if is_submit != None:
+                service.is_submit = is_submit
+
+            session.commit()

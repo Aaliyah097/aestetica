@@ -28,6 +28,6 @@ class AnesthetistCalculator:
             if hours == 30:
                 hours = 0.5
 
-            salary.volume = hours * treatment.amount
+            salary.volume = hours * (treatment.amount if treatment.amount != 0 else 1)
 
         return salary

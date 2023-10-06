@@ -131,50 +131,51 @@
 
 
             <div style="max-height: 50vh; max-width: 96vw; overflow: auto;" class="">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr class="sticks">
-                                <th>Услуга</th>
-                                <th>Техник</th>
-                                <th>Сумма</th>
-                                <th>Действие</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cons in consumables |sort(attribute="service.code")%}
-                            <tr>
-
-                                <td>{{ cons.service.code }} {{ cons.service.name }}</td>
-                                <td>{{ cons.technician.name }}</td>
-                                <td style="position: relative;">
-                                    <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}"
-                                        class="selectPriceCost" style="max-width: 100%;">
-                                </td>
-                                <td>
-                                    <div class="btn-group" style="width: 100%;">
-                                        <button type="button" class="Action" data-bs-toggle="dropdown"
-                                            aria-expanded="false" style="white-space: nowrap;">
-                                            Действия <span>▽</span>
-                                        </button>
-                                        <ul class="dropdown-menu" style="width: 100%">
-                                            <li>
-
-                                                <a class="dropdown-item" style="width: 100%"
-                                                    onclick="handleEditClick('{{ cons.pk }}')">Сохранить</a>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" style="width: 100%" onclick="deleteThisRow('{{ cons.pk  }}')">Удалить</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-       
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr class="sticks">
+                            <th colspan="2">Услуга</th> <!-- Используем класс col-3 для столбца, который будет занимать 25% ширины -->
+                            <th >Техник</th> <!-- Используем класс col для столбца, который будет занимать оставшиеся 75% ширины -->
+                            <th>Сумма cтар.</th>
+                            <th>Сумма нов</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cons in consumables | sort(attribute="service.code") %}
+                        <tr>
+                            <td colspan="2">{{ cons.service.code }} {{ cons.service.name }}</td>
+                            <td>{{ cons.technician.name }}</td>
+                            <td>
+                                <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}" style="font-size: 13px !important; text-align: center;"
+                                     >
+                            </td>
+                            <td>
+                                <input type="text" value="{{ cons.cost_new }}" id="costInputNew_{{ cons.pk }}" style="font-size: 13px !important;text-align: center;"
+                                   >
+                            </td>
+                            <td>
+                                <div class="btn-group" style="width: 100%;">
+                                    <button type="button" class="Action" data-bs-toggle="dropdown"
+                                        aria-expanded="false" style="white-space: nowrap;">
+                                        Действия <span>▽</span>
+                                    </button>
+                                    <ul class="dropdown-menu" style="width: 100%">
+                                        <li>
+                                            <a class="dropdown-item" style="width: 100%"
+                                                onclick="handleEditClick('{{ cons.pk }}')">Сохранить</a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item" style="width: 100%"
+                                                onclick="deleteThisRow('{{ cons.pk  }}')">Удалить</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <hr>
             <br><br>   <br><br>   <br><br>   <br><br>   <br><br>   <br><br>

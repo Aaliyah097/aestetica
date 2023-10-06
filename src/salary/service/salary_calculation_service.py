@@ -6,6 +6,7 @@ import calendar
 from src.schedule.entities.schedule import Schedule
 
 from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.householder import Householder
 from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.staff import Staff
@@ -26,8 +27,8 @@ from src.treatments.repositories.treatments_repository import TreatmentRepositor
 from src.schedule.repositories.schedule_repository import ScheduleRepository
 
 from src.salary.repositories.bonus_repository import BonusRepository
+from src.salary.repositories.salary_repository import SalaryRepository
 from src.staff.repositories.staff_repository import StaffRepository
-from src.salary.entities.salary import Salary
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
 from src.salary.service.calculators.assistants_calculator import AssistantsSalaryCalculator
@@ -75,6 +76,7 @@ class SalaryCalculationService:
         self.bonus_repository: BonusRepository = BonusRepository()
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
         self.staff_repo: StaffRepository = StaffRepository()
+        self.salary_repo: SalaryRepository = SalaryRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
@@ -97,6 +99,9 @@ class SalaryCalculationService:
         if self.month_volume < 14_000_000:
             return award
 
+        if self.date_begin.day < 15:
+            return award
+
         if isinstance(staff, Administrator) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant):
             members_count = self.team_members[Administrator] + \
                             self.team_members[Assistant] + \
@@ -115,29 +120,6 @@ class SalaryCalculationService:
 
         return award
 
-    def administrators_calc(self) -> list[AssistantSalaryReport]:
-        schedules = self.schedule_repo.get_all_schedule(self.date_begin, self.date_end)
-        salary_reports = []
-
-        for staff, schedule in self._split_schedule(schedules).items():
-            if not isinstance(staff, Administrator):
-                continue
-            salary = AssistantsSalaryCalculator().calc(staff, schedule)
-            award = self.calc_award(staff)
-            salary.add_award(award)
-
-            salary_reports.append(
-                AssistantSalaryReport(
-                    staff=staff,
-                    income=salary.income,
-                    volume=salary.volume,
-                    fix=salary.fix,
-                    schedule=schedule,
-                    award=award
-                )
-            )
-        return salary_reports
-
     # Считаться должно так:
     """
     Берем ставку фиксы,
@@ -150,7 +132,8 @@ class SalaryCalculationService:
         salary_reports = []
 
         for staff, schedule in self._split_schedule(schedules).items():
-            if not isinstance(staff, Assistant) and not isinstance(staff, SeniorAssistant):
+            if not isinstance(staff, Assistant) and not isinstance(staff, SeniorAssistant) \
+                    and not isinstance(staff, Administrator) and not isinstance(staff, Householder):
                 continue
             salary = AssistantsSalaryCalculator().calc(staff, schedule)
             award = self.calc_award(staff)
@@ -173,9 +156,11 @@ class SalaryCalculationService:
 
         for staff in self.staff_repo.get_staff():
             if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) \
-                    or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator):
+                    or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator) \
+                    or isinstance(staff, Householder):
                 continue
-            salary = Salary(staff, Department("Прочее"))
+            salary = self.salary_repo.get_salary(staff, Department("Прочее"))
+            salary.volume = 1
             award = self.calc_award(staff)
             salary.add_award(award)
 
@@ -250,6 +235,8 @@ class SalaryCalculationService:
         data = defaultdict(list)
 
         for sch in schedule:
+            # if sch.on_date < self.date_begin or sch.on_date > self.date_begin:
+            #     continue
             bonus = self.bonus_repository.get_bonus(sch.staff, on_date=sch.on_date)
             if bonus:
                 sch.bonus = bonus.amount

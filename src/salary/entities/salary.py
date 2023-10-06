@@ -13,11 +13,12 @@ class Salary:
         self.id: int | None = None
         self.staff: Staff = staff
         self.department: Department = department
-        self.fix: float = fix if fix >= 0 else 0
+        self.fix: float = fix
         self._grid: list[SalaryGrid] = []
         self._volume: float = 0
         self._income: float = 0
         self._bonuses: list[float] = []
+        self._award: float = 0
 
     def add_bonus(self, value: float) -> None:
         try:
@@ -33,14 +34,17 @@ class Salary:
         except ValueError:
             return
 
-        self._income += value
+        self._award = value
 
     @property
     def income(self) -> float:
+        total = self._income
         for bonus in self._bonuses:
-            self._income += bonus
+            total += bonus
 
-        return round(self._income, 2)
+        total += self._award
+
+        return round(total, 2)
 
     @property
     def volume(self) -> float:
@@ -58,16 +62,17 @@ class Salary:
             return
 
         total = 0
-        for idx, dimension in enumerate(self._grid):
-            if self._grid[0].limit > self._volume:
-                total = round(self._volume * self._grid[0].percent / 100, 2)
-                break
 
-            prev_limit = self._grid[idx - 1].limit if idx > 0 else 0
-            if dimension.limit <= self._volume:
-                total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
-            else:
-                total += round((self._volume - prev_limit) * dimension.percent / 100, 2)
+        if self._grid[0].limit > self._volume:
+            total = round(self._volume * self._grid[0].percent / 100, 2)
+        else:
+            for idx, dimension in enumerate(self._grid):
+                prev_limit = self._grid[idx - 1].limit if idx > 0 else 0
+                if dimension.limit <= self._volume:
+                    total += round((dimension.limit - prev_limit) * dimension.percent / 100, 2)
+                else:
+                    total += round((self._volume - prev_limit) * dimension.percent / 100, 2)
+                    break
 
         self._income = total
 

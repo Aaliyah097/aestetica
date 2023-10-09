@@ -243,6 +243,7 @@ class SalaryCalculationService:
             bonus = self.bonus_repository.get_bonus(sch.staff, on_date=sch.on_date)
             if bonus:
                 sch.bonus = bonus.amount
+                sch.comment = bonus.comment
 
             data[sch.staff].append(sch)
 

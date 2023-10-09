@@ -1,21 +1,10 @@
 import json
 
 from settings import Config
-
 from db.infodent.repository import Repository, Connector
-
 from src.treatments.entities.service import Service
-
 from src.staff.repositories.filials_repository import FilialsRepository
 from src.treatments.repositories.services_repository import ServicesRepository
-from src.salary.repositories.salary_repository import SalaryRepository
-from src.treatments.repositories.consumables_repository import ConsumablesRepository
-
-from db.aestetica.tables import (
-    Base,
-    Salary as SalaryTable,
-    and_
-)
 
 
 def sync_services():
@@ -51,11 +40,3 @@ def sync_services():
             service_repository.create(
                 Service(name=service['SCHNAME'], code=service['KODOPER'], is_submit=False)
             )
-
-
-def sync_staff():
-    pass
-
-
-def test():
-    sync_staff()

@@ -86,6 +86,7 @@ class SalaryCalculationService:
         month = date_begin.month
         year = date_begin.year
         first_day, last_day = calendar.monthrange(year, month)
+        first_day = first_day if first_day else 1
 
         self.month_volume: float = self.treatment_repo.get_month_volume_payments(
             datetime.date(year, month, first_day), datetime.date(year, month, last_day)

@@ -189,14 +189,19 @@ def list_salary():
     anesthetists_salary_report = service.anesthetists_calc()
 
     groups = defaultdict(list)
+    assistants_groups = defaultdict(list)
 
     for salary in other_salary_reports:
         groups[salary.staff.role.name].append(salary)
+
+    for salary in assistants_salary_report:
+        assistants_groups[salary.staff.role.name].append(salary)
 
     return render_template(
         'salary_table.html',
         doctors_report=doctors_salary_reports,
         assistants_report=assistants_salary_report,
+        assistants_reports_groups=assistants_groups,
         anesthetists_report=anesthetists_salary_report,
         other_reports=groups,
         total_income=sum([salary.income for salary in doctors_salary_reports]) +

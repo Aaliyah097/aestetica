@@ -1,6 +1,5 @@
 
-
-
+<!-- Редактирование зарплатных сеток сотрудников -->
     <label for="staffName" class="label_date" style="width: 100%">ФИО<br>
         <input type="text" class="input_and_select" id="staffName" style="width: 100%"
             value="{{ salaries[0].staff.name }}" readonly>
@@ -10,6 +9,66 @@
             value="{{ salaries[0].staff.role.name }}" readonly>
     </label>
     <br><br>
+    <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% set unique_filials = [] %}
+        {% for salary in salaries %}
+            {% if salary.filial.name not in unique_filials %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if loop.first %}active{% endif %}"
+                            id="{{ salary.filial.name|replace(' ', '_') }}-tab" data-bs-toggle="tab"
+                            data-bs-target="#{{ salary.filial.name|replace(' ', '_') }}-content" type="button"
+                            role="tab" aria-controls="{{ salary.filial.name|replace(' ', '_') }}-content"
+                            {% if loop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+                        {{ salary.filial.name }}
+                    </button>
+                </li>
+                {% set unique_filials = unique_filials + [salary.filial.name] %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    
+    <div class="tab-content" id="myTabContent">
+        {% for filial in unique_filials %}
+            <div class="tab-pane {% if loop.first %}active{% endif %}" id="{{ filial|replace(' ', '_') }}-content"
+                 role="tabpanel" aria-labelledby="{{ filial|replace(' ', '_') }}-tab">
+                <ul class="nav nav-tabs" id="{{ filial|replace(' ', '_') }}-tab" role="tablist">
+                    {% for salary in salaries %}
+                        {% if salary.filial.name == filial %}
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link {% if loop.first %}active{% endif %}"
+                                        id="{{ salary.department.name|replace(' ', '_') }}-tab" data-bs-toggle="tab"
+                                        data-bs-target="#{{ salary.department.name|replace(' ', '_') }}-content"
+                                        type="button" role="tab"
+                                        aria-controls="{{ salary.department.name|replace(' ', '_') }}-content"
+                                        {% if loop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
+                                    {{ salary.department.name }}
+                                </button>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <div class="tab-content" id="{{ filial|replace(' ', '_') }}-content">
+                    {% for salary in salaries %}
+                        {% if salary.filial.name == filial %}
+                            <div class="tab-pane {% if loop.first %}active{% endif %}"
+                                 id="{{ salary.department.name|replace(' ', '_') }}-content" role="tabpanel"
+                                 aria-labelledby="{{ salary.department.name|replace(' ', '_') }}-tab">
+                                 <p>Фикс: {{ salary.fix }}</p>
+                                 <p>Grid:</p>
+                                 <ul>
+                                    {% for grid in salary.grid %}
+                                        <li>Лимит: {{ grid.limit }}, Процент: {{ grid.percent }}</li>
+                                    {% endfor %}
+                                 </ul>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div> -->
+    
+
     <ul class="nav nav-tabs" id="myTab" role="tablist">
 
         {% for salary in salaries %}
@@ -25,10 +84,9 @@
         </li>
         {% endfor %}
     </ul>
-
     <div class="tab-content" id="myTabContent">
         {% for salary in salaries %}
-
+            {{ salary }}
             <div class="tab-pane {% if salary.department.name == salaries[0].department.name %}active{% endif %}"
             id="{{ salary.department.name|replace(' ', '_') }}" role="tabpanel"
             aria-labelledby="{{ salary.department.name|replace(' ', '_') }}-tab">
@@ -52,9 +110,7 @@
                 </label>
                 {% endfor %}
             </div>
-            <!-- <button class="btn btn-success save-button"
-                style="margin-top: 7%; width: auto; float: right; padding: 1% 2%" onclick="test()">Сохранить</button>
-            <br> -->
+
         </div>
         {% endfor %}
     </div>

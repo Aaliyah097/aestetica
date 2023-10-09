@@ -11,7 +11,7 @@
 
 <!-- <p class="description first_desk">Сотрудники</p> -->
 
-<div class="block_data" >
+<div class="block_data">
 
     <div class="block_data__change">
         <div class="block_data__change__content">
@@ -87,98 +87,136 @@
     <div class="block_data__add">
         <div class="block_data__change__content">
             <div class="block_data__change__content_header">
-                <p>Редактирование расходников</p>
+                <p>
+                    <select name="" id="select_consumables" class="select_consumables">
+                        <option value="ChangeConsumables">Редактирование расходников</option>
+                        <option value="ChangeService">Редактирование услуг</option>
+                    </select>
+                </p>
                 <button class="btn_none" id="refreshDataBonus" onclick="transfromThisElement('refreshDataBonus')">
                     <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
                 </button>
             </div>
             <hr>
 
+            <div id="ChangeConsumables">
+                <form action="" id="saveConsumables">
+                    <div class="block_data__add__content">
+                        <label class="label_date" style="width: 100%">Услуги <br>
+                            <select class="js-select2" name="service" required>
+                                {% for s in services | sort(attribute='code') %}
+                                <!-- <option value="" selected disabled>выберите услугу</option> -->
+                                <option value="{{ s.code }}">{{ s.code }} {{ s.name }}</option>
+                                {% endfor %}
 
-            <form action="" id="saveConsumables">
-                <div class="block_data__add__content">
-                    <label class="label_date" style="width: 100%">Услуги <br>
-                        <select class="js-select2" name="service" required>
-                            {% for s in services | sort(attribute='code') %}
-                            <!-- <option value="" selected disabled>выберите услугу</option> -->
-                            <option value="{{ s.code }}">{{ s.code }} {{ s.name }}</option>
+                            </select>
+                        </label>
+
+                        <label class="label_date" style="width: 100%">Техники <br>
+                            <select class="selectPriceCost" name="staff">
+                                <option value="">Отсутствует</option>
+                                {% for t in technicians %}
+                                <option value="{{ t.name }}">{{ t.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="label_date" style="width: 100%">Сумма <br>
+                            <input type="number" placeholder="введите сумму" class="selectPriceCost" name="cost"
+                                id="costPriceAddSebe" required>
+                        </label>
+                    </div>
+
+                    <div style="display: flex; justify-content: end; margin: 3%">
+                        <button class="btn btn-dark" type="submit">Сохранить данные</button>
+                    </div>
+                </form>
+                <p style="margin-top: 2%;" class="total">Всего записей: {{ consumables|length }}</p>
+
+
+
+
+                <div style="max-height: 50vh; max-width: 96vw; overflow: auto;" class="">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr class="sticks">
+                                <th colspan="2">Услуга</th>
+                                <!-- Используем класс col-3 для столбца, который будет занимать 25% ширины -->
+                                <th>Техник</th>
+                                <!-- Используем класс col для столбца, который будет занимать оставшиеся 75% ширины -->
+                                <th>Сумма cтар.</th>
+                                <th>Сумма нов</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cons in consumables | sort(attribute="service.code") %}
+                            <tr>
+                                <td colspan="2">{{ cons.service.code }} {{ cons.service.name }}</td>
+                                <td>{{ cons.technician.name }}</td>
+                                <td>
+                                    <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}"
+                                        style="font-size: 13px !important; text-align: center;">
+                                </td>
+                                <td>
+                                    <input type="text" value="{{ cons.cost_new }}" id="costInputNew_{{ cons.pk }}"
+                                        style="font-size: 13px !important;text-align: center;">
+                                </td>
+                                <td>
+                                    <div class="btn-group" style="width: 100%;">
+                                        <button type="button" class="Action" data-bs-toggle="dropdown"
+                                            aria-expanded="false" style="white-space: nowrap;">
+                                            Действия <span>▽</span>
+                                        </button>
+                                        <ul class="dropdown-menu" style="width: 100%">
+                                            <li>
+                                                <a class="dropdown-item" style="width: 100%"
+                                                    onclick="handleEditClick('{{ cons.pk }}')">Сохранить</a>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" style="width: 100%"
+                                                    onclick="deleteThisRow('{{ cons.pk  }}')">Удалить</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
                             {% endfor %}
-
-                        </select>
-                    </label>
-
-                    <label class="label_date" style="width: 100%">Техники <br>
-                        <select class="selectPriceCost" name="staff">
-                            <option value="">Отсутствует</option>
-                            {% for t in technicians %}
-                            <option value="{{ t.name }}">{{ t.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </label>
-                    <label class="label_date" style="width: 100%">Сумма <br>
-                        <input type="number" placeholder="введите сумму" class="selectPriceCost" name="cost"
-                            id="costPriceAddSebe" required>
-                    </label>
+                        </tbody>
+                    </table>
                 </div>
-
-                <div style="display: flex; justify-content: end; margin: 3%">
-                    <button class="btn btn-dark" type="submit">Сохранить данные</button>
-                </div>
-            </form>
-            <p style="margin-top: 2%;" class="total">Всего записей: {{ consumables|length }}</p>
-
-
-
-
-            <div style="max-height: 50vh; max-width: 96vw; overflow: auto;" class="">
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr class="sticks">
-                            <th colspan="2">Услуга</th> <!-- Используем класс col-3 для столбца, который будет занимать 25% ширины -->
-                            <th >Техник</th> <!-- Используем класс col для столбца, который будет занимать оставшиеся 75% ширины -->
-                            <th>Сумма cтар.</th>
-                            <th>Сумма нов</th>
-                            <th>Действие</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cons in consumables | sort(attribute="service.code") %}
+            </div>
+            <div id="ChangeService" style="position: relative">
+                <input type="text" id="searchInServices" class="input_and_select" oninput="searchServices(this)">
+                <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
+                    <table class="table table-hovered table-bordered">
                         <tr>
-                            <td colspan="2">{{ cons.service.code }} {{ cons.service.name }}</td>
-                            <td>{{ cons.technician.name }}</td>
-                            <td>
-                                <input type="text" value="{{ cons.cost }}" id="costInput_{{ cons.pk }}" style="font-size: 13px !important; text-align: center;"
-                                     >
+                            <th>Код</th>
+                            <th>Наименование</th>
+                            <th>Актуальность</th>
+                        </tr>
+                        {% for s in services | sort(attribute='code') %}
+                        <tr>
+                            <td>{{ s.code }}</td>
+                            <td style="position: relative;">
+                                <textarea name="" id="textarea_{{ s.code }}" cols="45" rows="2">{{ s.name }}</textarea>
                             </td>
                             <td>
-                                <input type="text" value="{{ cons.cost_new }}" id="costInputNew_{{ cons.pk }}" style="font-size: 13px !important;text-align: center;"
-                                   >
-                            </td>
-                            <td>
-                                <div class="btn-group" style="width: 100%;">
-                                    <button type="button" class="Action" data-bs-toggle="dropdown"
-                                        aria-expanded="false" style="white-space: nowrap;">
-                                        Действия <span>▽</span>
-                                    </button>
-                                    <ul class="dropdown-menu" style="width: 100%">
-                                        <li>
-                                            <a class="dropdown-item" style="width: 100%"
-                                                onclick="handleEditClick('{{ cons.pk }}')">Сохранить</a>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item" style="width: 100%"
-                                                onclick="deleteThisRow('{{ cons.pk  }}')">Удалить</button>
-                                        </li>
-                                    </ul>
-                                </div>
+                                {% if s.is_submit == True %}
+                                    <input type="checkbox" checked data-cargo-code="{{ s.code }}"
+                                        data-cargo-name="{{ s.name }}" onchange="ChangeIsSubmit(this)">
+                                {% else %}
+                                    <input type="checkbox" data-cargo-code="{{ s.code }}"
+                                        data-cargo-name="{{ s.name }}" onchange="ChangeIsSubmit(this)">
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </table>
+                </div>
             </div>
+
             <hr>
-            <br><br>   <br><br>   <br><br>   <br><br>   <br><br>   <br><br>
+            <br><br> <br><br> <br><br> <br><br> <br><br> <br><br>
 
 
         </div>

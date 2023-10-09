@@ -10,17 +10,20 @@
     --DescriptionColor: #8E8E8E;
     --black: #212529;
 }
-.prompt{
+
+.prompt {
     color: var(--DescriptionColor);
     padding: 3% 2%;
     font-size: 13px;
 }
+
 button,
 button:active,
-button:focus  {
-cursor: pointer;
-  border:none;
+button:focus {
+    cursor: pointer;
+    border: none;
 }
+
 input,
 select,
 option {
@@ -84,6 +87,33 @@ option {
     font-size: var(--FontSizeText)
 }
 
+.select_consumables {
+    text-decoration: none;
+    outline: none;
+    border-radius: 0.4rem;
+    background-color: #efefef;
+    border: #bdc3c7 0.1rem solid;
+    padding: 0rem 1rem;
+    font-size: 1rem;
+    height: 2rem;
+}
+
+#ChangeService>input {
+    width: 95%;
+    height: 2rem;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: white;
+}
+
+
+
+.select_consumables:focus {
+    border: none;
+    text-decoration: none;
+}
+
 .input_and_select:focus {
     outline: none;
     border: #303030 0.1rem solid;
@@ -100,9 +130,10 @@ option {
     margin-top: 2%;
     font-size: var(--FontSizeText);
 }
-.sync_button{
+
+.sync_button {
     border-radius: 0.4rem;
-    background-color: rgb(93,121,93);
+    background-color: rgb(93, 121, 93);
     color: white;
     text-align: center;
     padding: 0rem 1rem;
@@ -112,7 +143,8 @@ option {
     font-size: var(--FontSizeText);
     margin-top: 4%;
 }
-.sync_button:hover{
+
+.sync_button:hover {
     background-color: rgb(71, 94, 71);
 
 }
@@ -210,12 +242,15 @@ td {
     margin-bottom: 5%;
     position: relative;
 }
-.block_data__change{
+
+.block_data__change {
     max-height: 90vh;
 }
+
 .block_data__add {
     max-height: 90vh;
 }
+
 .block_data__add__content {
     position: relative;
     display: flex;
@@ -226,23 +261,27 @@ td {
 }
 
 .block_data__add__content {
-    display: flex; /* Размещаем элементы в строку */
-    justify-content: space-between; /* Равномерно распределяем пространство между элементами */
-    align-items: center; /* Выравниваем элементы по вертикали по центру */
+    display: flex;
+    /* Размещаем элементы в строку */
+    justify-content: space-between;
+    /* Равномерно распределяем пространство между элементами */
+    align-items: center;
+    /* Выравниваем элементы по вертикали по центру */
 
-  }
-  
-  /* Убираем внешние отступы у элементов */
-  .block_data__add__content select,
-  .block_data__add__content input {
+}
+
+/* Убираем внешние отступы у элементов */
+.block_data__add__content select,
+.block_data__add__content input {
     margin: 0;
-  }
-  
-  /* Устанавливаем общий размер для всех элементов */
-  .block_data__add__content select,
-  .block_data__add__content input {
-    width: 90%; 
-  }
+}
+
+/* Устанавливаем общий размер для всех элементов */
+.block_data__add__content select,
+.block_data__add__content input {
+    width: 90%;
+}
+
 /* 
 .block_data__add__content select {
     max-width: 300px;
@@ -290,9 +329,11 @@ td {
 #showChange.transform {
     transform: rotate(180deg);
 }
-#showChange{
+
+#showChange {
     display: none;
 }
+
 #refreshData.transform {
     transform: rotate(360deg);
 }
@@ -308,16 +349,18 @@ td {
     table-layout: fixed;
 }
 
-.selectPriceCost{
+.selectPriceCost {
     border: 1px solid #969696;
     border-radius: 3px;
     padding: 2px 20px 2px 8px;
 
 }
-.selectPriceCost:focus{
+
+.selectPriceCost:focus {
     outline: none;
     border: 2px solid #969696;
 }
+
 /* Конец сотрудники */
 
 
@@ -373,9 +416,11 @@ td {
     .description {
         display: none;
     }
-    #showChange{
+
+    #showChange {
         display: block;
     }
+
     .input_block {
         width: 80%;
         margin: 0;
@@ -398,7 +443,6 @@ td {
         /* width: 50%; */
         padding: 0rem 1rem;
         font-size: var(--FontSizeText)
-
     }
 
     .logo_img {
@@ -438,10 +482,12 @@ td {
         display: flex;
         position: relative;
     }
-    .block_data__add{
+
+    .block_data__add {
         height: 95vh;
         max-height: 100vh;
     }
+
     .block_data__add__content {
         display: flex;
         flex-direction: column;
@@ -456,10 +502,12 @@ td {
         font-size: 16px;
         margin: 5% 0 0 1%;
     }
+
     .block_data__add__content select,
     .block_data__add__content input {
-      width:97%; 
+        width: 97%;
     }
+
     .table-staff {
         table-layout: auto;
         margin-top: 1%;

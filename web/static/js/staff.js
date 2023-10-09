@@ -1,5 +1,21 @@
+document.addEventListener("DOMContentLoaded", () => {
+    ChangeService.style.display = 'none'
+  });
+  class Loader {
+    constructor(loader) {
+        this.loader = document.querySelector('.bgDark')
+    }
+    LoaderOn() {
+        this.loader.style = 'display: block'
+    }
+    LoaderOff() {
+        this.loader.style = 'display: none'
+
+    }
+}
 const loader = document.querySelector('.bgDark')
 let originalHeaderText = '';
+
 
 $(document).ready(function () {
     $('.js-select2').select2({
@@ -67,6 +83,16 @@ showChange.addEventListener('click', () => {
     };
 })
 
+select_consumables.addEventListener('change', () => {
+    if(select_consumables.value == 'ChangeConsumables') {
+        ChangeConsumables.style = 'display: block;'
+        ChangeService.style = 'display: none;'
+    } else {
+        ChangeConsumables.style = 'display: none;'
+        ChangeService.style = 'display: block;'
+        searchInServices.focus()
+    }
+})
 // showChange.addEventListener('click', ())
 
 function getSalaryCurrentEmloyee(value) {
@@ -143,6 +169,7 @@ function createBonus(value) {
     let data_bonus = document.getElementById('date_begin').value
     let data_bonus_end = document.getElementById('date_end').value
     let value_bonus = document.getElementById('amount').value
+    let comment = document.getElementById('comment').value
     let name = localStorage.getItem('name')
 
     if (!data_bonus || !value_bonus) {
@@ -154,6 +181,7 @@ function createBonus(value) {
     form.append('amount', value_bonus)
     form.append('date_begin', data_bonus)
     form.append('date_end', data_bonus_end)
+    form.append('comment', comment)
     fetch(`/bonus`, {
         method: 'POST',
         body: form
@@ -164,8 +192,8 @@ function createBonus(value) {
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')
-        setTimeout(() => { location.reload() }, 1500)
-    }).catch(error => {
+        // setTimeout(() => { location.reload() }, 1500)
+    }).catch((error) => {
 
     })
 }
@@ -286,6 +314,56 @@ function deleteThisRow(id) {
     })
 }
 
+
+function ChangeIsSubmit(checkbox) {
+    console.log(checkbox)
+    const cargoCode = checkbox.getAttribute('data-cargo-code');
+    const cargoName = checkbox.getAttribute('data-cargo-name');
+    const newValue = checkbox.checked; // Получаем новое значение чекбокса
+
+    fetch('/services/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            code: cargoCode,
+            name: cargoName,
+            is_submit: newValue,
+        }),
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log(`Значение чекбокса для ${cargoName} (код ${cargoCode}) успешно обновлено.`);
+        } else {
+            console.error(`Ошибка при обновлении значения чекбокса для ${cargoName} (код ${cargoCode}).`);
+        }
+    })
+    .catch(error => {
+        console.error(`Произошла ошибка: ${error}`);
+    });
+}
+
+function searchServices(input) {
+    const filter = input.value.toLowerCase(); // Получаем значение из input и переводим его в нижний регистр
+
+    const table = document.querySelector(".table"); // Получаем таблицу
+    const rows = table.getElementsByTagName("tr"); // Получаем все строки таблицы
+
+    // Проходим по каждой строке, начиная с 1, так как первая строка - заголовки
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const nameCell = row.cells[1]; // Получаем ячейку с именем
+        const name = nameCell.querySelector("textarea").value.toLowerCase(); // Получаем значение имени и переводим его в нижний регистр
+
+        // Проверяем, содержит ли имя фильтрующий текст
+        if (name.includes(filter)) {
+            row.style.display = ""; // Если содержит, отображаем строку
+        } else {
+            row.style.display = "none"; // Если не содержит, скрываем строку
+        }
+    }
+}
 
 
 

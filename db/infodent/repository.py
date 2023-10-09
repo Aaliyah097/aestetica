@@ -323,3 +323,13 @@ class Repository:
                 total += pay['AVANS_AMOUNT'] or 0
 
             return total
+
+    def get_services(self) -> list[dict]:
+        query = """SELECT schid, schname, kodoper FROM wschema"""
+
+        with self.connector as cursor:
+            cursor.execute(query)
+            return self.map_headings(
+                columns=[column[0] for column in cursor.description],
+                data=cursor.fetchall()
+            )

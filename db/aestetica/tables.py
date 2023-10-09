@@ -5,7 +5,7 @@ from sqlalchemy import (
     select,
     ForeignKey, create_engine, update, Table,
     Column, DateTime, UniqueConstraint, delete,
-    or_
+    or_, and_
 )
 
 from sqlalchemy.orm import (
@@ -74,12 +74,17 @@ class Salary(Base):
     __tablename__ = 'salary'
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
-    staff: Mapped[str] = mapped_column((ForeignKey('staff.name')))
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     staff_backref = relationship(
         "Staff", backref=backref("staff", cascade="all, delete-orphan")
     )
     department: Mapped[str] = mapped_column(ForeignKey('departments.name'))
     fix: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+
+    filial: Mapped[str] = mapped_column(ForeignKey('filials.name'), nullable=True, default=None)
+    filial_backref = relationship(
+        "Filial", backref=backref("filial", cascade="all, delete-orphan")
+    )
 
 
 class SalaryGrid(Base):
@@ -113,6 +118,7 @@ class Consumables(Base):
     )
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'), nullable=True)
     cost: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+    cost_new: Mapped[float] = mapped_column(Float(), default=0, nullable=True)
 
 
 class Bonus(Base):
@@ -124,3 +130,4 @@ class Bonus(Base):
     date_end: Mapped[datetime.date] = mapped_column(Date())
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
     amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+    comment: Mapped[str] = mapped_column(String(255), default=None, nullable=True)

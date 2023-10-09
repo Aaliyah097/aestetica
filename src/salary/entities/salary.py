@@ -3,13 +3,15 @@ from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.department import Department
 from src.salary.entities.salary_grid import SalaryGrid
+from src.staff.entities.filial import Filial
 
 
 class Salary:
     def __init__(self,
                  staff: Staff,
                  department: Department,
-                 fix: float = 0):
+                 fix: float = 0,
+                 filial: Filial = None):
         self.id: int | None = None
         self.staff: Staff = staff
         self.department: Department = department
@@ -19,6 +21,7 @@ class Salary:
         self._income: float = 0
         self._bonuses: list[float] = []
         self._award: float = 0
+        self.filial: Filial = filial
 
     def add_bonus(self, value: float) -> None:
         try:
@@ -95,7 +98,8 @@ class Salary:
                 grid.serialize() for grid in self._grid
             ],
             'volume': self._volume,
-            'income': self._income
+            'income': self._income,
+            'filial': self.filial.serialize() if self.filial else None
         }
 
     def __repr__(self):

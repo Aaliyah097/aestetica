@@ -258,10 +258,11 @@ document.getElementById('saveConsumables').addEventListener('submit', function (
 });
 
 function handleEditClick(pk) {
-
-    const newValue = document.getElementById(`costInput_${pk}`).value;
+    const OldCost = document.getElementById(`costInput_${pk}`).value;
+    const NewCost = document.getElementById(`costInputNew_${pk}`).value;
     let formData = new FormData()
-    formData.append('cost', newValue)
+    formData.append('cost', OldCost)
+    formData.append('cost_new', NewCost)
 
     fetch(`/consumables/${pk}/update`, {
         method: 'POST',

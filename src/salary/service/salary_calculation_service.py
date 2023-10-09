@@ -70,6 +70,8 @@ class SalaryCalculationService:
     def __init__(self, filial: Filial | str,
                  date_begin: datetime.date = None,
                  date_end: datetime.date = None):
+        self.filial = Filial(filial) if type(filial) == str else filial
+
         self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
         self.submit_services: list[Service] = ServicesRepository.get_submits()
         self.schedule_repo: ScheduleRepository = ScheduleRepository(filial)
@@ -84,6 +86,7 @@ class SalaryCalculationService:
         month = date_begin.month
         year = date_begin.year
         first_day, last_day = calendar.monthrange(year, month)
+        first_day = first_day if first_day else 1
 
         self.month_volume: float = self.treatment_repo.get_month_volume_payments(
             datetime.date(year, month, first_day), datetime.date(year, month, last_day)
@@ -135,7 +138,7 @@ class SalaryCalculationService:
             if not isinstance(staff, Assistant) and not isinstance(staff, SeniorAssistant) \
                     and not isinstance(staff, Administrator) and not isinstance(staff, Householder):
                 continue
-            salary = AssistantsSalaryCalculator().calc(staff, schedule)
+            salary = AssistantsSalaryCalculator().calc(staff, schedule, self.filial)
             award = self.calc_award(staff)
             salary.add_award(award)
 
@@ -159,7 +162,7 @@ class SalaryCalculationService:
                     or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator) \
                     or isinstance(staff, Householder):
                 continue
-            salary = self.salary_repo.get_salary(staff, Department("Прочее"))
+            salary = self.salary_repo.get_salary(staff, Department("Прочее"), filial=self.filial)
             salary.volume = 1
             award = self.calc_award(staff)
             salary.add_award(award)
@@ -194,7 +197,7 @@ class SalaryCalculationService:
 
         calculator = AnesthetistCalculator()
         for staff, treatments in data.items():
-            salary = calculator.calc(staff, treatments)
+            salary = calculator.calc(staff, treatments, filial=self.filial)
             salary_reports.append(
                 DoctorsSalaryReport(
                     staff=staff,
@@ -220,7 +223,7 @@ class SalaryCalculationService:
         calculator = DoctorSalaryCalculator()
 
         for doctor, departments in treatments.items():
-            salaries, marked_treatments = calculator.calc(doctor, departments)
+            salaries, marked_treatments = calculator.calc(doctor, departments, filial=self.filial)
             salary_report = DoctorsSalaryReport(
                 staff=doctor,
                 income=sum([salary.income for salary in salaries]),

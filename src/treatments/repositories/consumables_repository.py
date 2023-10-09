@@ -20,7 +20,8 @@ class ConsumablesRepository:
                     technician=StaffRepository().get_staff_by_name(c.staff),
                     service=ServicesRepository().get_by_code(c.service),
                     cost=c.cost,
-                    pk=c.id
+                    pk=c.id,
+                    cost_new=c.cost_new
                 )
                 for c in session.scalars(select(ConsumablesTable)).all()
             ]
@@ -47,10 +48,11 @@ class ConsumablesRepository:
             return Consumables(
                 service=service,
                 technician=technician,
-                cost=consumables.cost
+                cost=consumables.cost,
+                cost_new=consumables.cost_new
             ) if consumables else None
 
-    def create(self, technician_name: str, service_code: str, cost: float = 0) -> None:
+    def create(self, technician_name: str, service_code: str, cost: float = 0, cost_new: float = 0) -> None:
         if technician_name:
             staff = StaffRepository().get_staff_by_name(technician_name)
             if not staff:
@@ -71,7 +73,8 @@ class ConsumablesRepository:
                 ConsumablesTable(
                     service=service_code,
                     staff=technician_name,
-                    cost=cost
+                    cost=cost,
+                    cost_new=cost_new
                 )
             )
             session.commit()
@@ -86,10 +89,11 @@ class ConsumablesRepository:
             session.commit()
 
     @staticmethod
-    def update(pk: int, cost: float) -> None:
+    def update(pk: int, cost: float = 0, cost_new: float = 0) -> None:
         with Base() as session:
             consumables = session.get(ConsumablesTable, pk)
             if not consumables:
                 return
             consumables.cost = cost
+            consumables.cost_new = cost_new
             session.commit()

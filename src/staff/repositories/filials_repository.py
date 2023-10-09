@@ -19,6 +19,21 @@ class FilialsRepository:
             session.commit()
 
     @staticmethod
+    def get_all() -> list[Filial]:
+        with Base() as session:
+            return [
+                Filial(
+                    name=f.name,
+                    db_address=f.db_address,
+                    db_port=f.db_port,
+                    db_name=f.db_name,
+                    db_user=f.db_user,
+                    db_password=f.db_password
+                )
+                for f in session.query(FilialTable).all()
+            ]
+
+    @staticmethod
     def get_by_name(name: str) -> Filial | None:
         if not name:
             return None

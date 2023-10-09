@@ -30,7 +30,7 @@
                 <div class="block_watched">
                     <table class="table table-bordered table-hover table-staff">
                         <thead>
-                            <tr class="sticks   ">
+                            <tr class="sticks">
                                 <th onclick="makeInput(this)">ФИО</th>
                                 <th>Роль</th>
                                 <th>Новый врач</th>
@@ -186,10 +186,15 @@
                 </div>
             </div>
             <div id="ChangeService" style="position: relative">
-                <input type="text" id="searchInServices" class="input_and_select" oninput="searchServices(this)">
-                <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
-                    <table class="table table-hovered table-bordered">
-                        <tr>
+                <img src="../static//img/icon_search.png" alt="">
+                
+                    <!-- <input type="text" id="searchInServices" class="input_and_select" oninput="searchServices(this)" placeholder="Наименование услуги">
+                    <img src="../static/img/icon_search.png" alt="" height="190" style="position: absolute; right: 0; margin-right: 2%;" />
+             -->
+             <input class="input-elevated" type="text" placeholder="Поиск" id="searchInServices"  oninput="searchServices(this)">
+                <div style="max-height: 60vh; max-width: 96vw; overflow: auto; margin-top: 2%;">
+                    <table class="table table-hovered table-bordered" id="TableService">
+                        <tr class="sticks">
                             <th>Код</th>
                             <th>Наименование</th>
                             <th>Актуальность</th>

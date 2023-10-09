@@ -345,26 +345,25 @@ function ChangeIsSubmit(checkbox) {
 }
 
 function searchServices(input) {
-    const filter = input.value.toLowerCase(); // Получаем значение из input и переводим его в нижний регистр
+    const searchText = input.value.toLowerCase(); // Получаем текст из поля ввода и приводим его к нижнему регистру
+    const table = document.getElementById("TableService"); // Получаем таблицу
 
-    const table = document.querySelector(".table"); // Получаем таблицу
-    const rows = table.getElementsByTagName("tr"); // Получаем все строки таблицы
+    // Получаем все строки таблицы, начиная со второй строки (первая строка содержит заголовки)
+    const rows = table.querySelectorAll("tr:not(:first-child)");
 
-    // Проходим по каждой строке, начиная с 1, так как первая строка - заголовки
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const nameCell = row.cells[1]; // Получаем ячейку с именем
-        const name = nameCell.querySelector("textarea").value.toLowerCase(); // Получаем значение имени и переводим его в нижний регистр
+    // Перебираем строки таблицы и скрываем те, которые не содержат текст поиска
+    rows.forEach((row) => {
+        const nameCell = row.querySelector("td:nth-child(2)"); // Получаем ячейку с наименованием
+        const name = nameCell.textContent.toLowerCase(); // Получаем текст из ячейки и приводим его к нижнему регистру
 
-        // Проверяем, содержит ли имя фильтрующий текст
-        if (name.includes(filter)) {
-            row.style.display = ""; // Если содержит, отображаем строку
+        // Проверяем, содержит ли текст ячейки текст поиска
+        if (name.includes(searchText)) {
+            row.style.display = ""; // Если содержит, то строка видима
         } else {
-            row.style.display = "none"; // Если не содержит, скрываем строку
+            row.style.display = "none"; // Если не содержит, то строка скрыта
         }
-    }
+    });
 }
-
 
 
 

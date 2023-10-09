@@ -11,6 +11,7 @@
     </label>
     <br><br>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
+
         {% for salary in salaries %}
         <li class="nav-item" role="presentation">
             <button class="nav-link {% if salary.department.name == salaries[0].department.name %}active{% endif %}"

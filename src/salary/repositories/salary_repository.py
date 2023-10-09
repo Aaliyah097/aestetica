@@ -167,6 +167,6 @@ class SalaryRepository:
 
                 salaries[row.filial].append(salary)
 
-        list_salaries = [s for f, s in salaries.items()]
+        list_salaries = [s[0] for f, s in salaries.items()]
 
         return list_salaries

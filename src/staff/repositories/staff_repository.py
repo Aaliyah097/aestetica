@@ -76,6 +76,15 @@ class StaffRepository:
             session.delete(staff_table)
             session.commit()
 
+    def delete_staff_by_name(self, staff_name: str) -> None:
+        staff_table = self._get_staff_by_name(staff_name)
+        if not staff_table:
+            return
+
+        with Base() as session:
+            session.delete(staff_table)
+            session.commit()
+
     @staticmethod
     def _get_staff_by_name(staff_name: str) -> StaffTable | None:
         with Base() as session:

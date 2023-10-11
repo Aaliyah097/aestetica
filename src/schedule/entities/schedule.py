@@ -14,6 +14,7 @@ class Schedule:
         self.filial: Filial = filial
         self.department: Department = department or Department("Прочее")
         self.bonus: float = 0
+        self.comment: str | None = None
 
     def serialize(self) -> dict:
         return {
@@ -21,7 +22,8 @@ class Schedule:
             'staff': self.staff.serialize() if self.staff else None,
             'filial': self.filial.serialize() if self.filial else None,
             'department': self.department.serialize() if self.department else None,
-            'bonus': self.bonus
+            'bonus': self.bonus,
+            'comment': self.comment
         }
 
     def __repr__(self):

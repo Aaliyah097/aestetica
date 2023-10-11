@@ -51,22 +51,25 @@ class SalaryRepository:
 
             session.commit()
 
-    def create_salary(self, staff: Staff, department: Department, fix: float = 0) -> Salary | None:
+    def create_salary(self, staff: Staff, department: Department, fix: float = 0, filial: Filial = None) -> Salary | None:
         with Base() as session:
             query = select(SalaryTable).where(SalaryTable.staff == staff.name,
-                                              SalaryTable.department == department.name)
+                                              SalaryTable.department == department.name,
+                                              SalaryTable.filial == filial.name
+                                              )
             if session.scalar(query):
                 return
 
             salary = SalaryTable(
                 staff=staff.name,
                 department=department.name,
-                fix=fix
+                fix=fix,
+                filial=filial.name
             )
             session.add(salary)
             session.commit()
 
-            return self.get_salary(staff, department)
+            return self.get_salary(staff, department, filial)
 
     @staticmethod
     def create_grid(salary: Salary, grid: list[SalaryGrid]) -> None:
@@ -167,6 +170,6 @@ class SalaryRepository:
 
                 salaries[row.filial].append(salary)
 
-        list_salaries = [s[0] for f, s in salaries.items()]
+        list_salaries = [s for f, s in salaries.items()]
 
         return list_salaries

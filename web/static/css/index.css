@@ -203,7 +203,12 @@ option {
     /* min-height: 50vh; */
 }
 
-
+td>textarea{
+    width: 100%;
+    height: 100%;
+    padding: 2%;
+    border: lightgrey;
+}
 
 th {
     text-align: center;
@@ -420,6 +425,34 @@ td {
     background: lightsalmon;
 }
 
+.success{
+    animation: change_back 0.8s linear;
+}
+@keyframes  change_back {
+    0%{
+        background: none;
+    }
+    50%{
+        background: lightgreen;
+    }
+    100%{
+        background: none;
+    }
+}
+.error{
+    animation: change_back_error 0.8s linear;
+}
+@keyframes change_back_error {
+    0%{
+        background: none;
+    }
+    50%{
+        background: rgb(201, 23, 23);
+    }
+    100%{
+        background: none;
+    }
+}
 /* Конец анимации */
 
 

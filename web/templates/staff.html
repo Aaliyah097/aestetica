@@ -202,8 +202,11 @@
                         {% for s in services | sort(attribute='code') %}
                         <tr>
                             <td>{{ s.code }}</td>
-                            <td style="position: relative;">
-                                <textarea name="" id="textarea_{{ s.code }}" cols="45" rows="2">{{ s.name }}</textarea>
+                            <td style="position: relative; padding: 0; margin: 0;">
+                                <textarea name="" id="textarea_{{ s.code }}"
+                                onkeydown="saveNameOperation(event, this)" data-cargo-code="{{ s.code }}"
+                                data-cargo-issubmit="{{ s.is_submit }}"
+                                >{{ s.name }}</textarea>
                             </td>
                             <td>
                                 {% if s.is_submit == True %}

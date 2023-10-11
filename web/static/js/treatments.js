@@ -131,3 +131,6 @@ sync_button.addEventListener('click', async (event) => {
         getNotifications(`Ошибка! Данные не синхронизированы. ${error}`, 'alert-danger');
     }
 });
+
+
+

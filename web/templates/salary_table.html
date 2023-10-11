@@ -236,7 +236,8 @@
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>
-                <th colspan="2">Надбавка</th>
+                <th>Надбавка</th>
+                <th colspan="2">Комментарий</th>
                 <th></th>
             </tr>
             {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
@@ -245,7 +246,12 @@
                 <td>{{ razbivka_asisst.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka_asisst.department.name }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                <td colspan="2">{{ razbivka_asisst.bonus }}</td>
+                <td>{{ razbivka_asisst.bonus }}</td>
+                <td colspan="2">
+                    {% if razbivka_asisst.comment is not none %}
+                        {{ razbivka_asisst.comment }}
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
             {# сумма для ассистентов #}
@@ -255,6 +261,7 @@
                 <td colspan="2"></td>
                 <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2,
                     'floor')).replace(',', ' ') }}</td>
+                <td></td>
                 <td></td>
             </tr>
             {% endfor %}
@@ -303,7 +310,8 @@
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>
-                <th colspan="2">Надбавка</th>
+                <th>Надбавка</th>
+                <th colspan="2">Комментарий</th>
                 <th></th>
             </tr>
             {% for razbivka_admin in salary.schedule| sort(attribute="on_date") %}
@@ -312,7 +320,12 @@
                 <td>{{ razbivka_admin.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka_admin.department.name }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                <td colspan="2">{{ razbivka_admin.bonus }}</td>
+                <td >{{ razbivka_admin.bonus }}</td>
+                <td colspan="2">
+                    {% if razbivka_admin.comment is not none %}
+                        {{ razbivka_admin.comment }}
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
             {# сумма для администраторов #}
@@ -323,6 +336,7 @@
                 <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2,
                     'floor')).replace(',', ' ') }}</td>
                 <td></td>
+                <td></td>
             </tr>
             {% endfor %}
 
@@ -332,6 +346,7 @@
                 <td></td>
                 <td>{{ '{0:,} ₽'.format(administrators_report|sum(attribute='income')|round(2, 'floor')).replace(',', '
                     ') }}</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

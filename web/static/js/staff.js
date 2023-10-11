@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     ChangeService.style.display = 'none'
-  });
-  class Loader {
+});
+class Loader {
     constructor(loader) {
         this.loader = document.querySelector('.bgDark')
     }
@@ -84,9 +84,10 @@ showChange.addEventListener('click', () => {
 })
 
 select_consumables.addEventListener('change', () => {
-    if(select_consumables.value == 'ChangeConsumables') {
+    if (select_consumables.value == 'ChangeConsumables') {
         ChangeConsumables.style = 'display: block;'
         ChangeService.style = 'display: none;'
+        location.reload()
     } else {
         ChangeConsumables.style = 'display: none;'
         ChangeService.style = 'display: block;'
@@ -98,6 +99,7 @@ select_consumables.addEventListener('change', () => {
 function getSalaryCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
     let name_modal = value.getAttribute('data-name-modal')
+
     // get_salary_by_staff
     $.ajax(
         {
@@ -105,6 +107,7 @@ function getSalaryCurrentEmloyee(value) {
             url: `/staff/salary?staff=${name}`,
             async: true,
             success: function (data) {
+                console.log(data)
                 document.getElementById('test').innerHTML = data
                 document.querySelector('.save-button').style = 'display: block'
                 document.getElementById('exampleModalLabel').innerHTML = name_modal
@@ -316,7 +319,7 @@ function deleteThisRow(id) {
 
 
 function ChangeIsSubmit(checkbox) {
-    console.log(checkbox)
+
     const cargoCode = checkbox.getAttribute('data-cargo-code');
     const cargoName = checkbox.getAttribute('data-cargo-name');
     const newValue = checkbox.checked; // Получаем новое значение чекбокса
@@ -332,16 +335,21 @@ function ChangeIsSubmit(checkbox) {
             is_submit: newValue,
         }),
     })
-    .then(response => {
-        if (response.ok) {
-            console.log(`Значение чекбокса для ${cargoName} (код ${cargoCode}) успешно обновлено.`);
-        } else {
-            console.error(`Ошибка при обновлении значения чекбокса для ${cargoName} (код ${cargoCode}).`);
-        }
-    })
-    .catch(error => {
-        console.error(`Произошла ошибка: ${error}`);
-    });
+        .then(response => {
+            if (response.ok) {
+                checkbox.parentNode.classList.add('success')
+                setTimeout(() => checkbox.parentNode.classList.remove('success'), 850)
+
+                console.log(`Значение чекбокса для ${cargoName} (код ${cargoCode}) успешно обновлено.`);
+            } else {
+                checkbox.parentNode.classList.add('error')
+                setTimeout(() => checkbox.parentNode.classList.remove('error'), 850)
+                console.error(`Ошибка при обновлении значения чекбокса для ${cargoName} (код ${cargoCode}).`);
+            }
+        })
+        .catch((error) => {
+            console.error(`Произошла ошибка: ${error}`);
+        });
 }
 
 function searchServices(input) {
@@ -364,9 +372,42 @@ function searchServices(input) {
         }
     });
 }
+function saveNameOperation(event, element) {
+    if (event.key === 'Enter') {
+        console.log()
+        const cargoCode = element.getAttribute('data-cargo-code');
+        const cargoIsSubmit = element.getAttribute('data-cargo-issubmit') == 'True' ? true : false
 
+        fetch('/services/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: event.target.value,
+                code: cargoCode,
+                is_submit: cargoIsSubmit
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    element.classList.add('success')
+                    setTimeout(() => element.classList.remove('success'), 850)
+                    getNotifications('Успешно! Наименование изменено', 'alert-success')
 
+                } else {
+                    element.classList.add('error')
+                    setTimeout(() => element.classList.remove('error'), 850)
+                    getNotifications('Ошибка! Не удалось изменить имя услуги', 'alert-danger')
 
+                }
+            })
+            .catch((error) => {
+                console.error(`Произошла ошибка: ${error}`);
+            });
+
+    }
+}
 
 
 

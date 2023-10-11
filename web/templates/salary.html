@@ -1,136 +1,66 @@
-
-<!-- Редактирование зарплатных сеток сотрудников -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salaries and Departments</title>
+</head>
+<body>
     <label for="staffName" class="label_date" style="width: 100%">ФИО<br>
-        <input type="text" class="input_and_select" id="staffName" style="width: 100%"
-            value="{{ salaries[0].staff.name }}" readonly>
+        <input type="text" class="input_and_select" id="staffName" style="width: 100%" value="{{ salaries[0][0]['staff']['name'] }}" readonly>
     </label>
-    <label for="roleName" class="label_date" style="width: 100%">Роль<br>
-        <input type="text" class="input_and_select" id="roleName" style="width: 100%"
-            value="{{ salaries[0].staff.role.name }}" readonly>
+    <label for "roleName" class="label_date" style="width: 100%">Роль<br>
+        <input type="text" class="input_and_select" id="roleName" style="width: 100%" value="{{ salaries[0][0]['staff']['role']['name'] }}" readonly>
     </label>
     <br><br>
-    <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
-        {% set unique_filials = [] %}
-        {% for salary in salaries %}
-            {% if salary.filial.name not in unique_filials %}
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link {% if loop.first %}active{% endif %}"
-                            id="{{ salary.filial.name|replace(' ', '_') }}-tab" data-bs-toggle="tab"
-                            data-bs-target="#{{ salary.filial.name|replace(' ', '_') }}-content" type="button"
-                            role="tab" aria-controls="{{ salary.filial.name|replace(' ', '_') }}-content"
-                            {% if loop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
-                        {{ salary.filial.name }}
-                    </button>
-                </li>
-                {% set unique_filials = unique_filials + [salary.filial.name] %}
-            {% endif %}
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        {% for filial in salaries %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ filial[0]['filial']['name'] }}-tab" data-bs-toggle="tab" href="#{{ filial[0]['filial']['name'] }}" role="tab" aria-controls="{{ filial[0]['filial']['name'] }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+                    {{ filial[0]['filial']['name'] }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
-    
-    <div class="tab-content" id="myTabContent">
-        {% for filial in unique_filials %}
-            <div class="tab-pane {% if loop.first %}active{% endif %}" id="{{ filial|replace(' ', '_') }}-content"
-                 role="tabpanel" aria-labelledby="{{ filial|replace(' ', '_') }}-tab">
-                <ul class="nav nav-tabs" id="{{ filial|replace(' ', '_') }}-tab" role="tablist">
-                    {% for salary in salaries %}
-                        {% if salary.filial.name == filial %}
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link {% if loop.first %}active{% endif %}"
-                                        id="{{ salary.department.name|replace(' ', '_') }}-tab" data-bs-toggle="tab"
-                                        data-bs-target="#{{ salary.department.name|replace(' ', '_') }}-content"
-                                        type="button" role="tab"
-                                        aria-controls="{{ salary.department.name|replace(' ', '_') }}-content"
-                                        {% if loop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>
-                                    {{ salary.department.name }}
-                                </button>
-                            </li>
-                        {% endif %}
+
+    <div class="tab-content">
+        {% for filial in salaries %}
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ filial[0]['filial']['name'] }}" role="tabpanel" aria-labelledby="{{ filial[0]['filial']['name'] }}-tab">
+                <ul class="nav nav-tabs" id="departmentTabs-{{ filial[0]['filial']['name'] }}" role="tablist">
+                    {% for department in filial %}
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ department['department']['name'] }}-tab" data-bs-toggle="tab" href="#{{ department['department']['name'] }}" role="tab" aria-controls="{{ department['department']['name'] }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
+                                {{ department['department']['name'] }}
+                            </a>
+                        </li>
                     {% endfor %}
                 </ul>
-                <div class="tab-content" id="{{ filial|replace(' ', '_') }}-content">
-                    {% for salary in salaries %}
-                        {% if salary.filial.name == filial %}
-                            <div class="tab-pane {% if loop.first %}active{% endif %}"
-                                 id="{{ salary.department.name|replace(' ', '_') }}-content" role="tabpanel"
-                                 aria-labelledby="{{ salary.department.name|replace(' ', '_') }}-tab">
-                                 <p>Фикс: {{ salary.fix }}</p>
-                                 <p>Grid:</p>
-                                 <ul>
-                                    {% for grid in salary.grid %}
-                                        <li>Лимит: {{ grid.limit }}, Процент: {{ grid.percent }}</li>
-                                    {% endfor %}
-                                 </ul>
+
+                <div class="tab-content">
+                    {% for department in filial %}
+                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ department['department']['name'] }}" role="tabpanel" aria-labelledby="{{ department['department']['name'] }}-tab">
+                            <label for="fixValue" class="label_date" style="width: 100%">Фикс. сотрудника <span class="salary_id" style="color: transparent;">{{ department.id }}</span><br>
+                                <input type="text" class="salary_input fix-value" style="width: 100%" value="{{ department.fix }}">
+                            </label>
+                            <div class="grid_input">
+                                {% for grid in department['grid'] %}
+                                    <label class="label_date">% <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
+                                        <input type="text" class="salary_input grid-percent" value="{{ grid.percent }}">
+                                    </label>
+                                {% endfor %}
                             </div>
-                        {% endif %}
+                            <div class="grid_input">
+                                {% for grid in department['grid'] %}
+                                    <label class="label_date">Лимит <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
+                                        <input type="text" class="salary_input grid-limit" value="{{ grid.limit }}">
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
                     {% endfor %}
                 </div>
             </div>
         {% endfor %}
-    </div> -->
-    
-
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-
-        {% for salary in salaries %}
-        <li class="nav-item" role="presentation">
-            <button class="nav-link {% if salary.department.name == salaries[0].department.name %}active{% endif %}"
-                id="{{ salary.department.name|replace(' ', '_') }}-tab" data-bs-toggle="tab"
-                data-bs-target="#{{ salary.department.name|replace(' ', '_') }}" type="button" role="tab"
-                aria-controls="{{ salary.department.name|replace(' ', '_') }}" {% if
-                salary.department.name==salaries[0].department.name %} aria-selected="true" {% else %}
-                aria-selected="false" {% endif %}>
-                {{ salary.department.name }}
-            </button>
-        </li>
-        {% endfor %}
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        {% for salary in salaries %}
-            {{ salary }}
-            <div class="tab-pane {% if salary.department.name == salaries[0].department.name %}active{% endif %}"
-            id="{{ salary.department.name|replace(' ', '_') }}" role="tabpanel"
-            aria-labelledby="{{ salary.department.name|replace(' ', '_') }}-tab">
-        
-            <label for="fixValue" class="label_date" style="width: 100%">Фикс. сотрудника <span class="salary_id" style="color: transparent;">{{ salary.id }}</span><br>
-                <input type="text" class="salary_input fix-value" style="width: 100%" value="{{ salary.fix }}">
-            </label>
-        
-            <div class="grid_input">
-                {% for grid in salary.grid %}
-                <label class="label_date">% <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                    <input type="text" class="salary_input grid-percent"  value="{{ grid.percent }}">
-                </label>
-                {% endfor %}
-            </div>
-         
-            <div class="grid_input">
-                {% for grid in salary.grid %}
-                <label class="label_date">Лимит <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                    <input type="text" class="salary_input grid-limit" value="{{ grid.limit }}">
-                </label>
-                {% endfor %}
-            </div>
-
-        </div>
-        {% endfor %}
     </div>
-
-
-
-<style>
-    .grid_input {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2%;
-
-    }
-    .salary_input{
-        width: 100%;
-        border-radius: 0.4rem;
-        background-color: #efefef;
-        border: #bdc3c7 1px solid;
-        height: 3rem;
-        padding: 0rem 0.2rem;
-        font-size: 14px;
-    }
-</style>
+</body>
+</html>

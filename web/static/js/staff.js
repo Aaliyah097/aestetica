@@ -273,30 +273,6 @@ function createBonus(value) {
 
 function CreateSalaryCurrentEmployee() {
 
-
-    // Получение текущего активного филиала
-    // const activeFilialTab = document.querySelector('.nav-link.active');
-
-    // if (activeFilialTab) {
-    //     // Получение текущей активной вкладки внутри филиала
-    //     const tabId = activeFilialTab.getAttribute('href').substr(1); // Убираем символ #
-
-    //     if (tabId) {
-    //         const activeTab = document.getElementById(tabId);
-
-    //         if (activeTab) {
-    //             // Получение ID активного департамента
-    //             const activeDepartmentTab = activeTab.querySelector('.nav-link.active');
-    //             const departmentId = activeDepartmentTab.getAttribute('data-current-id');
-
-    //             if (departmentId) {
-    //                 // departmentId содержит ID активного департамента в активном филиале
-    //                 console.log("ID активного департамента:", departmentId);
-    //             }
-    //         }
-    //     }
-    // }
-
     const activeFilialTab = document.querySelector('.nav-link.active');
 
     if (activeFilialTab) {

@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    ChangeService.style.display = 'none'
+    ChangeService.style = 'display: none;';
+    addStaffBlock.style = 'display: none;'
 });
 class Loader {
     constructor(loader) {
@@ -72,16 +73,16 @@ function transfromThisElement(id) {
     }, 500)
 }
 
-showChange.addEventListener('click', () => {
-    showChange.classList.toggle('transform')
-    let element = document.querySelector('.block_watched')
-    if (element.style.display == "none") {
-        element.style.display = "block"; //Показываем элемент
-    }
-    else {
-        element.style = "display : none;"
-    };
-})
+// showChange.addEventListener('click', () => {
+//     showChange.classList.toggle('transform')
+//     let element = document.querySelector('.block_watched')
+//     if (element.style.display == "none") {
+//         element.style.display = "block"; //Показываем элемент
+//     }
+//     else {
+//         element.style = "display : none;"
+//     };
+// })
 
 select_consumables.addEventListener('change', () => {
     if (select_consumables.value == 'ChangeConsumables') {
@@ -94,6 +95,57 @@ select_consumables.addEventListener('change', () => {
         searchInServices.focus()
     }
 })
+
+
+select_staff.addEventListener('change', () => {
+    if (select_staff.value == 'changeStaffBlock') {
+        changeStaffBlock.style = 'display: block;'
+        addStaffBlock.style = 'display: none;'
+        location.reload()
+    } else {
+        changeStaffBlock.style = 'display: none;'
+        fetch('/roles', {
+            method: 'GET',
+        }).then(response => {
+            return response.json()
+        })
+            .then(res => {
+                for (let role of res) {
+                    let option = document.createElement('option')
+                    option.value = role.name
+                    option.text = role.name
+                    allRoleInCompany.appendChild(option)
+                }
+            }).catch((error) => {
+                console.error(error)
+            })
+        addStaffBlock.style = 'display: block;'
+
+        // searchInServices.focus()
+    }
+})
+function saveNewStaff() {
+    const form = document.getElementById('addStaffForm');
+    const formData = new FormData(form);
+
+    fetch('/staff/create', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => {
+            if (response.ok) {
+                getNotifications('Успешно! Сотрудник создан!', 'alert-success')
+                // Обработка успешного ответа, например, перенаправление на другую страницу
+            } else {
+                // Обработка ошибки
+                getNotifications('Ошибка! Сотрудник не создан!', 'alert-danger')
+                console.error('Произошла ошибка при отправке данных.');
+            }
+        })
+        .catch(error => {
+            console.error('Произошла ошибка:', error);
+        });
+}
 // showChange.addEventListener('click', ())
 
 function getSalaryCurrentEmloyee(value) {
@@ -107,7 +159,6 @@ function getSalaryCurrentEmloyee(value) {
             url: `/staff/salary?staff=${name}`,
             async: true,
             success: function (data) {
-                console.log(data)
                 document.getElementById('test').innerHTML = data
                 document.querySelector('.save-button').style = 'display: block'
                 document.getElementById('exampleModalLabel').innerHTML = name_modal
@@ -120,6 +171,23 @@ function getSalaryCurrentEmloyee(value) {
     )
 }
 
+async function deleteCurrentEmloyee(value) {
+    confirm(`Вы уверены что хотите удалить \nсотрудника - ${value}`, "")
+    if (confirm) {
+        await fetch(`/staff/delete?staff=${value}`, {
+            method: 'POST',
+        })
+            .then(res => {
+                getNotifications('Успешно! Сотрудник удален!', 'alert-success')
+            })
+            .catch((err) => {
+                getNotifications('Ошибка! Сотрудник не удален!', 'alert-danger')
+            })
+        await setTimeout(() => location.reload(), 1000)
+
+    }
+
+}
 
 function getBonusCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
@@ -204,58 +272,216 @@ function createBonus(value) {
 
 
 function CreateSalaryCurrentEmployee() {
-    loader.style = 'display: block'
-    console.log(loader)
-    setTimeout(() => {
-        // Получение элементов для текущей вкладки
-        const tabContent = document.querySelector('.tab-pane.active');
-        const fixValueInput = tabContent.querySelector('.fix-value');
-        const percentInputs = tabContent.querySelectorAll('.grid-percent');
-        const limitInputs = tabContent.querySelectorAll('.grid-limit');
-        const gridIds = tabContent.querySelectorAll('.grid-id');
-        const tabCurrentId = tabContent.querySelector('.salary_id').innerText
 
-        // Получение значений из полей и вывод в консоль
-        const fixValue = fixValueInput.value;
 
-        const gridData = [];
+    // Получение текущего активного филиала
+    // const activeFilialTab = document.querySelector('.nav-link.active');
 
-        percentInputs.forEach((percentInput, index) => {
-            const percent = percentInput.value;
-            const limit = limitInputs[index].value;
-            const id = gridIds[index].textContent; // Получение текстового содержимого элемента
-            gridData.push({
-                id: Number(id),
-                percent: parseFloat(percent),
-                limit: parseFloat(limit)
-            });
-        });
+    // if (activeFilialTab) {
+    //     // Получение текущей активной вкладки внутри филиала
+    //     const tabId = activeFilialTab.getAttribute('href').substr(1); // Убираем символ #
 
-        const data = {
-            'fix': parseFloat(fixValue),
-            'grid': gridData
-        };
+    //     if (tabId) {
+    //         const activeTab = document.getElementById(tabId);
 
-        fetch(`/salary/update/${tabCurrentId}`, {
-            method: 'POST',
-            headers: {
+    //         if (activeTab) {
+    //             // Получение ID активного департамента
+    //             const activeDepartmentTab = activeTab.querySelector('.nav-link.active');
+    //             const departmentId = activeDepartmentTab.getAttribute('data-current-id');
 
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(data),
-        }).then(response => {
-            loader.style = 'display: none'
-            if (response.status == 200) {
-                getNotifications('Успешно! Данные изменены', 'alert-success')
+    //             if (departmentId) {
+    //                 // departmentId содержит ID активного департамента в активном филиале
+    //                 console.log("ID активного департамента:", departmentId);
+    //             }
+    //         }
+    //     }
+    // }
+
+    const activeFilialTab = document.querySelector('.nav-link.active');
+
+    if (activeFilialTab) {
+        // Получение текущей активной вкладки внутри филиала
+        const tabId = activeFilialTab.getAttribute('href').substr(1); // Убираем символ #
+
+        if (tabId) {
+            const activeTab = document.getElementById(tabId);
+
+            if (activeTab) {
+                // Получение ID активного департамента
+                const activeDepartmentTab = activeTab.querySelector('.nav-link.active');
+                const departmentId = activeDepartmentTab.getAttribute('data-current-id');
+
+                if (departmentId) {
+                    // departmentId содержит ID активного департамента в активном филиале
+                    console.log("ID активного департамента:", departmentId);
+
+                    // Найти элементы для ввода percent, limit и fix внутри активного департамента таба
+                    const percentInputs = activeTab.querySelectorAll(`#${activeDepartmentTab.getAttribute('href').substr(1)} .salary_input.grid-percent`);
+                    const limitInputs = activeTab.querySelectorAll(`#${activeDepartmentTab.getAttribute('href').substr(1)} .salary_input.grid-limit`);
+                    const fixValueInput = activeTab.querySelector(`#${activeDepartmentTab.getAttribute('href').substr(1)} .salary_input.fix-value`);
+                    const gridIdElements = activeTab.querySelectorAll(`#${activeDepartmentTab.getAttribute('href').substr(1)} .grid-id`);
+
+                    // Получить значение для fix
+                    const fix = parseFloat(fixValueInput.value);
+
+                    // Создать массив данных для percent, limit и id
+                    const gridData = [];
+
+                    percentInputs.forEach((percentInput, index) => {
+                        const percent = parseFloat(percentInput.value);
+                        const limit = parseFloat(limitInputs[index].value);
+                        const id = gridIdElements[index].getAttribute('data-grid-id');
+
+                        gridData.push({
+                            id: Number(id),
+                            percent,
+                            limit
+                        });
+                    });
+
+                    // Создать структуру данных
+                    const data = {
+                        fix: fix,
+                        grid: gridData
+                    };
+                    fetch(`/salary/update/${departmentId}`, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": 'application/json'
+                        },
+                        body: JSON.stringify(data),
+                    }).then(response => {
+                        loader.style = 'display: none';
+                        if (response.status == 200) {
+                            getNotifications('Успешно! Данные изменены', 'alert-success');
+                        }
+                    }).catch((error) => {
+                        loader.style = 'display: none';
+                    });
+                    // console.log("Данные fix и grid:", data, departmentId);
+                }
             }
+        }
+    }
 
-        }).catch((error) => {
-            loader.style = 'display: none'
 
-        })
-    }, 1000)
+
+
+
+
+    // if (!activeFilial) {
+    //     console.log('Активный филиал не найден');
+    //     loader.style = 'display: none';
+    //     return;
+    // }
+
+    // Получение текущей активной вкладки внутри филиала
+    // const activeTab = activeFilial.querySelector('.tab-pane.active.show');
+    // console.log(activeTab)
+    // const tabCurrentId = activeTab.getAttribute('id');
+    // const fixValueInput = activeTab.querySelector('.fix-value');
+    // console.log(fixValueInput)
+    // const percentInputs = activeTab.querySelectorAll('.grid-percent');
+    // console.log(percentInputs)
+    // const limitInputs = activeTab.querySelectorAll('.grid-limit');
+    // console.log(limitInputs)
+    // const gridIdElements = activeTab.querySelectorAll('.grid-id');
+    // console.log(gridIdElements)
+
+    // // Получение значений из полей и вывод в консоль
+    // const fixValue = fixValueInput.value;
+
+    // const gridData = [];
+
+    // percentInputs.forEach((percentInput, index) => {
+    //     const percent = percentInput.value;
+    //     const limit = limitInputs[index].value;
+    //     const id = gridIdElements[index].getAttribute('data-grid-id');
+    //     gridData.push({
+    //         id: Number(id),
+    //         percent: parseFloat(percent),
+    //         limit: parseFloat(limit)
+    //     });
+    // });
+
+    // const data = {
+    //     'fix': parseFloat(fixValue),
+    //     'grid': gridData
+    // };
+
+    // fetch(`/salary/update/${tabCurrentId}`, {
+    //     method: 'POST',
+    //     headers: {
+    //         "Content-Type": 'application/json'
+    //     },
+    //     body: JSON.stringify(data),
+    // }).then(response => {
+    //     loader.style = 'display: none';
+    //     if (response.status == 200) {
+    //         getNotifications('Успешно! Данные изменены', 'alert-success');
+    //     }
+    // }).catch((error) => {
+    //     loader.style = 'display: none';
+    // });
 
 }
+
+
+
+
+// function CreateSalaryCurrentEmployee() {
+//     // loader.style = 'display: block'
+//     console.log(loader)
+//     setTimeout(() => {
+//         // Получение элементов для текущей вкладки
+//         const tabContent = document.querySelector('.tab-pane.active');
+//         const fixValueInput = tabContent.querySelector('.fix-value');
+//         const percentInputs = tabContent.querySelectorAll('.grid-percent');
+//         const limitInputs = tabContent.querySelectorAll('.grid-limit');
+//         const gridIds = tabContent.querySelectorAll('.grid-id');
+//         const tabCurrentId = tabContent.querySelector('.salary_id').innerText
+
+
+//         // Получение значений из полей и вывод в консоль
+//         const fixValue = fixValueInput.value;
+
+//         const gridData = [];
+
+//         percentInputs.forEach((percentInput, index) => {
+//             const percent = percentInput.value;
+//             const limit = limitInputs[index].value;
+//             const id = gridIds[index].textContent; // Получение текстового содержимого элемента
+//             gridData.push({
+//                 id: Number(id),
+//                 percent: parseFloat(percent),
+//                 limit: parseFloat(limit)
+//             });
+//         });
+//         console.log(percentInputs)
+//         const data = {
+//             'fix': parseFloat(fixValue),
+//             'grid': gridData
+//         };
+//         fetch(`/salary/update/${tabCurrentId}`, {
+//             method: 'POST',
+//             headers: {
+
+//                 "Content-Type": 'application/json'
+//             },
+//             body: JSON.stringify(data),
+//         }).then(response => {
+//             loader.style = 'display: none'
+//             if (response.status == 200) {
+//                 getNotifications('Успешно! Данные изменены', 'alert-success')
+//             }
+
+//         }).catch((error) => {
+//             loader.style = 'display: none'
+
+//         })
+//     }, 1000)
+
+// }
 
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
     e.preventDefault();

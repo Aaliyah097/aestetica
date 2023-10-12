@@ -1,66 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Salaries and Departments</title>
-</head>
-<body>
-    <label for="staffName" class="label_date" style="width: 100%">ФИО<br>
-        <input type="text" class="input_and_select" id="staffName" style="width: 100%" value="{{ salaries[0][0]['staff']['name'] }}" readonly>
-    </label>
-    <label for "roleName" class="label_date" style="width: 100%">Роль<br>
-        <input type="text" class="input_and_select" id="roleName" style="width: 100%" value="{{ salaries[0][0]['staff']['role']['name'] }}" readonly>
-    </label>
-    <br><br>
+<label for="staffName" class="label_date" style="width: 100%">ФИО<br>
+    <input type="text" class="input_and_select" id="staffName{{ salaries[0][0]['id']}}" style="width: 100%"
+        value="{{ salaries[0][0]['staff']['name'] }}" readonly>
+</label>
+<label for="roleName" class="label_date" style="width: 100%">Роль<br>
+    <input type="text" class="input_and_select" id="roleName" style="width: 100%"
+        value="{{ salaries[0][0]['staff']['role']['name'] }}" readonly>
+</label>
+<br>
+<p class="total">Сохранение обязательно на каждой вкладке</p>
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        {% for filial in salaries %}
+<br>
+
+<!-- ФИЛИАЛЫ -->
+<ul class="nav nav-tabs" id="myTab" role="tablist" style="width: 100%;">
+    {% for filial in salaries %}
+    <li class="nav-item" role="presentation" style="width: 50%;">
+        <a class="nav-link {% if loop.first %}active{% endif %}"
+            id="{{ filial[0]['filial']['name']|replace(' ', '_') }}-tab" data-bs-toggle="tab"
+            href="#{{ filial[0]['filial']['name']|replace(' ', '_') }}" role="tab"
+            aria-controls="{{ filial[0]['filial']['name']|replace(' ', '_') }}"
+            aria-selected="{{ 'true' if loop.first else 'false' }}">
+            <b> Филлиал {{ filial[0]['filial']['name'] }}</b>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+<br>
+<!-- ДЕПАРТАМЕНТЫ -->
+<div class="tab-content">
+    {% for filial in salaries %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+        id="{{ filial[0]['filial']['name']|replace(' ', '_') }}" role="tabpanel"
+        aria-labelledby="{{ filial[0]['filial']['name']|replace(' ', '_') }}-tab">
+        <ul class="nav nav-tabs" id="departmentTabs-{{ filial[0]['filial']['name']|replace(' ', '_') }}" role="tablist">
+            {% for department in filial %}
             <li class="nav-item" role="presentation">
-                <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ filial[0]['filial']['name'] }}-tab" data-bs-toggle="tab" href="#{{ filial[0]['filial']['name'] }}" role="tab" aria-controls="{{ filial[0]['filial']['name'] }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
-                    {{ filial[0]['filial']['name'] }}
+                <a class="nav-link {% if loop.first %}active{% endif %}"
+                    id="{{ department['department']['name']|replace(' ', '_') }}-{{ filial[0]['filial']['name']|replace(' ', '_') }}-tab"
+                    data-bs-toggle="tab"
+                    href="#{{ department['department']['name']|replace(' ', '_') }}-{{ filial[0]['filial']['name']|replace(' ', '_') }}"
+                    role="tab"
+                    aria-controls="{{ department['department']['name']|replace(' ', '_') }}-{{ filial[0]['filial']['name']|replace(' ', '_') }}"
+                    aria-selected="{{ 'true' if loop.first else 'false' }}" data-current-id="{{ department['id'] }}">
+                    {{ department['department']['name'] }} 
                 </a>
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+        <div class="tab-content">
+            {% for department in filial %}
 
-    <div class="tab-content">
-        {% for filial in salaries %}
-            <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ filial[0]['filial']['name'] }}" role="tabpanel" aria-labelledby="{{ filial[0]['filial']['name'] }}-tab">
-                <ul class="nav nav-tabs" id="departmentTabs-{{ filial[0]['filial']['name'] }}" role="tablist">
-                    {% for department in filial %}
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link {% if loop.first %}active{% endif %}" id="{{ department['department']['name'] }}-tab" data-bs-toggle="tab" href="#{{ department['department']['name'] }}" role="tab" aria-controls="{{ department['department']['name'] }}" aria-selected="{{ 'true' if loop.first else 'false' }}">
-                                {{ department['department']['name'] }}
-                            </a>
-                        </li>
+            <div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+                id="{{ department['department']['name']|replace(' ', '_') }}-{{ filial[0]['filial']['name']|replace(' ', '_') }}"
+                role="tabpanel"
+                aria-labelledby="{{ department['department']['name']|replace(' ', '_') }}-{{ filial[0]['filial']['name']|replace(' ', '_') }}-tab">
+                <label for="fixValue" class="label_date" style="width: 100%">Фикс. сотрудника<br>
+                    <input type="text" class="salary_input fix-value" style="width: 100%" value="{{ department.fix }}">
+                </label>
+                <div class="grid_input">
+
+                    {% for grid in department['grid'] %}
+                    {{grid.id}}
+                    <label class="label_date">% <span class="grid-id" data-grid-id="{{ grid.id }}"
+                            style="color: transparent;"></span><br>
+                        <input type="text" class="salary_input grid-percent" value="{{ grid.percent }}">
+                    </label>
                     {% endfor %}
-                </ul>
+                </div>
+                <div class="grid_input">
+                    {% for grid in department['grid'] %}
+                    {{grid.id}}
 
-                <div class="tab-content">
-                    {% for department in filial %}
-                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ department['department']['name'] }}" role="tabpanel" aria-labelledby="{{ department['department']['name'] }}-tab">
-                            <label for="fixValue" class="label_date" style="width: 100%">Фикс. сотрудника <span class="salary_id" style="color: transparent;">{{ department.id }}</span><br>
-                                <input type="text" class="salary_input fix-value" style="width: 100%" value="{{ department.fix }}">
-                            </label>
-                            <div class="grid_input">
-                                {% for grid in department['grid'] %}
-                                    <label class="label_date">% <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                                        <input type="text" class="salary_input grid-percent" value="{{ grid.percent }}">
-                                    </label>
-                                {% endfor %}
-                            </div>
-                            <div class="grid_input">
-                                {% for grid in department['grid'] %}
-                                    <label class="label_date">Лимит <span class="grid-id" style="color: transparent;">{{ grid.id }}</span><br>
-                                        <input type="text" class="salary_input grid-limit" value="{{ grid.limit }}">
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
+                    <label class="label_date">Лимит <span class="grid-id" data-grid-id="{{ grid.id }}"
+                            style="color: transparent;"></span><br>
+                        <input type="text" class="salary_input grid-limit" value="{{ grid.limit }}">
+                    </label>
                     {% endfor %}
                 </div>
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-</body>
-</html>
+    {% endfor %}
+</div>
+

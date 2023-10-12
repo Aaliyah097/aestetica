@@ -16,70 +16,101 @@
     <div class="block_data__change">
         <div class="block_data__change__content">
             <div class="block_data__change__content_header">
-                <p>Редактирование сотрудников</p>
+                <p>
+                    <select name="" id="select_staff" class="select_consumables">
+                        <option value="changeStaffBlock">Редактирование сотрудников</option>
+                        <option value="addStaffBlock">Добавление сотрудника</option>
+                    </select>
+                </p>
                 <button class="btn_none" id="refreshData" onclick="transfromThisElement('refreshData')">
                     <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
                 </button>
-                <button class="btn_none" id="showChange">
+                <!-- <button class="btn_none" id="showChange">
                     <img src="{{url_for('static', filename='img/arrowdown.png')}}" alt="">
-                </button>
+                </button> -->
             </div>
             <hr>
-            <p class="total">Всего записей: {{ staff|length }}</p>
-            <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
-                <div class="block_watched">
-                    <table class="table table-bordered table-hover table-staff">
-                        <thead>
-                            <tr class="sticks">
-                                <th onclick="makeInput(this)">ФИО</th>
-                                <th>Роль</th>
-                                <th>Новый врач</th>
-                                <th>Действие</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in staff |sort(attribute="role.name")%}
-                            <tr>
 
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.role.name }}</td>
-                                <td>{{ "Да" if item.is_new else "Нет" }}</td>
-                                <td>
-                                    <div class="btn-group" style="width: 100%;">
-                                        <button type="button" class="Action" data-bs-toggle="dropdown"
-                                            aria-expanded="false" style="white-space: nowrap;">
-                                            Действия <span>▽</span>
-                                        </button>
-                                        <ul class="dropdown-menu" style="width: 100%">
-                                            <li>
-                                                <a class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
-                                                    id="open_modal{{item.name}}"
-                                                    data-name-modal="Редактирование сотрудника"
-                                                    onclick="getSalaryCurrentEmloyee(this)">Редактирование</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
-                                                    id="open_modal{{item.name}}"
-                                                    data-name-modal="Премирование сотрудника"
-                                                    onclick="getBonusCurrentEmloyee(this)">Премирование</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+            <div id="changeStaffBlock">
+                <p class="total">Всего записей: {{ staff|length }}</p>
+                <div style="max-height: 60vh; max-width: 96vw; overflow: auto;">
+                    <div class="block_watched">
+                        <table class="table table-bordered table-hover table-staff">
+                            <thead>
+                                <tr class="sticks">
+                                    <th onclick="makeInput(this)">ФИО</th>
+                                    <th>Роль</th>
+                                    <th>Новый врач</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in staff |sort(attribute="role.name")%}
+                                <tr>
 
-                                    <!--  -->
-                                </td>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.role.name }}</td>
+                                    <td>{{ "Да" if item.is_new else "Нет" }}</td>
+                                    <td>
+                                        <div class="btn-group" style="width: 100%;">
+                                            <button type="button" class="Action" data-bs-toggle="dropdown"
+                                                aria-expanded="false" style="white-space: nowrap;">
+                                                Действия <span>▽</span>
+                                            </button>
+                                            <ul class="dropdown-menu" style="width: 100%">
+                                                <li>
+                                                    <a class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        data-name-employee="{{ item.name }}"
+                                                        id="open_modal{{item.name}}"
+                                                        data-name-modal="Редактирование сотрудника"
+                                                        onclick="getSalaryCurrentEmloyee(this)">Редактирование</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        data-name-employee="{{ item.name }}"
+                                                        id="open_modal{{item.name}}"
+                                                        data-name-modal="Премирование сотрудника"
+                                                        onclick="getBonusCurrentEmloyee(this)">Премирование</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item"
+                                                        onclick="deleteCurrentEmloyee('{{item.name}}')">Удаление</a>
+                                                </li>
+                                            </ul>
+                                        </div>
 
-                            </tr>
+                                        <!--  -->
+                                    </td>
 
-                            {% endfor %}
-                            <br>
-                        </tbody>
-                    </table>
+                                </tr>
+
+                                {% endfor %}
+                                <br>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <p class="prompt">* Для поиска врача, нажмать на поле ФИО</p>
             </div>
-            <p class="prompt">* Для поиска врача, нажмать на поле ФИО</p>
+            <div id="addStaffBlock"
+                style="position: relative; max-width: 98%; display: flex; justify-content: center; flex-direction: column; align-items: center">
+                <h2 align="center">Добавление сотрудника</h2>
+                <form id="addStaffForm" style="width: 80%; margin-left: 10%">
+                    <label for="name" style="width: 100%">ФИО<br>
+                        <input type="text" class="input_and_select" id="name" name="name" style="width: 100%">
+                    </label>
+                    <label for="role" style="width: 100%">Роль<br>
+                        <select id="allRoleInCompany" name="role" class="input_and_select" style="width: 100%" >
+                            <!-- Здесь должны быть опции, но они будут добавлены с помощью JavaScript -->
+                        </select>
+                    </label>
+                    <button style="width: 100%; margin: 4% 0 5% 0" class="btn btn-dark" type="button" onclick="saveNewStaff()">Добавить</button>
+                </form>
+            </div>
+
+
 
         </div>
         <br><br>
@@ -187,11 +218,13 @@
             </div>
             <div id="ChangeService" style="position: relative">
                 <img src="../static//img/icon_search.png" alt="">
-                
-                    <!-- <input type="text" id="searchInServices" class="input_and_select" oninput="searchServices(this)" placeholder="Наименование услуги">
+
+                <!-- <input type="text" id="searchInServices" class="input_and_select" oninput="searchServices(this)" placeholder="Наименование услуги">
                     <img src="../static/img/icon_search.png" alt="" height="190" style="position: absolute; right: 0; margin-right: 2%;" />
              -->
-             <input class="input-elevated" type="text" placeholder="Поиск" id="searchInServices"  oninput="searchServices(this)">
+                <input class="input-elevated" type="text" placeholder="Поиск" id="searchInServices"
+                    oninput="searchServices(this)">
+                    <p class="total">Для сохранения наименования нажмите Enter</p>
                 <div style="max-height: 60vh; max-width: 96vw; overflow: auto; margin-top: 2%;">
                     <table class="table table-hovered table-bordered" id="TableService">
                         <tr class="sticks">
@@ -203,18 +236,17 @@
                         <tr>
                             <td>{{ s.code }}</td>
                             <td style="position: relative; padding: 0; margin: 0;">
-                                <textarea name="" id="textarea_{{ s.code }}"
-                                onkeydown="saveNameOperation(event, this)" data-cargo-code="{{ s.code }}"
-                                data-cargo-issubmit="{{ s.is_submit }}"
-                                >{{ s.name }}</textarea>
+                                <textarea name="" id="textarea_{{ s.code }}" onkeydown="saveNameOperation(event, this)"
+                                    data-cargo-code="{{ s.code }}"
+                                    data-cargo-issubmit="{{ s.is_submit }}">{{ s.name }}</textarea>
                             </td>
                             <td>
                                 {% if s.is_submit == True %}
-                                    <input type="checkbox" checked data-cargo-code="{{ s.code }}"
-                                        data-cargo-name="{{ s.name }}" onchange="ChangeIsSubmit(this)">
+                                <input type="checkbox" checked data-cargo-code="{{ s.code }}"
+                                    data-cargo-name="{{ s.name }}" onchange="ChangeIsSubmit(this)">
                                 {% else %}
-                                    <input type="checkbox" data-cargo-code="{{ s.code }}"
-                                        data-cargo-name="{{ s.name }}" onchange="ChangeIsSubmit(this)">
+                                <input type="checkbox" data-cargo-code="{{ s.code }}" data-cargo-name="{{ s.name }}"
+                                    onchange="ChangeIsSubmit(this)">
                                 {% endif %}
                             </td>
                         </tr>

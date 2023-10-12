@@ -15,3 +15,9 @@ def new_page():
     return render_template(
         'index.html'
     )
+
+@app.route('/archive', methods=['GET', ])
+def archieve():
+    return render_template(
+        'archive.html'
+    )

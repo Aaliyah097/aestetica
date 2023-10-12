@@ -47,12 +47,15 @@ def create_bonus():
     except ValueError:
         return "amount should be a number", 500
 
-    BonusRepository.create(
-        staff_name=staff,
-        amount=amount,
-        date_begin=date_begin,
-        date_end=date_end,
-        comment=comment
-    )
+    try:
+        BonusRepository.create(
+            staff_name=staff,
+            amount=amount,
+            date_begin=date_begin,
+            date_end=date_end,
+            comment=comment
+        )
+    except Exception as e:
+        return str(e), 500
 
     return 'ok', 200

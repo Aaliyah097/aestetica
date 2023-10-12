@@ -2,6 +2,7 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 import calendar
+from typing import Optional
 
 from src.schedule.entities.schedule import Schedule
 
@@ -28,6 +29,8 @@ from src.schedule.repositories.schedule_repository import ScheduleRepository
 
 from src.salary.repositories.bonus_repository import BonusRepository
 from src.salary.repositories.salary_repository import SalaryRepository
+from src.salary.repositories.payout_repository import PayoutRepository
+
 from src.staff.repositories.staff_repository import StaffRepository
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
@@ -43,23 +46,18 @@ class SalaryReport:
     income: float
     volume: float
     fix: float
+    payout: float
+    award: float
 
 
 @dataclass
 class DoctorsSalaryReport(SalaryReport):
     treatments: list[Treatment]
-    award: float = 0
 
 
 @dataclass
 class AssistantSalaryReport(SalaryReport):
     schedule: list[Schedule]
-    award: float = 0
-
-
-@dataclass
-class OtherSalaryReport(SalaryReport):
-    award: float = 0
 
 
 class SalaryCalculationService:
@@ -79,6 +77,7 @@ class SalaryCalculationService:
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
         self.staff_repo: StaffRepository = StaffRepository()
         self.salary_repo: SalaryRepository = SalaryRepository()
+        self.payout_repo: PayoutRepository = PayoutRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
@@ -96,6 +95,14 @@ class SalaryCalculationService:
         self.team_members = defaultdict(int)
         for role in roles:
             self.team_members[role] += self.staff_repo.get_amount_by_role(role)
+
+    def calc_payouts(self, staff: Staff) -> float:
+        total = 0
+        payouts = self.payout_repo.get_by_staff(staff.name)
+        for pay in payouts:
+            if self.date_begin <= pay.on_date <= self.date_end:
+                total += pay.amount
+        return total
 
     def calc_award(self, staff: Staff) -> float:
         award = 0
@@ -141,6 +148,8 @@ class SalaryCalculationService:
             salary = AssistantsSalaryCalculator().calc(staff, schedule, self.filial)
             award = self.calc_award(staff)
             salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
 
             salary_reports.append(
                 AssistantSalaryReport(
@@ -149,12 +158,13 @@ class SalaryCalculationService:
                     volume=salary.volume,
                     fix=salary.fix,
                     schedule=schedule,
-                    award=award
+                    award=award,
+                    payout=payout
                 )
             )
         return salary_reports
 
-    def other_staff_calc(self) -> list[OtherSalaryReport]:
+    def other_staff_calc(self) -> list[SalaryReport]:
         salary_reports = []
 
         for staff in self.staff_repo.get_staff():
@@ -166,14 +176,17 @@ class SalaryCalculationService:
             salary.volume = 1
             award = self.calc_award(staff)
             salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
 
             salary_reports.append(
-                OtherSalaryReport(
+                SalaryReport(
                     staff=staff,
                     income=salary.income,
                     award=award,
                     volume=0,
-                    fix=salary.fix
+                    fix=salary.fix,
+                    payout=payout
                 )
             )
         return salary_reports
@@ -198,6 +211,10 @@ class SalaryCalculationService:
         calculator = AnesthetistCalculator()
         for staff, treatments in data.items():
             salary = calculator.calc(staff, treatments, filial=self.filial)
+
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
+
             salary_reports.append(
                 DoctorsSalaryReport(
                     staff=staff,
@@ -205,7 +222,8 @@ class SalaryCalculationService:
                     award=0,
                     volume=salary.volume,
                     fix=salary.fix,
-                    treatments=treatments
+                    treatments=treatments,
+                    payout=payout
                 )
             )
 
@@ -224,12 +242,17 @@ class SalaryCalculationService:
 
         for doctor, departments in treatments.items():
             salaries, marked_treatments = calculator.calc(doctor, departments, filial=self.filial)
+
+            payout = self.calc_payouts(doctor)
+
             salary_report = DoctorsSalaryReport(
                 staff=doctor,
-                income=sum([salary.income for salary in salaries]),
+                income=sum([salary.income for salary in salaries]) - payout,
                 volume=sum([salary.volume for salary in salaries]),
                 fix=0,
-                treatments=marked_treatments
+                treatments=marked_treatments,
+                payout=payout,
+                award=0
             )
             salary_reports.append(salary_report)
         return salary_reports

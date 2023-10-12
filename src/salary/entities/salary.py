@@ -21,6 +21,7 @@ class Salary:
         self._income: float = 0
         self._bonuses: list[float] = []
         self._award: float = 0
+        self._payout: float = 0
         self.filial: Filial = filial
 
     def add_bonus(self, value: float) -> None:
@@ -39,6 +40,14 @@ class Salary:
 
         self._award = value
 
+    def add_payout(self, value: float) -> None:
+        try:
+            float(value)
+        except ValueError:
+            return
+
+        self._payout = value
+
     @property
     def income(self) -> float:
         total = self._income
@@ -46,6 +55,7 @@ class Salary:
             total += bonus
 
         total += self._award
+        total -= self._payout
 
         return round(total, 2)
 

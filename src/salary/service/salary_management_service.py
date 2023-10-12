@@ -7,6 +7,10 @@ from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.repositories.filials_repository import FilialsRepository
 from src.staff.repositories.departments_repository import DepartmentsRepository
 
+from src.salary.service.salary_calculation_service import SalaryReport
+import bs4
+import pandas
+
 
 class SalaryManagementService:
     def __init__(self):
@@ -69,3 +73,9 @@ class SalaryManagementService:
                     fix=5000 if isinstance(staff, Assistant) else 0,
                     filial=filial
                 )
+
+    @staticmethod
+    def export_salary(table_html: str) -> None:
+        table = bs4.BeautifulSoup(table_html, "html.parser")
+        df = pandas.read_html(table_html)[0]
+        df.to_excel("data.xlsx")

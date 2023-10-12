@@ -8,7 +8,8 @@ class Service:
         return {
             'name': self.name,
             'code': self.code,
-            'is_submit' : self.is_submit,
+            'is_submit': self.is_submit
+
         }
 
     def __repr__(self):

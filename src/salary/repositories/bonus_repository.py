@@ -1,6 +1,9 @@
 import datetime
 
 from src.staff.entities.users.staff import Staff
+from src.staff.entities.users.administrator import Administrator
+from src.staff.entities.users.assistant import Assistant
+from src.staff.entities.users.senior_assistant import SeniorAssistant
 from src.staff.repositories.staff_repository import StaffRepository
 from src.salary.entities.bonus import Bonus
 from db.aestetica.tables import Bonus as BonusTable
@@ -30,8 +33,12 @@ class BonusRepository:
 
     @staticmethod
     def create(staff_name: str, amount: float, date_begin: datetime.date, date_end: datetime.date, comment: str = None) -> None:
-        if not StaffRepository().get_staff_by_name(staff_name):
+        staff = StaffRepository().get_staff_by_name(staff_name)
+        if not staff:
             return
+
+        if not isinstance(staff, Assistant) or not isinstance(staff, Administrator) or not isinstance(staff, SeniorAssistant):
+            raise Exception(f"Надбавки недоступны для должности {staff.role.name}")
 
         with Base() as session:
             session.add(

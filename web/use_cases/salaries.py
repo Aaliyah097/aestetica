@@ -86,3 +86,11 @@ def modify_salary(pk: int):
     service.modify_salary(salary_id=pk, fix=fix or 0, grid=salary_grid or [])
 
     return 'ok', 200
+
+
+@app.route('/salary/export', methods=['POST', ])
+def export_salary_report():
+    table = request.json.get('table')
+    SalaryManagementService.export_salary(table)
+
+    return 'ok', 200

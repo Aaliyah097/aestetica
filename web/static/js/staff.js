@@ -158,9 +158,10 @@ function createBonus(value) {
         method: 'POST',
         body: form
     }).then(response => {
-        if (response.status != 200) {
-            getNotifications('Ошибка создания премии. Повторите попытку позже! Или проверьте не создана ли уже премия на Вашу дату.')
-            return
+        if (response.status !== 200) {
+            response.text().then(function(text){
+                getNotifications('Ошибка присваивания надбавки. ' + text)
+            })
         }
         $('#exampleModal').modal('hide')
         getNotifications('Успешно! Премия создана', 'alert-success')

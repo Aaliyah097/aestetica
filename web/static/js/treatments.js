@@ -18,6 +18,36 @@ document.getElementById('form_data').addEventListener('submit', function (event)
 
 })
 
+
+function ExportSalary(){
+    let table = document.getElementById('DownloadMainTable');
+    if (table == null){
+        getNotifications('Сформируйте таблицу перед экспортом')
+        return
+    }
+    let loader = new Loader()
+    loader.LoaderOn()
+    $.ajax(
+        {
+            type: 'post',
+            url: '/salary/export',
+            async: true,
+            data: JSON.stringify({
+                'table': table.outerHTML
+            }),
+            contentType: 'application/json',
+            success: function (data){
+                loader.LoaderOff()
+            },
+            error: function (xhr, errmsg, err) {
+                loader.LoaderOff()
+                getNotifications('Ошибка получения данных, повторите попытку позже')
+            }
+        }
+    )
+}
+
+
 function getSalary(form) {
     document.getElementById('table_block').innerHTML = ""
     let loader = new Loader()

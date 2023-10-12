@@ -65,7 +65,8 @@ class ServicesRepository:
             return [
                 Service(
                     name=s.name,
-                    code=s.code
+                    code=s.code,
+                    is_submit=s.is_submit
                 )
                 for s in session.scalars(query).all()
             ]

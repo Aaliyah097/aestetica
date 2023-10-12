@@ -16,7 +16,7 @@
     <div class="block_data__change">
         <div class="block_data__change__content">
             <div class="block_data__change__content_header">
-                <p>Редактирование сотрудников</p>
+                <p>Надбавки сотрудника</p>
                 <button class="btn_none" id="refreshData" onclick="transfromThisElement('refreshData')">
                     <img src="{{url_for('static', filename='img/refresh.png')}}" alt="">
                 </button>
@@ -63,7 +63,7 @@
                                                     data-bs-target="#exampleModal" data-name-employee="{{ item.name }}"
                                                     id="open_modal{{item.name}}"
                                                     data-name-modal="Премирование сотрудника"
-                                                    onclick="getBonusCurrentEmloyee(this)">Премирование</a>
+                                                    onclick="getBonusCurrentEmloyee(this)">Надбавки</a>
                                             </li>
                                         </ul>
                                     </div>

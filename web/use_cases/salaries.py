@@ -23,11 +23,12 @@ def get_salary_by_staff():
     )
 
 
-@app.route('/salary', methods=['GET', ])
+@app.route('/salary', methods=['GET', 'POST'])
 def list_salary():
     filial_name = request.args.get('filial', None)
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
+    complaints = request.json.get('complaints', [])
 
     if not all([filial_name, date_begin, date_end]):
         return 'Expected params are ?filial&date_begin&date_end', 500
@@ -38,7 +39,7 @@ def list_salary():
     except (AttributeError, ValueError):
         return "Expected date format is %Y-%m-%d", 500
 
-    service = SalaryCalculationService(filial_name, date_begin, date_end)
+    service = SalaryCalculationService(filial_name, date_begin, date_end, complaints=complaints)
 
     doctors_salary_reports = service.doctors_cals()
     assistants_salary_report = service.assistants_calc()

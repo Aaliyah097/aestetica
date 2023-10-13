@@ -54,9 +54,13 @@ function getSalary(form) {
     loader.LoaderOn()
     $.ajax(
         {
-            type: 'get',
+            type: 'post',
             url: `${form.attr('action')}?${form.serialize()}`,
             async: true,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'complaints': []
+            }),
             success: function (data) {
                 document.querySelector('.nodata').style = 'display: none'
                 document.getElementById('table_block').innerHTML = data

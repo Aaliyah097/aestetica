@@ -6,6 +6,8 @@ from src.staff.entities.department import Department
 from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 
+from hashlib import sha256
+
 
 class Treatment:
     def __init__(self, client: str, on_date: datetime.datetime,
@@ -26,6 +28,10 @@ class Treatment:
         self.technician: Technician | None = None
         self.consumables: Consumables | None = None
         self.markdown: MarkDown = MarkDown()
+
+    def __hash__(self):
+        data = (self.client, self.on_date, self.staff.name, self.department.name, self.service.code)
+        return hash(data)
 
     def serialize(self) -> dict:
         return {
@@ -49,16 +55,18 @@ class Treatment:
 
 
 class MarkDown:
-    def __init__(self, is_history: bool = False, prev_treatment: Treatment | None = None):
+    def __init__(self, is_history: bool = False, prev_treatment: Treatment | None = None, number: int | None = None):
         self.is_history = is_history
         self.volume: float = 0
         self.prev_treatment: Treatment | None = prev_treatment
+        self.number: int | None = number
 
     def serialize(self) -> dict:
         return {
             'is_history': self.is_history,
             'prev_treatment': self.prev_treatment.serialize() if self.prev_treatment else None,
-            'volume': self.volume
+            'volume': self.volume,
+            'number': self.number
         }
 
     def __repr__(self):

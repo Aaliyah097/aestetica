@@ -74,7 +74,9 @@ class SalaryCalculationService:
 
     def __init__(self, filial: Filial | str,
                  date_begin: datetime.date = None,
-                 date_end: datetime.date = None):
+                 date_end: datetime.date = None,
+                 complaints: list = None):
+        self.complaints = [str(c) for c in complaints] if complaints else []
         self.filial = Filial(filial) if type(filial) == str else filial
 
         self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
@@ -350,8 +352,13 @@ class SalaryCalculationService:
                         history_treatment.markdown = MarkDown(
                             is_history=True
                         )
-                        result[treatment.staff][treatment.department].append(history_treatment)
 
-            result[treatment.staff][treatment.department].append(treatment)
+                        history_treatment.markdown.number = str(hash(history_treatment))
+                        if history_treatment.markdown.number not in self.complaints:
+                            result[treatment.staff][treatment.department].append(history_treatment)
+
+            treatment.markdown.number = str(hash(treatment))
+            if treatment.markdown.number not in self.complaints:
+                result[treatment.staff][treatment.department].append(treatment)
 
         return result

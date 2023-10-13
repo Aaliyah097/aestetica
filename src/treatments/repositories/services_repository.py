@@ -41,7 +41,7 @@ class ServicesRepository:
             service = session.get(ServiceTable, code)
             return Service(
                 name=service.name,
-                code=service.code
+                code=service.code,
             ) if service else None
 
     def create(self, service: Service) -> None:
@@ -52,7 +52,7 @@ class ServicesRepository:
             session.add(
                 ServiceTable(
                     name=service.name,
-                    code=service.code
+                    code=service.code,
                 )
             )
             session.commit()

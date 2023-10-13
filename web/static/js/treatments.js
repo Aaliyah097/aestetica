@@ -1,4 +1,3 @@
-const loader = document.querySelector('.bgDark')
 class Loader {
     constructor(loader) {
         this.loader = document.querySelector('.bgDark')
@@ -21,7 +20,7 @@ document.getElementById('form_data').addEventListener('submit', function (event)
 
 function ExportSalary(){
     let table = document.getElementById('DownloadMainTable');
-    if (table == null){
+    if (!table){
         getNotifications('Сформируйте таблицу перед экспортом')
         return
     }

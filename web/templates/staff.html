@@ -75,6 +75,14 @@
                                                         onclick="getBonusCurrentEmloyee(this)">Премирование</a>
                                                 </li>
                                                 <li>
+                                                    <a class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        data-name-employee="{{ item.name }}"
+                                                        id="open_modal{{item.name}}"
+                                                        data-name-modal="Данные о выплаченных окладах"
+                                                        onclick="getArchiveDataForPerson(this)">Оклады</a>
+                                                </li>
+                                                <li>
                                                     <a class="dropdown-item"
                                                         onclick="deleteCurrentEmloyee('{{item.name}}')">Удаление</a>
                                                 </li>

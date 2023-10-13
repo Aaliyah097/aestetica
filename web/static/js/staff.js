@@ -98,7 +98,7 @@ select_consumables.addEventListener('change', () => {
 
 
 select_staff.addEventListener('change', () => {
-    if (select_staff.value == 'changeStaffBlock') {
+    if (select_staff.value === 'changeStaffBlock') {
         changeStaffBlock.style = 'display: block;'
         addStaffBlock.style = 'display: none;'
         location.reload()

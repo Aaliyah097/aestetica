@@ -44,6 +44,7 @@ def list_salary():
     assistants_salary_report = service.assistants_calc()
     other_salary_reports = service.other_staff_calc()
     anesthetists_salary_report = service.anesthetists_calc()
+    sellers_salary_report = service.sellers_calc()
 
     groups = defaultdict(list)
     assistants_groups = defaultdict(list)
@@ -60,10 +61,13 @@ def list_salary():
         assistants_report=assistants_salary_report,
         assistants_reports_groups=assistants_groups,
         anesthetists_report=anesthetists_salary_report,
+        sellers_report=sellers_salary_report,
         other_reports=groups,
         total_income=sum([salary.income for salary in doctors_salary_reports]) +
                      sum([salary.income for salary in assistants_salary_report]) +
-                     sum([salary.income for salary in other_salary_reports]),
+                     sum([salary.income for salary in other_salary_reports]) +
+                     sum([salary.income for salary in anesthetists_salary_report])+
+                     sum([salary.income for salary in sellers_salary_report]),
         month_volume=service.month_volume,
         date_begin=date_begin,
         date_end=date_end

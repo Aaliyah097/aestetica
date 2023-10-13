@@ -7,6 +7,7 @@ from src.staff.entities.users.administrator import Administrator
 from src.staff.entities.users.manager import Manager
 from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.users.householder import Householder
+from src.staff.entities.users.seller import Seller
 
 from src.staff.entities.role import Role
 
@@ -36,6 +37,8 @@ class StaffFactory:
             new_staff = Anesthetist(name=name)
         elif staff_role.name == 'Завхоз':
             new_staff = Householder(name=name)
+        elif staff_role.name == "Продажник":
+            new_staff = Seller(name=name)
         else:
             new_staff = Staff(name=name)
 

@@ -2,7 +2,6 @@ import datetime
 from collections import defaultdict
 from dataclasses import dataclass
 import calendar
-from typing import Optional
 
 from src.schedule.entities.schedule import Schedule
 
@@ -15,11 +14,13 @@ from src.staff.entities.users.technician import Technician
 from src.staff.entities.users.senior_assistant import SeniorAssistant
 from src.staff.entities.users.manager import Manager
 from src.staff.entities.users.administrator import Administrator
+from src.staff.entities.users.seller import Seller
+
+from src.salary.entities.traffic import Traffic
 
 from src.staff.entities.department import Department
 from src.staff.entities.filial import Filial
 
-from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment, MarkDown
 
@@ -30,6 +31,7 @@ from src.schedule.repositories.schedule_repository import ScheduleRepository
 from src.salary.repositories.bonus_repository import BonusRepository
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.repositories.payout_repository import PayoutRepository
+from src.salary.repositories.traffic_repository import TrafficRepository
 
 from src.staff.repositories.staff_repository import StaffRepository
 
@@ -60,6 +62,11 @@ class AssistantSalaryReport(SalaryReport):
     schedule: list[Schedule]
 
 
+@dataclass
+class SellerSalaryReport(SalaryReport):
+    traffic: list[Traffic]
+
+
 class SalaryCalculationService:
     """Расчет ЗП по филиалу.
     В расчет попадает сразу два периода 1-15, 16-31 и сразу все роли в организации.
@@ -78,6 +85,7 @@ class SalaryCalculationService:
         self.staff_repo: StaffRepository = StaffRepository()
         self.salary_repo: SalaryRepository = SalaryRepository()
         self.payout_repo: PayoutRepository = PayoutRepository()
+        self.traffic_repo: TrafficRepository = TrafficRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
@@ -130,13 +138,38 @@ class SalaryCalculationService:
 
         return award
 
-    # Считаться должно так:
-    """
-    Берем ставку фиксы,
-    Прибавляем за период бонусы к ставке
-    (Ставку и бонус) умножаем на количество дней в периоде отработанным
-    И перенести это все в калькулятор по ассистентам
-    """
+    # продажники
+    def sellers_calc(self) -> list[SellerSalaryReport]:
+        salary_reports = []
+        for staff in self.staff_repo.get_staff():
+            if not isinstance(staff, Seller):
+                continue
+
+            traffic = list(filter(lambda t: self.date_begin <= t.on_date <= self.date_end,
+                                  self.traffic_repo.get_by_staff(staff.name)))
+            volume = sum([t.amount for t in traffic])
+
+            salary = self.salary_repo.get_salary(staff, Department('Прочее'), filial=self.filial)
+            salary.volume = volume
+            award = self.calc_award(staff)
+            salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
+
+            salary_reports.append(
+                SellerSalaryReport(
+                    staff=staff,
+                    income=salary.income,
+                    award=award,
+                    volume=volume,
+                    fix=salary.fix,
+                    payout=payout,
+                    traffic=traffic
+                )
+            )
+        return salary_reports
+
+    # ассистенты
     def assistants_calc(self) -> list[AssistantSalaryReport]:
         schedules = self.schedule_repo.get_all_schedule(self.date_begin, self.date_end)
         salary_reports = []
@@ -164,13 +197,14 @@ class SalaryCalculationService:
             )
         return salary_reports
 
+    # прочие
     def other_staff_calc(self) -> list[SalaryReport]:
         salary_reports = []
 
         for staff in self.staff_repo.get_staff():
             if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) \
                     or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator) \
-                    or isinstance(staff, Householder):
+                    or isinstance(staff, Householder) or isinstance(staff, Seller):
                 continue
             salary = self.salary_repo.get_salary(staff, Department("Прочее"), filial=self.filial)
             salary.volume = 1
@@ -191,6 +225,7 @@ class SalaryCalculationService:
             )
         return salary_reports
 
+    # анестезиологи
     def anesthetists_calc(self) -> list[DoctorsSalaryReport]:
         treatments = self.treatment_repo.get_all_treatments(
             date_begin=self.date_begin,
@@ -229,6 +264,7 @@ class SalaryCalculationService:
 
         return salary_reports
 
+    # врачи
     def doctors_cals(self) -> list[DoctorsSalaryReport]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(
@@ -272,17 +308,14 @@ class SalaryCalculationService:
 
         return data
 
-    def get_consumables(self, treatment: Treatment) -> Consumables | None:
-        return self.consumables_repo.get_by_technician_and_service(
-            technician=treatment.technician,
-            service=treatment.service
-        )
-
     def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))
 
         for treatment in treatments:
-            treatment.consumables = self.get_consumables(treatment)
+            treatment.consumables = self.consumables_repo.get_by_technician_and_service(
+                technician=treatment.technician,
+                service=treatment.service
+            )
 
             if not isinstance(treatment.staff, Doctor):
                 continue

@@ -9,6 +9,7 @@ from web.use_cases.bonuses import *
 from web.use_cases.departments import *
 from web.use_cases.roles import *
 from web.use_cases.payouts import *
+from web.use_cases.traffic import *
 
 
 @app.route('/', methods=['GET', ])
@@ -16,6 +17,7 @@ def new_page():
     return render_template(
         'index.html'
     )
+
 
 @app.route('/archive', methods=['GET', ])
 def archieve():

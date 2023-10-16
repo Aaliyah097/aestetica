@@ -7,6 +7,7 @@
 
 
 {{ sellers_report }}
+
 <div style="overflow: auto; max-height: 80vh; margin-bottom: 2%">
     <table class="table table-bordered table-hover" id="DownloadMainTable">
         <thead>
@@ -47,7 +48,7 @@
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Департамент</th>
@@ -65,8 +66,15 @@
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment {{'isHistory' if  razbivka.markdown.is_history  }}"
                 data-name-employee-no-show="{{ salary.staff.name }}"
-                data-isHistory="{{ razbivka.markdown.is_history }}">
-                <td>{{ razbivka.client }} {{ razbivka.markdown.number }}</td>
+                data-isHistory="{{ razbivka.markdown.is_history }}"
+                >
+      
+                <td style="position: relative; padding: 0;">
+                    <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}" 
+                    style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"  onchange="Reclamation(this)">
+                    {{ razbivka.client }}
+                    <div class="metka">РЕКЛАМАЦИЯ</div>
+                </td>
                 <td>{{ razbivka.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka.department }}</td>
                 <td>{{ razbivka.service.name }}</td>
@@ -140,7 +148,7 @@
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Департамент</th>
@@ -233,7 +241,7 @@
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>
@@ -307,7 +315,7 @@
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>
@@ -383,7 +391,7 @@
 
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>
@@ -445,7 +453,7 @@
 
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:1">
+                style="position: sticky; top:9vh; z-index:2">
                 <th>Дата</th>
                 <th>Департамент</th>
                 <th>Ставка</th>

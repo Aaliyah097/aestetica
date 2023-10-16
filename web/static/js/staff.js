@@ -386,7 +386,9 @@ function deleteRowArchive(idx) {
 
 
 
-
+// function Reclamation(el){
+//     console.log(el)
+// }
 
 
 function deleteRow(value) {

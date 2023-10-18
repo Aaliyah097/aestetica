@@ -78,9 +78,12 @@
                                                     <a class="dropdown-item" data-bs-toggle="modal"
                                                         data-bs-target="#exampleModal"
                                                         data-name-employee="{{ item.name }}"
+                                                        data-role-employee="{{ item.role.name }}"
                                                         id="open_modal{{item.name}}"
-                                                        data-name-modal="Данные о выплаченных окладах"
-                                                        onclick="getArchiveDataForPerson(this)">Оклады</a>
+                                                        data-name-modal="{% if item.role.name == 'Продажник' %}Данные менеджера по продажам{% else %}Данные о выплаченных окладах{% endif %}"
+                                                        onclick="getArchiveDataForPerson(this)">
+                                                        Оклады
+                                                    </a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item"
@@ -110,11 +113,12 @@
                         <input type="text" class="input_and_select" id="name" name="name" style="width: 100%">
                     </label>
                     <label for="role" style="width: 100%">Роль<br>
-                        <select id="allRoleInCompany" name="role" class="input_and_select" style="width: 100%" >
+                        <select id="allRoleInCompany" name="role" class="input_and_select" style="width: 100%">
                             <!-- Здесь должны быть опции, но они будут добавлены с помощью JavaScript -->
                         </select>
                     </label>
-                    <button style="width: 100%; margin: 4% 0 5% 0" class="btn btn-dark" type="button" onclick="saveNewStaff()">Добавить</button>
+                    <button style="width: 100%; margin: 4% 0 5% 0" class="btn btn-dark" type="button"
+                        onclick="saveNewStaff()">Добавить</button>
                 </form>
             </div>
 
@@ -232,7 +236,7 @@
              -->
                 <input class="input-elevated" type="text" placeholder="Поиск" id="searchInServices"
                     oninput="searchServices(this)">
-                    <p class="total">Для сохранения наименования нажмите Enter</p>
+                <p class="total">Для сохранения наименования нажмите Enter</p>
                 <div style="max-height: 60vh; max-width: 96vw; overflow: auto; margin-top: 2%;">
                     <table class="table table-hovered table-bordered" id="TableService">
                         <tr class="sticks">

@@ -222,8 +222,12 @@ async function getArchiveDataForPerson(value) {
 
     let name = value.getAttribute('data-name-employee')
     let name_modal = value.getAttribute('data-name-modal')
+    let role = value.getAttribute('data-role-employee')
     let data
-    await fetch(`/payouts?staff=${name}`)
+    let url = `/payouts?staff=${name}`
+    if(role == 'Продажник') url = `/traffic?staff=${name}`
+
+    await fetch(url)
         .then(response => { return response.json() })
         .then(res => {
             data = res
@@ -236,7 +240,7 @@ async function getArchiveDataForPerson(value) {
             // Создаем контейнер для таблицы с margin-top: 2%
             const tableContainer = document.createElement("div");
             tableContainer.style.marginTop = "2%";
-            tableContainer.appendChild(createDataTable(data));
+            tableContainer.appendChild(createDataTable(data, name, role));
 
             document.getElementById('archiveData').appendChild(tableContainer);
 
@@ -247,7 +251,7 @@ async function getArchiveDataForPerson(value) {
         });
 }
 
-function createDataTable(data) {
+function createDataTable(data, name, role) {
     const section = document.createElement('section');
     const buttonAdd = document.createElement('button');
     const buttonSave = document.createElement('button');
@@ -284,7 +288,7 @@ function createDataTable(data) {
         <td>${item.staff.name}</td>
         <td>${item.staff.role.name}</td>
         <td>
-            <button data-idx='${item.id}' class="btn btn-danger" onclick=deleteRowArchive(${item.id})>Удалить</button>
+            <button data-idx='${item.id}' data-role='${role}' class="btn btn-danger" onclick=deleteRowArchive(this)>Удалить</button>
         </td>`;
         tbody.appendChild(row);
     });
@@ -299,7 +303,7 @@ function createDataTable(data) {
 
     buttonAdd.addEventListener('click', () => {
         if (!newRowAdded) {
-            addNewRow(table, data);
+            addNewRow(table, data, name, role);
             buttonAdd.style.display = 'none';
             buttonSave.style.display = 'block';
             newRowAdded = true;
@@ -307,7 +311,7 @@ function createDataTable(data) {
     });
     
     buttonSave.addEventListener('click', () => {
-        saveNewRow(table);
+        saveNewRow(table, name, role);
         buttonAdd.style.display = 'block';
         buttonSave.style.display = 'none';
         newRowAdded = false;
@@ -316,21 +320,21 @@ function createDataTable(data) {
     return section;
 }
 
-function addNewRow(table, data) {
+function addNewRow(table, data, name, role) {
+
     const tbody = table.querySelector('tbody');
     const newRow = document.createElement('tr');
-
     newRow.innerHTML = `
         <td style="position: relative"><input type='text' style="width: 100%"></td>
         <td style="position: relative"><input type='date' style="width: 100%"></td>
-        <td>${data[0].staff.name}</td>
-        <td>${data[0].staff.role.name}</td>
+        <td>${name}</td>
+        <td>${role}</td>
     `;
 
     tbody.appendChild(newRow);
 }
 
-function saveNewRow(table) {
+function saveNewRow(table, name, role) {
 
     const tbody = table.querySelector('tbody');
     const newRow = tbody.lastElementChild;
@@ -342,10 +346,13 @@ function saveNewRow(table) {
     console.log(staff_name)
     let data = {
         'amount': amount,
-        'on_date:':  date,
+        'on_date': date,
         'staff': staff_name
     }
-    fetch('/payouts/create', {
+    let url = `/payouts/create`
+    if(role == 'Продажник') url = `/traffic/create`
+
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -359,10 +366,14 @@ function saveNewRow(table) {
     })
   
 }
-
-function deleteRowArchive(idx) {
+// Удаление записи по окладу
+function deleteRowArchive(value) {
+    let idx = value.getAttribute('data-idx')
+    let role = value.getAttribute('data-role')
+    let url = `/payouts/${idx}/delete`
+    if(role == 'Продажник') url = `/traffic/${idx}/delete`
     if (confirm('Вы уверены, что хотите удалить запись?', "")) {
-        fetch(`/payouts/${idx}/delete`, {
+        fetch(url, {
             method: 'POST'
         })
         .then(res => {
@@ -501,7 +512,7 @@ function CreateSalaryCurrentEmployee() {
                         },
                         body: JSON.stringify(data),
                     }).then(response => {
-                        loader.LoaderOn()
+                        loader.LoaderOff()
                         if (response.status == 200) {
                             getNotifications('Успешно! Данные изменены', 'alert-success');
                         }

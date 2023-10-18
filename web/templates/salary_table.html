@@ -6,7 +6,6 @@
 <hr>
 
 
-{{ sellers_report }}
 
 <div style="overflow: auto; max-height: 80vh; margin-bottom: 2%">
     <table class="table table-bordered table-hover" id="DownloadMainTable">
@@ -66,12 +65,12 @@
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment {{'isHistory' if  razbivka.markdown.is_history  }}"
                 data-name-employee-no-show="{{ salary.staff.name }}"
-                data-isHistory="{{ razbivka.markdown.is_history }}"
-                >
-      
+                data-isHistory="{{ razbivka.markdown.is_history }}">
+
                 <td style="position: relative; padding: 0;">
-                    <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}" 
-                    style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"  onchange="Reclamation(this)">
+                    <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}"
+                        style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"
+                        onchange="Reclamation(this)">
                     {{ razbivka.client }}
                     <div class="metka">РЕКЛАМАЦИЯ</div>
                 </td>
@@ -228,7 +227,7 @@
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }} 
+                            {{ salary.staff.name }}
                             <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
                         </div>
                     </span>
@@ -258,7 +257,7 @@
                 <td>{{ razbivka_asisst.bonus }}</td>
                 <td colspan="2">
                     {% if razbivka_asisst.comment is not none %}
-                        {{ razbivka_asisst.comment }}
+                    {{ razbivka_asisst.comment }}
                     {% endif %}
                 </td>
             </tr>
@@ -267,9 +266,10 @@
             <tr class="no_show attachment" style="background: #699b69; color: white"
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
-                <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2,
-                    'floor')).replace(',', ' ') }}</td>
+                <td></td>
+                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
             </tr>
@@ -278,12 +278,18 @@
             {# сумма для всех ассистентов #}
             <tr style="background: #a7c9a7; color: white; text-align: left">
                 <td style="text-align: left;">Итого</td>
-                <td></td>
-                <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ')
-                    }}</td>
+                <td>
+                    {{ assistants_report|selectattr('staff.role.name', 'equalto',
+                    'Ассистент')|map(attribute='volume')|sum|round(2, 'floor')}}
+                </td>
+                <td>
+                   
+                    {{ '{0:,} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto',
+                    'Ассистент')|map(attribute='income')|sum|round(2, 'floor')).replace(',', ' ')}}
+                </td>
                 <td></td>
                 <td colspan="9"></td>
-            
+
             </tr>
 
             {# Администраторы #}
@@ -298,11 +304,12 @@
 
             {% for salary in assistants_report |sort(attribute="staff.name") if salary.staff.role.name ==
             'Администратор' %}
+
             <tr>
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }} 
+                            {{ salary.staff.name }}
                             <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
                         </div>
                     </span>
@@ -329,10 +336,10 @@
                 <td>{{ razbivka_admin.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka_admin.department.name }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                <td >{{ razbivka_admin.bonus }}</td>
+                <td>{{ razbivka_admin.bonus }}</td>
                 <td colspan="2">
                     {% if razbivka_admin.comment is not none %}
-                        {{ razbivka_admin.comment }}
+                    {{ razbivka_admin.comment }}
                     {% endif %}
                 </td>
             </tr>
@@ -341,9 +348,10 @@
             <tr class="no_show attachment" style="background: #699b69; color: white"
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
+                <td> </td>
+                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td></td>
                 <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2,
-                    'floor')).replace(',', ' ') }}</td>
                 <td></td>
                 <td></td>
             </tr>
@@ -352,139 +360,92 @@
             {# сумма для всех администраторов #}
             <tr style="background: #a7c9a7; color: white; text-align: left">
                 <td style="text-align: left;">Итого</td>
-                <td></td>
-                <td>{{ '{0:,} ₽'.format(administrators_report|sum(attribute='income')|round(2, 'floor')).replace(',', '
-                    ') }}</td>
+                <td> {{ assistants_report|selectattr('staff.role.name', 'equalto',
+                    'Администратор')|map(attribute='volume')|sum|round(2, 'floor')}}
+                </td>
+
+                <td>
+                    {{ '{0:,} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto',
+                    'Администратор')|map(attribute='income')|sum|round(2, 'floor')).replace(',', ' ')}}
+                </td>
+
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
             </tr>
 
-            <!-- {#assistants#}
-        <tr style="background: #fae08b; color: #215968; text-align: left">
-            <td style="text-align: left;">Ассистенты</td>
-            <td>Дни</td>
-            <td>Руб.</td>
-            <td>Выходы</td>
-            <th>Руб.</th>
-            <td colspan="8"></td>
-        </tr>
 
-        {% for salary in assistants_report |sort(attribute="staff.name") %}
+
+
+
+            {# Менеджер по продажам #}
+            <tr style="background: #fae08b; color: #215968; text-align: left">
+                <td style="text-align: left;">Менеджер по продажам</td>
+                <td>РУб.</td>
+                <td>Руб.</td>
+                <td></td>
+                <th>Руб.</th>
+                <td colspan="8"></td>
+            </tr>
+
+            {% for salary in sellers_report | sort(attribute="staff.name") if salary.staff.role.name == 'Продажник' %}
             <tr>
-
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }}  ({{ salary.staff.role.name }})
-                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
+                            {{ salary.staff.name }}
+                            <img src="{{ url_for('static', filename='img/down-arrow.png') }}" alt="">
                         </div>
                     </span>
                 </td>
 
-                <td>{{ salary.volume }}</td>
+                <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
-                <td>{{ salary.schedule|count }}</td>
+                <td>{{ salary.payout }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
                 <td class="add" colspan="8"></td>
-
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
                 style="position: sticky; top:9vh; z-index:2">
                 <th>Дата</th>
-                <th>Департамент</th>
-                <th>Ставка</th>
-                <th colspan="2">Надбавка</th>
+                <th>Сумма</th>
+                <th></th>
+                <th></th>
+                <th colspan="2"></th>
+                <th></th>
             </tr>
-            {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
-                <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
-
-                    <td>{{ razbivka_asisst.on_date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ razbivka_asisst.department.name }}</td>
-                    <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                    <td colspan="2">{{ razbivka_asisst.bonus }}</td>
-                </tr>
+            {% for razbivka_manager in salary.traffic | sort(attribute="on_date") %}
+            <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
+                <td>{{ razbivka_manager.on_date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ '{0:,} ₽'.format(razbivka_manager.amount).replace(',', ' ') }}</td>
+            </tr>
             {% endfor %}
-            {#margins by assistants#}
-            <tr class="no_show attachment" style="background: #699b69; color: white" data-name-employee-no-show="{{ salary.staff.name }}">
+            <tr class="no_show attachment" style="background: #699b69; color: white"
+                data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
-                <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2, 'floor')).replace(',', ' ') }}</td>
-            </tr>
-        {% endfor %}
-
-        {#margins by all assistants#}
-        <tr style="background: #a7c9a7; color: white; text-align: left">
-            <td style="text-align: left;">Итого</td>
-            <td></td>
-            <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
-            <td></td>
-            <td colspan="9"></td>
-        </tr>
-
-        {# Администраторы  #}
-        <tr style="background: #fae08b; color: #215968; text-align: left">
-            <td style="text-align: left;">Администраторы</td>
-            <td>Дни</td>
-            <td>Руб.</td>
-            <td>Выходы</td>
-            <th>Руб.</th>
-            <td colspan="8"></td>
-        </tr>
-
-        {% for salary in assistants_report |sort(attribute="staff.name") %}
-            <tr>
-
-                <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
-                    <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
-                        <div style="display: flex; justify-content: space-between">
-                            {{ salary.staff.name }}  ({{ salary.staff.role.name }})
-                            <img src="{{url_for('static', filename='img/down-arrow.png')}}" alt="">
-                        </div>
-                    </span>
+                <td>{{ '{0:,} ₽'.format(salary.traffic|sum(attribute='amount')|round(2,'floor')).replace(',', ' ') }}
                 </td>
-
-                <td>{{ salary.volume }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
-                <td>{{ salary.schedule|count }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
-                <td class="add" colspan="8"></td>
-
-            </tr>
-            <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
-                style="position: sticky; top:9vh; z-index:2">
-                <th>Дата</th>
-                <th>Департамент</th>
-                <th>Ставка</th>
-                <th colspan="2">Надбавка</th>
-            </tr>
-            {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
-                <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
-
-                    <td>{{ razbivka_asisst.on_date.strftime('%d.%m.%Y') }}</td>
-                    <td>{{ razbivka_asisst.department.name }}</td>
-                    <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                    <td colspan="2">{{ razbivka_asisst.bonus }}</td>
-                </tr>
-            {% endfor %}
-            {#margins by Администраторы#}
-            <tr class="no_show attachment" style="background: #699b69; color: white" data-name-employee-no-show="{{ salary.staff.name }}">
-                <td>Итого</td>
                 <td colspan="2"></td>
-                <td colspan="2">{{ '{0:,} ₽'.format(salary.schedule|sum(attribute='bonus')|round(2, 'floor')).replace(',', ' ') }}</td>
+                <td colspan="2"></td>
+                <td></td>
             </tr>
-        {% endfor %}
+            {% endfor %}
+            <tr style="background: #a7c9a7; color: white; text-align: left">
+                <td style="text-align: left;">Итого</td>
+                <td>
+                    {{ '{0:,} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='volume') | sum | round(2, 'floor')).replace(',', ' ') }}
 
-        {#margins by all Администраторы#}
-        <tr style="background: #a7c9a7; color: white; text-align: left">
-            <td style="text-align: left;">Итого</td>
-            <td></td>
-            <td>{{ '{0:,} ₽'.format(assistants_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}</td>
-            <td></td>
-            <td colspan="9"></td>
-        </tr> -->
+                </td>
+                <td>
+                    {{ '{0:,} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='income') | sum | round(2, 'floor')).replace(',', ' ') }}
+                </td>
+                <td></td>
+                <td colspan="2"></td>
+                <td></td>
+            </tr>
 
+            {# end comment #}
 
 
             {#Прочие персонал#}

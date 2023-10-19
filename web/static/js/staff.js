@@ -14,7 +14,7 @@ class Loader {
 
     }
 }
-const loader = document.querySelector('.bgDark')
+const loader = new Loader()
 let originalHeaderText = '';
 
 
@@ -151,7 +151,7 @@ function saveNewStaff() {
 function getSalaryCurrentEmloyee(value) {
     let name = value.getAttribute('data-name-employee')
     let name_modal = value.getAttribute('data-name-modal')
-
+    document.getElementById('archiveData').innerHTML = "";
     // get_salary_by_staff
     $.ajax(
         {
@@ -204,8 +204,8 @@ function getBonusCurrentEmloyee(value) {
             async: true,
             success: function (data) {
                 console.log(value)
+                document.getElementById('archiveData').innerHTML = "";
                 document.querySelector('.name_staff').innerHTML = 'Сотрудник: ' + localStorage.getItem('name')
-
                 document.querySelector('.save-button').style = 'display: none'
                 document.getElementById('test').innerHTML = data
                 // console.log(localStorage.getItem('name'))
@@ -217,6 +217,190 @@ function getBonusCurrentEmloyee(value) {
         }
     )
 }
+
+async function getArchiveDataForPerson(value) {
+
+    let name = value.getAttribute('data-name-employee')
+    let name_modal = value.getAttribute('data-name-modal')
+    let role = value.getAttribute('data-role-employee')
+    let data
+    let url = `/payouts?staff=${name}`
+    if(role == 'Продажник') url = `/traffic?staff=${name}`
+
+    await fetch(url)
+        .then(response => { return response.json() })
+        .then(res => {
+            data = res
+
+
+            document.getElementById('test').innerHTML = ""; // Очистим содержимое
+            document.getElementById('archiveData').innerHTML = "";
+            document.getElementById('archiveData').innerHTML = `<p>Сотрудник: ${name}</p>`;
+
+            // Создаем контейнер для таблицы с margin-top: 2%
+            const tableContainer = document.createElement("div");
+            tableContainer.style.marginTop = "2%";
+            tableContainer.appendChild(createDataTable(data, name, role));
+
+            document.getElementById('archiveData').appendChild(tableContainer);
+
+            document.querySelector('.save-button').style = 'display: block';
+            document.getElementById('exampleModalLabel').innerHTML = name_modal;
+            document.querySelector('.name_staff').innerText = "";
+            document.querySelector('.btn.btn-success.save-button').style = 'display: none;'
+        });
+}
+
+function createDataTable(data, name, role) {
+    const section = document.createElement('section');
+    const buttonAdd = document.createElement('button');
+    const buttonSave = document.createElement('button');
+    
+    buttonAdd.classList.add('btn', 'btn-dark');
+    buttonAdd.innerText = 'Добавить';
+    buttonAdd.style.marginTop = '2%'
+    buttonSave.classList.add('btn', 'btn-success');
+    buttonSave.style.display = 'none'; // Изначально скрываем кнопку сохранения
+    buttonSave.innerText = 'Сохранить';
+    buttonSave.style.marginTop = '2%'
+    const tableContainer = document.createElement('div');
+    tableContainer.style.maxHeight = '50vh';
+    tableContainer.style.overflow = 'auto';
+
+    const table = document.createElement("table");
+    table.classList.add('table', 'table-bordered');
+    table.border = "1";
+
+    // Создать заголовок таблицы
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    headerRow.classList.add('sticks')
+    headerRow.innerHTML = "<th>Сумма</th><th>Дата</th><th>Имя</th><th>Роль</th><th>Действия</th>";
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Создать тело таблицы и добавить данные
+    const tbody = document.createElement("tbody");
+    data.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${item.amount}</td>
+        <td>${item?.on_date.split('-').reverse().join(".")}</td>
+        <td>${item.staff.name}</td>
+        <td>${item.staff.role.name}</td>
+        <td>
+            <button data-idx='${item.id}' data-role='${role}' class="btn btn-danger" onclick=deleteRowArchive(this)>Удалить</button>
+        </td>`;
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+    section.appendChild(tableContainer);
+    section.appendChild(buttonAdd);
+    section.appendChild(buttonSave);
+    
+    let newRowAdded = false; // Флаг, который указывает, была ли уже добавлена новая строка
+
+    buttonAdd.addEventListener('click', () => {
+        if (!newRowAdded) {
+            addNewRow(table, data, name, role);
+            buttonAdd.style.display = 'none';
+            buttonSave.style.display = 'block';
+            newRowAdded = true;
+        }
+    });
+    
+    buttonSave.addEventListener('click', () => {
+        saveNewRow(table, name, role);
+        buttonAdd.style.display = 'block';
+        buttonSave.style.display = 'none';
+        newRowAdded = false;
+    });
+
+    return section;
+}
+
+function addNewRow(table, data, name, role) {
+
+    const tbody = table.querySelector('tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td style="position: relative"><input type='text' style="width: 100%"></td>
+        <td style="position: relative"><input type='date' style="width: 100%"></td>
+        <td>${name}</td>
+        <td>${role}</td>
+    `;
+
+    tbody.appendChild(newRow);
+}
+
+function saveNewRow(table, name, role) {
+
+    const tbody = table.querySelector('tbody');
+    const newRow = tbody.lastElementChild;
+    
+    // Получите значения из инпутов в новой строке
+    const amount = newRow.querySelector('input[type="text"]').value;
+    const date = newRow.querySelector('input[type="date"]').value;
+    const staff_name = newRow.cells[2].innerText
+    console.log(staff_name)
+    let data = {
+        'amount': amount,
+        'on_date': date,
+        'staff': staff_name
+    }
+    let url = `/payouts/create`
+    if(role == 'Продажник') url = `/traffic/create`
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    }).then(res => {
+       getNotifications('Успешно! Оклад добавлен', 'alert-success')
+       $('#exampleModal').modal('hide')
+    }).catch((err) => {
+        console.error(err)
+    })
+  
+}
+// Удаление записи по окладу
+function deleteRowArchive(value) {
+    let idx = value.getAttribute('data-idx')
+    let role = value.getAttribute('data-role')
+    let url = `/payouts/${idx}/delete`
+    if(role == 'Продажник') url = `/traffic/${idx}/delete`
+    if (confirm('Вы уверены, что хотите удалить запись?', "")) {
+        fetch(url, {
+            method: 'POST'
+        })
+        .then(res => {
+            if (res.ok) {
+                getNotifications('Успешно! Данные о выплате удалены', 'alert-success');
+                // Находим строку (родительский элемент кнопки "Удалить") и удаляем ее из DOM
+                // Находим первый РОДИТЕЛЬ строки
+                const row = document.querySelector(`button[data-idx="${idx}"]`).closest('tr');
+                row.remove();
+            } else {
+                getNotifications('Ошибка! Данные не удалены', 'alert-danger');
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            getNotifications('Ошибка! Данные не удалены', 'alert-danger');
+        });
+    }
+}
+
+
+
+
+// function Reclamation(el){
+//     console.log(el)
+// }
+
 
 function deleteRow(value) {
     let table = document.querySelector('.table-bonus')
@@ -258,7 +442,7 @@ function createBonus(value) {
         body: form
     }).then(response => {
         if (response.status !== 200) {
-            response.text().then(function(text){
+            response.text().then(function (text) {
                 getNotifications('Ошибка присваивания надбавки. ' + text)
             })
         }
@@ -328,12 +512,12 @@ function CreateSalaryCurrentEmployee() {
                         },
                         body: JSON.stringify(data),
                     }).then(response => {
-                        loader.style = 'display: none';
+                        loader.LoaderOff()
                         if (response.status == 200) {
                             getNotifications('Успешно! Данные изменены', 'alert-success');
                         }
                     }).catch((error) => {
-                        loader.style = 'display: none';
+                        loader.LoaderOff()
                     });
                     // console.log("Данные fix и grid:", data, departmentId);
                 }
@@ -341,124 +525,10 @@ function CreateSalaryCurrentEmployee() {
         }
     }
 
-
-
-
-
-
-    // if (!activeFilial) {
-    //     console.log('Активный филиал не найден');
-    //     loader.style = 'display: none';
-    //     return;
-    // }
-
-    // Получение текущей активной вкладки внутри филиала
-    // const activeTab = activeFilial.querySelector('.tab-pane.active.show');
-    // console.log(activeTab)
-    // const tabCurrentId = activeTab.getAttribute('id');
-    // const fixValueInput = activeTab.querySelector('.fix-value');
-    // console.log(fixValueInput)
-    // const percentInputs = activeTab.querySelectorAll('.grid-percent');
-    // console.log(percentInputs)
-    // const limitInputs = activeTab.querySelectorAll('.grid-limit');
-    // console.log(limitInputs)
-    // const gridIdElements = activeTab.querySelectorAll('.grid-id');
-    // console.log(gridIdElements)
-
-    // // Получение значений из полей и вывод в консоль
-    // const fixValue = fixValueInput.value;
-
-    // const gridData = [];
-
-    // percentInputs.forEach((percentInput, index) => {
-    //     const percent = percentInput.value;
-    //     const limit = limitInputs[index].value;
-    //     const id = gridIdElements[index].getAttribute('data-grid-id');
-    //     gridData.push({
-    //         id: Number(id),
-    //         percent: parseFloat(percent),
-    //         limit: parseFloat(limit)
-    //     });
-    // });
-
-    // const data = {
-    //     'fix': parseFloat(fixValue),
-    //     'grid': gridData
-    // };
-
-    // fetch(`/salary/update/${tabCurrentId}`, {
-    //     method: 'POST',
-    //     headers: {
-    //         "Content-Type": 'application/json'
-    //     },
-    //     body: JSON.stringify(data),
-    // }).then(response => {
-    //     loader.style = 'display: none';
-    //     if (response.status == 200) {
-    //         getNotifications('Успешно! Данные изменены', 'alert-success');
-    //     }
-    // }).catch((error) => {
-    //     loader.style = 'display: none';
-    // });
-
 }
 
 
 
-
-// function CreateSalaryCurrentEmployee() {
-//     // loader.style = 'display: block'
-//     console.log(loader)
-//     setTimeout(() => {
-//         // Получение элементов для текущей вкладки
-//         const tabContent = document.querySelector('.tab-pane.active');
-//         const fixValueInput = tabContent.querySelector('.fix-value');
-//         const percentInputs = tabContent.querySelectorAll('.grid-percent');
-//         const limitInputs = tabContent.querySelectorAll('.grid-limit');
-//         const gridIds = tabContent.querySelectorAll('.grid-id');
-//         const tabCurrentId = tabContent.querySelector('.salary_id').innerText
-
-
-//         // Получение значений из полей и вывод в консоль
-//         const fixValue = fixValueInput.value;
-
-//         const gridData = [];
-
-//         percentInputs.forEach((percentInput, index) => {
-//             const percent = percentInput.value;
-//             const limit = limitInputs[index].value;
-//             const id = gridIds[index].textContent; // Получение текстового содержимого элемента
-//             gridData.push({
-//                 id: Number(id),
-//                 percent: parseFloat(percent),
-//                 limit: parseFloat(limit)
-//             });
-//         });
-//         console.log(percentInputs)
-//         const data = {
-//             'fix': parseFloat(fixValue),
-//             'grid': gridData
-//         };
-//         fetch(`/salary/update/${tabCurrentId}`, {
-//             method: 'POST',
-//             headers: {
-
-//                 "Content-Type": 'application/json'
-//             },
-//             body: JSON.stringify(data),
-//         }).then(response => {
-//             loader.style = 'display: none'
-//             if (response.status == 200) {
-//                 getNotifications('Успешно! Данные изменены', 'alert-success')
-//             }
-
-//         }).catch((error) => {
-//             loader.style = 'display: none'
-
-//         })
-//     }, 1000)
-
-// }
 
 document.getElementById('saveConsumables').addEventListener('submit', function (e) {
     e.preventDefault();

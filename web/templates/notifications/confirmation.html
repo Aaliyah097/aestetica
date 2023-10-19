@@ -1,0 +1,43 @@
+<div class="confirmation" id="confiramtion_reclamation">
+    <div class="confirmation__block">
+        <p>Подтвердить рекламацию ?</p>
+        <div class="confirmation__block_btn">
+            <button type="button" class="btn btn-danger">Нет</button>
+            <button type="button" class="btn btn-success" onclick="getReclamation()">Да</button>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .confirmation {
+        z-index: 5;
+        width: 25%;
+        height: auto;
+        position: fixed;
+        bottom: 2%;
+        right: 1%;
+        display: none;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: -7px -7px 14px #c2c2c2,
+            7px 7px 14px #ffffff;
+    }
+    .confirmation__block p {
+        text-align: center;
+        font-size: 18px;
+    }
+    .confirmation__block_btn{
+        display: flex;
+        justify-content: space-evenly;
+        margin-bottom: 2%;
+    }
+    .confirmation__block_btn button{
+        min-width: 70px;
+    }
+    @media screen  and (max-width: 600px){
+        .confirmation {
+            width: 80%;
+        }
+    }
+</style>

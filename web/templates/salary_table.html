@@ -5,8 +5,6 @@
 </p>
 <hr>
 
-
-
 <div style="overflow: auto; max-height: 80vh; margin-bottom: 2%">
     <table class="table table-bordered table-hover" id="DownloadMainTable">
         <thead>
@@ -16,6 +14,7 @@
                 <th>ЗП</th>
                 <th>Кол-во </th>
                 <th>Премия</th>
+                <th>Выплач. оклады</th>
                 <th class="add" colspan="8"></th>
             </tr>
         </thead>
@@ -25,6 +24,7 @@
                 <td>Руб.</td>
                 <td>Руб.</td>
                 <td>Приемы</td>
+                <th>Руб.</th>
                 <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
@@ -44,6 +44,7 @@
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -119,12 +120,16 @@
                 <td colspan="9"></td>
             </tr>
 
+
+
+
             {# anesthetists #}
             <tr style="background: #fae08b; color: #215968; text-align: left">
                 <td style="text-align: left;">Анестезиологи</td>
                 <td>ч.</td>
                 <td>Руб.</td>
                 <td>Приемы</td>
+                <th>Руб.</th>
                 <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
@@ -144,6 +149,7 @@
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -212,12 +218,16 @@
             </tr>
             {# end comment #}
 
+
+
+
             {# Ассистенты #}
             <tr style="background: #fae08b; color: #215968; text-align: left">
                 <td style="text-align: left;">Ассистенты</td>
                 <td>Дни</td>
                 <td>Руб.</td>
                 <td>Выходы</td>
+                <th>Руб.</th>
                 <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
@@ -237,6 +247,8 @@
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
+
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -292,12 +304,16 @@
 
             </tr>
 
+
+
+
             {# Администраторы #}
             <tr style="background: #fae08b; color: #215968; text-align: left">
                 <td style="text-align: left;">Администраторы</td>
                 <td>Дни</td>
                 <td>Руб.</td>
                 <td>Выходы</td>
+                <th>Руб.</th>
                 <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
@@ -319,6 +335,7 @@
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -386,6 +403,7 @@
                 <td>Руб.</td>
                 <td></td>
                 <th>Руб.</th>
+                <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
 
@@ -402,8 +420,9 @@
 
                 <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
-                <td>{{ salary.payout }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
@@ -463,6 +482,7 @@
                 <td>Руб.</td>
                 <td></td>
                 <th>Руб.</th>
+                <th>Руб.</th>
                 <td colspan="8"></td>
             </tr>
             {% for salary in salary_reports %}
@@ -479,6 +499,7 @@
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>-</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
             {% endfor %}

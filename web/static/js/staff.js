@@ -224,6 +224,7 @@ async function getArchiveDataForPerson(value) {
     let name_modal = value.getAttribute('data-name-modal')
     let role = value.getAttribute('data-role-employee')
     let data
+
     let url = `/payouts?staff=${name}`
     if(role == 'Продажник') url = `/traffic?staff=${name}`
 
@@ -324,6 +325,7 @@ function addNewRow(table, data, name, role) {
 
     const tbody = table.querySelector('tbody');
     const newRow = document.createElement('tr');
+    if(role == 'Продажник_оклад') role = 'Продажник'
     newRow.innerHTML = `
         <td style="position: relative"><input type='text' style="width: 100%"></td>
         <td style="position: relative"><input type='date' style="width: 100%"></td>
@@ -351,6 +353,7 @@ function saveNewRow(table, name, role) {
     }
     let url = `/payouts/create`
     if(role == 'Продажник') url = `/traffic/create`
+     
 
     fetch(url, {
         method: 'POST',
@@ -359,8 +362,14 @@ function saveNewRow(table, name, role) {
         },
         body: JSON.stringify(data)
     }).then(res => {
-       getNotifications('Успешно! Оклад добавлен', 'alert-success')
-       $('#exampleModal').modal('hide')
+        if(res.status == 200){
+            getNotifications('Успешно! Оклад добавлен', 'alert-success')
+            $('#exampleModal').modal('hide')
+        }else {
+            getNotifications('Ошибка! Вы не заполнили все поля!')
+            $('#exampleModal').modal('hide') 
+        }
+
     }).catch((err) => {
         console.error(err)
     })
@@ -372,6 +381,8 @@ function deleteRowArchive(value) {
     let role = value.getAttribute('data-role')
     let url = `/payouts/${idx}/delete`
     if(role == 'Продажник') url = `/traffic/${idx}/delete`
+     
+
     if (confirm('Вы уверены, что хотите удалить запись?', "")) {
         fetch(url, {
             method: 'POST'

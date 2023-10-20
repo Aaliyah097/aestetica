@@ -80,11 +80,28 @@
                                                         data-name-employee="{{ item.name }}"
                                                         data-role-employee="{{ item.role.name }}"
                                                         id="open_modal{{item.name}}"
-                                                        data-name-modal="{% if item.role.name == 'Продажник' %}Данные менеджера по продажам{% else %}Данные о выплаченных окладах{% endif %}"
+                                                        data-name-modal="{% if item.role.name == 'Продажник' %}Данные менеджера по продажам (Привлечения){% else %}Данные о выплаченных окладах{% endif %}"
                                                         onclick="getArchiveDataForPerson(this)">
-                                                        Оклады
+                                                        {% if item.role.name == 'Продажник' %}
+                                                            Привлечения
+                                                        {% else %}
+                                                            Оклады
+                                                        {% endif %}
                                                     </a>
                                                 </li>
+                                                {% if item.role.name == 'Продажник' %}
+                                                <li>
+                                                    <a class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal"
+                                                        data-name-employee="{{ item.name }}"
+                                                        data-role-employee="{{ item.role.name }}_оклад"
+                                                        id="open_modal{{item.name}}"
+                                                        data-name-modal="Данные о выплаченных окладах"
+                                                        onclick="getArchiveDataForPerson(this)">
+                                                         Оклады
+                                                    </a>
+                                                </li>
+                                                {% endif %}
                                                 <li>
                                                     <a class="dropdown-item"
                                                         onclick="deleteCurrentEmloyee('{{item.name}}')">Удаление</a>

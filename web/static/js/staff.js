@@ -172,8 +172,8 @@ function getSalaryCurrentEmloyee(value) {
 }
 
 async function deleteCurrentEmloyee(value) {
-    confirm(`Вы уверены что хотите удалить \nсотрудника - ${value}`, "")
-    if (confirm) {
+    let res = confirm(`Вы уверены что хотите удалить \nсотрудника - ${value}`, "")
+    if (res) {
         await fetch(`/staff/delete?staff=${value}`, {
             method: 'POST',
         })
@@ -363,7 +363,7 @@ function saveNewRow(table, name, role) {
         body: JSON.stringify(data)
     }).then(res => {
         if(res.status == 200){
-            getNotifications('Успешно! Оклад добавлен', 'alert-success')
+            getNotifications('Успешно! Данные добавлены', 'alert-success')
             $('#exampleModal').modal('hide')
         }else {
             getNotifications('Ошибка! Вы не заполнили все поля!')
@@ -381,9 +381,9 @@ function deleteRowArchive(value) {
     let role = value.getAttribute('data-role')
     let url = `/payouts/${idx}/delete`
     if(role == 'Продажник') url = `/traffic/${idx}/delete`
-     
+     let res = confirm('Вы уверены, что хотите удалить запись?', "")
 
-    if (confirm('Вы уверены, что хотите удалить запись?', "")) {
+    if (res) {
         fetch(url, {
             method: 'POST'
         })

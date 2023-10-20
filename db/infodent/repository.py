@@ -16,7 +16,9 @@ class Repository:
                               block_services_codes: tuple[str],
                               client: str) -> dict:
         if tooth_code == None:
-            tooth_code = "null"
+            tooth_statement = "is null"
+        else:
+            tooth_statement = f"= {tooth_code}"
 
         query = f"""
         SELECT
@@ -72,13 +74,13 @@ class Repository:
         t.treatdate <= '{str(lt_date)}' 
         AND d.dname LIKE '%{doctor_name}%' 
         AND c.fullname LIKE '%{client}"%' 
-        AND od.toothcode = {tooth_code}
-        AND od.schamount_a != 0
-        AND w.kodoper != '6.29'
+        AND od.toothcode {tooth_statement}
+        AND od.schamount_a <> 0
+        AND w.kodoper <> '6.29'
         """
-
+        
         for code in block_services_codes:
-            query += f"AND w.kodoper <> '{code}'"
+            query += f" AND w.kodoper <> '{code}'"
 
         query += "ORDER BY t.treatdate DESC"
 

@@ -1,3 +1,9 @@
+import datetime
+
+import openpyxl
+import bs4
+import pandas
+
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
 from src.staff.entities.users.seller import Seller
@@ -7,9 +13,6 @@ from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.repositories.filials_repository import FilialsRepository
 from src.staff.repositories.departments_repository import DepartmentsRepository
-
-import bs4
-import pandas
 
 
 class SalaryManagementService:
@@ -101,8 +104,20 @@ class SalaryManagementService:
                     filial=filial
                 )
 
+    # TODO создать отдельный класс генератора отчетов в excel
     @staticmethod
     def export_salary(table_html: str) -> None:
+        wb = openpyxl.Workbook()
+        sheet = wb.active()
+
         table = bs4.BeautifulSoup(table_html, "html.parser")
-        df = pandas.read_html(table_html)[0]
-        df.to_excel("data.xlsx")
+        rows = table.find_all('tr')
+        for idx, row in enumerate(rows):
+            columns = [col.text for col in row.find_all('td')]
+            if hasattr(row, 'header'):
+                pass
+            else:
+                pass
+
+        # df = pandas.read_html(table_html)[0]
+        # df.to_excel("data.xlsx")

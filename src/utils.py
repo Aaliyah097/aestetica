@@ -22,3 +22,9 @@ def remove_spaces(value: str) -> str:
             break
 
     return ''.join(splitted_value)
+
+
+class ExcelManager:
+    def __init__(self, wb, sheet_name = None):
+        self.wb = wb
+        self.sheet = self.wb[sheet_name] if sheet_name else self.wb.active

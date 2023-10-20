@@ -407,7 +407,7 @@
                 <td colspan="8"></td>
             </tr>
 
-            {% for salary in sellers_report | sort(attribute="staff.name") if salary.staff.role.name == 'Продажник' %}
+            {% for salary in sellers_report | sort(attribute="staff.name") %}
             <tr>
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
@@ -418,7 +418,7 @@
                     </span>
                 </td>
 
-                <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
+                <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }} / {{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>

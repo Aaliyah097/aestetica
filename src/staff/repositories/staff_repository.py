@@ -7,6 +7,7 @@ from src.staff.entities.users.administrator import Administrator
 from src.staff.entities.users.manager import Manager
 from src.staff.entities.users.anesthetist import Anesthetist
 from src.staff.entities.users.householder import Householder
+from src.staff.entities.users.seller import Seller
 
 from src.staff.entities.role import Role
 
@@ -36,6 +37,8 @@ class StaffFactory:
             new_staff = Anesthetist(name=name)
         elif staff_role.name == 'Завхоз':
             new_staff = Householder(name=name)
+        elif staff_role.name == "Продажник":
+            new_staff = Seller(name=name)
         else:
             new_staff = Staff(name=name)
 
@@ -69,6 +72,15 @@ class StaffRepository:
 
     def delete_staff(self, staff: Staff) -> None:
         staff_table = self._get_staff_by_name(staff.name)
+        if not staff_table:
+            return
+
+        with Base() as session:
+            session.delete(staff_table)
+            session.commit()
+
+    def delete_staff_by_name(self, staff_name: str) -> None:
+        staff_table = self._get_staff_by_name(staff_name)
         if not staff_table:
             return
 

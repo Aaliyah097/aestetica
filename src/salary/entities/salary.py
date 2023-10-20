@@ -1,6 +1,8 @@
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.users.anesthetist import Anesthetist
+from src.staff.entities.users.administrator import Administrator
+from src.staff.entities.users.senior_assistant import SeniorAssistant
 from src.staff.entities.department import Department
 from src.salary.entities.salary_grid import SalaryGrid
 from src.staff.entities.filial import Filial
@@ -21,7 +23,15 @@ class Salary:
         self._income: float = 0
         self._bonuses: list[float] = []
         self._award: float = 0
+        self._payout: float = 0
         self.filial: Filial = filial
+        self._per_hour: bool = False
+
+        if isinstance(self.staff, Assistant) \
+                or isinstance(self.staff, Anesthetist) \
+                or isinstance(self.staff, SeniorAssistant) \
+                or isinstance(self.staff, Administrator):
+            self._per_hour = True
 
     def add_bonus(self, value: float) -> None:
         try:
@@ -39,6 +49,14 @@ class Salary:
 
         self._award = value
 
+    def add_payout(self, value: float) -> None:
+        try:
+            float(value)
+        except ValueError:
+            return
+
+        self._payout = value
+
     @property
     def income(self) -> float:
         total = self._income
@@ -46,6 +64,10 @@ class Salary:
             total += bonus
 
         total += self._award
+        total -= self._payout
+
+        if not self._per_hour:
+            total += self.fix
 
         return round(total, 2)
 
@@ -58,10 +80,8 @@ class Salary:
         self._volume += value
 
         if len(self._grid) == 0:
-            if isinstance(self.staff, Assistant) or isinstance(self.staff, Anesthetist):
+            if self._per_hour:
                 self._income = self.fix * self._volume
-            else:
-                self._income = self.fix
             return
 
         total = 0
@@ -99,7 +119,7 @@ class Salary:
             ],
             'volume': self._volume,
             'income': self._income,
-            'filial': self.filial.serialize() if self.filial else None
+            'filial': self.filial.serialize() if self.filial else None,
         }
 
     def __repr__(self):

@@ -1,24 +1,26 @@
 {% block page_content %}
-    
-    <div>
+    <!-- Премирование  -->
+    <div style="position: relative; width: 95%; left: 50%; transform: translate(-50%, 0)">
         <label class="label_date" style="width: 100%">Дата начала<br>
-            <input type="date" class="input_and_select" style="width: 98%" id="date_begin" >
+            <input type="date" class="input_and_select" style="width: 100%" id="date_begin" >
         </label>
         <label class="label_date" style="width: 100%">Дата конца<br>
-            <input type="date" class="input_and_select" style="width: 98%" id="date_end" >
+            <input type="date" class="input_and_select" style="width: 100%" id="date_end" >
         </label>
-        <label class="label_date" style="width: 100%">Сумма премии<br>
+        <label class="label_date" style="width: 100%">Комментарий<br>
+            <input type="text" class="input_and_select" style="width: 100%" id="comment" >
+        </label>
+        <label class="label_date" style="width: 100%">Сумма надбавки<br>
             <input type="number" class="input_and_select" style="width: 100%" id="amount" >
         </label>
     </div>
     <br>
     <button class="btn btn-success" style="width: auto; float: right; white-space: nowrap; padding: 1% 2%"
-        onclick="createBonus(this)">Премировать
-        сотрудника</button>
+        onclick="createBonus(this)">Присвоить надбавку</button>
 
 <br>
 <br>
-<p class="total">Ранее выданные премии</p>
+<p class="total">Ранее присвоенные надбавки</p>
 <div style="overflow: auto; max-height: 40vh">
     <table class="table table-bordered table-hover">
         <thead>
@@ -28,6 +30,7 @@
                 <th>Дата начала</th>
                 <th>Дата конца</th>
                 <th>Сумма</th>
+                <th>Коммент.</th>
                 <th>Действие</th>
             </tr>
         </thead>
@@ -39,6 +42,7 @@
                 <td>{{ bonus.date_begin.strftime('%d.%m.%Y') }}</td>
                 <td>{{ bonus.date_end.strftime('%d.%m.%Y') }}</td>
                 <td>{{ bonus.amount}}</td>
+                <td>{{ bonus.comment }}</td>
                 <td>
                     <button class="btn btn-danger" style="width: 100%" data-delete-bonus="{{ bonus.id }}"
                         onclick="deleteRow(this)">Удалить</button>

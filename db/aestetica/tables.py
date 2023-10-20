@@ -129,5 +129,32 @@ class Bonus(Base):
     date_begin: Mapped[datetime.date] = mapped_column(Date())
     date_end: Mapped[datetime.date] = mapped_column(Date())
     staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    staff_backref = relationship(
+        "Staff", backref=backref('bonuses', cascade="all, delete-orphan")
+    )
     amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
     comment: Mapped[str] = mapped_column(String(255), default=None, nullable=True)
+
+
+class Payouts(Base):
+    __tablename__ = 'payouts'
+
+    id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    staff_backref = relationship(
+        "Staff", backref=backref('payouts', cascade="all, delete-orphan")
+    )
+    on_date: Mapped[datetime.date] = mapped_column(Date(), default=datetime.date.today(), nullable=False)
+    amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)
+
+
+class Traffic(Base):
+    __tablename__ = 'traffic'
+
+    id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
+    staff: Mapped[str] = mapped_column(ForeignKey('staff.name'))
+    staff_backref = relationship(
+        "Staff", backref=backref('traffic', cascade="all, delete-orphan")
+    )
+    on_date: Mapped[datetime.date] = mapped_column(Date(), default=datetime.date.today(), nullable=False)
+    amount: Mapped[float] = mapped_column(Float(), default=0, nullable=False)

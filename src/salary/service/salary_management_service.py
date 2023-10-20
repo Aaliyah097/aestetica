@@ -1,9 +1,18 @@
+import datetime
+
+import openpyxl
+import bs4
+import pandas
+
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
+from src.staff.entities.users.seller import Seller
 from src.staff.entities.users.assistant import Assistant
 from src.staff.entities.department import Department
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.salary.entities.salary_grid import SalaryGrid
+from src.staff.repositories.filials_repository import FilialsRepository
+from src.staff.repositories.departments_repository import DepartmentsRepository
 
 
 class SalaryManagementService:
@@ -28,23 +37,52 @@ class SalaryManagementService:
         self.salary_repo.modify_salary(salary_id=salary_id, fix=fix, grid=salary_grid)
 
     def create_salary_for_staff(self, staff: Staff) -> None:
+        departments = DepartmentsRepository.get_all()
         if isinstance(staff, Doctor):
-            for dep_name in filter(lambda d: d != 'Прочее', Department.names):
-                department = Department(name=dep_name)
+            for filial in FilialsRepository.get_all():
+                for department in filter(lambda d: d.name != 'Прочее', departments):
+                    salary = self.salary_repo.create_salary(
+                        staff=staff,
+                        department=department,
+                        fix=0,
+                        filial=filial
+                    )
 
+                    if not salary:
+                        continue
+
+                    default_grids = {
+                        1_500_000: 20,
+                        2_500_000: 25,
+                        100_000_000: 30
+                    }
+
+                    self.salary_repo.create_grid(
+                        salary=salary,
+                        grid=[
+                            SalaryGrid(
+                                limit=key,
+                                percent=value
+                            )
+                            for key, value in default_grids.items()
+                        ]
+                    )
+        elif isinstance(staff, Seller):
+            for filial in FilialsRepository.get_all():
                 salary = self.salary_repo.create_salary(
                     staff=staff,
-                    department=department,
-                    fix=0
+                    department=Department(name='Прочее'),
+                    fix=25000,
+                    filial=filial
                 )
 
                 if not salary:
                     continue
 
                 default_grids = {
-                    1500000: 20,
-                    2500000: 25,
-                    3000000: 30
+                    5_000_000: 2,
+                    10_000_000: 2.5,
+                    100_000_000: 3
                 }
 
                 self.salary_repo.create_grid(
@@ -58,9 +96,28 @@ class SalaryManagementService:
                     ]
                 )
         else:
-            department = Department(name='Прочее')
-            self.salary_repo.create_salary(
-                staff=staff,
-                department=department,
-                fix=5000 if isinstance(staff, Assistant) else 0
-            )
+            for filial in FilialsRepository.get_all():
+                self.salary_repo.create_salary(
+                    staff=staff,
+                    department=Department(name='Прочее'),
+                    fix=5000 if isinstance(staff, Assistant) else 0,
+                    filial=filial
+                )
+
+    # TODO создать отдельный класс генератора отчетов в excel
+    @staticmethod
+    def export_salary(table_html: str) -> None:
+        wb = openpyxl.Workbook()
+        sheet = wb.active()
+
+        table = bs4.BeautifulSoup(table_html, "html.parser")
+        rows = table.find_all('tr')
+        for idx, row in enumerate(rows):
+            columns = [col.text for col in row.find_all('td')]
+            if hasattr(row, 'header'):
+                pass
+            else:
+                pass
+
+        # df = pandas.read_html(table_html)[0]
+        # df.to_excel("data.xlsx")

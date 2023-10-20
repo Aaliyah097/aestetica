@@ -84,6 +84,7 @@ class DoctorSalaryCalculator:
         if is_submit:
             volume = (volume - consumables_cost) * sp
         else:
+            # если техник не указан, то в полном объеме начисляем
             if consumables_cost != 0:
                 volume = (volume - consumables_cost) * fp
             else:

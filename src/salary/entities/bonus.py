@@ -15,7 +15,7 @@ class Bonus:
         self.date_end: datetime.date = date_end
         self.amount = amount or 0
         self.id: int | None = _id
-        self.comment: str | None = None
+        self.comment: str | None = comment
 
     def serialize(self) -> dict:
         return {

@@ -1,4 +1,3 @@
-const loader = document.querySelector('.bgDark')
 class Loader {
     constructor(loader) {
         this.loader = document.querySelector('.bgDark')
@@ -11,6 +10,8 @@ class Loader {
 
     }
 }
+let all_reclamation = [];
+let confirmation = document.getElementById('confiramtion_reclamation');
 
 document.getElementById('form_data').addEventListener('submit', function (event) {
     event.preventDefault()
@@ -18,15 +19,49 @@ document.getElementById('form_data').addEventListener('submit', function (event)
 
 })
 
+
+function ExportSalary(){
+    let table = document.getElementById('DownloadMainTable');
+    if (!table){
+        getNotifications('Сформируйте таблицу перед экспортом')
+        return
+    }
+    let loader = new Loader()
+    loader.LoaderOn()
+    $.ajax(
+        {
+            type: 'post',
+            url: '/salary/export',
+            async: true,
+            data: JSON.stringify({
+                'table': table.outerHTML
+            }),
+            contentType: 'application/json',
+            success: function (data){
+                loader.LoaderOff()
+            },
+            error: function (xhr, errmsg, err) {
+                loader.LoaderOff()
+                getNotifications('Ошибка получения данных, повторите попытку позже')
+            }
+        }
+    )
+}
+
+
 function getSalary(form) {
     document.getElementById('table_block').innerHTML = ""
     let loader = new Loader()
     loader.LoaderOn()
     $.ajax(
         {
-            type: 'get',
+            type: 'post',
             url: `${form.attr('action')}?${form.serialize()}`,
             async: true,
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'complaints': all_reclamation
+            }),
             success: function (data) {
                 document.querySelector('.nodata').style = 'display: none'
                 document.getElementById('table_block').innerHTML = data
@@ -131,3 +166,27 @@ sync_button.addEventListener('click', async (event) => {
         getNotifications(`Ошибка! Данные не синхронизированы. ${error}`, 'alert-danger');
     }
 });
+
+
+
+function Reclamation(el) {    
+    if (el.checked) {
+        el.closest('td').children[1].style.display = 'block';
+        all_reclamation.push(el.getAttribute('data-markdown-number'));
+    } else {
+        el.closest('td').children[1].style.display = 'none';
+        const index = all_reclamation.indexOf(el.getAttribute('data-markdown-number'));
+        if (index !== -1) {
+            all_reclamation.splice(index, 1);
+        }
+    }
+    all_reclamation.length > 0 ? confirmation.style.display = 'block' : confirmation.style.display = 'none';
+    console.log(all_reclamation);
+}
+function getReclamation(){
+    confirmation.style.display = 'none'
+    generate_button.click()
+    all_reclamation = []
+}
+
+

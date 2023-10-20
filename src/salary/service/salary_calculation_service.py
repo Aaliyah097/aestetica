@@ -14,11 +14,13 @@ from src.staff.entities.users.technician import Technician
 from src.staff.entities.users.senior_assistant import SeniorAssistant
 from src.staff.entities.users.manager import Manager
 from src.staff.entities.users.administrator import Administrator
+from src.staff.entities.users.seller import Seller
+
+from src.salary.entities.traffic import Traffic
 
 from src.staff.entities.department import Department
 from src.staff.entities.filial import Filial
 
-from src.treatments.entities.consumables import Consumables
 from src.treatments.entities.service import Service
 from src.treatments.entities.treatment import Treatment, MarkDown
 
@@ -28,6 +30,9 @@ from src.schedule.repositories.schedule_repository import ScheduleRepository
 
 from src.salary.repositories.bonus_repository import BonusRepository
 from src.salary.repositories.salary_repository import SalaryRepository
+from src.salary.repositories.payout_repository import PayoutRepository
+from src.salary.repositories.traffic_repository import TrafficRepository
+
 from src.staff.repositories.staff_repository import StaffRepository
 
 from src.salary.service.calculators.doctor_calculator import DoctorSalaryCalculator
@@ -43,23 +48,23 @@ class SalaryReport:
     income: float
     volume: float
     fix: float
+    payout: float
+    award: float
 
 
 @dataclass
 class DoctorsSalaryReport(SalaryReport):
     treatments: list[Treatment]
-    award: float = 0
 
 
 @dataclass
 class AssistantSalaryReport(SalaryReport):
     schedule: list[Schedule]
-    award: float = 0
 
 
 @dataclass
-class OtherSalaryReport(SalaryReport):
-    award: float = 0
+class SellerSalaryReport(SalaryReport):
+    traffic: list[Traffic]
 
 
 class SalaryCalculationService:
@@ -69,7 +74,9 @@ class SalaryCalculationService:
 
     def __init__(self, filial: Filial | str,
                  date_begin: datetime.date = None,
-                 date_end: datetime.date = None):
+                 date_end: datetime.date = None,
+                 complaints: list = None):
+        self.complaints = [str(c) for c in complaints] if complaints else []
         self.filial = Filial(filial) if type(filial) == str else filial
 
         self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
@@ -79,6 +86,8 @@ class SalaryCalculationService:
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
         self.staff_repo: StaffRepository = StaffRepository()
         self.salary_repo: SalaryRepository = SalaryRepository()
+        self.payout_repo: PayoutRepository = PayoutRepository()
+        self.traffic_repo: TrafficRepository = TrafficRepository()
 
         self.date_begin = date_begin
         self.date_end = date_end
@@ -96,6 +105,14 @@ class SalaryCalculationService:
         self.team_members = defaultdict(int)
         for role in roles:
             self.team_members[role] += self.staff_repo.get_amount_by_role(role)
+
+    def calc_payouts(self, staff: Staff) -> float:
+        total = 0
+        payouts = self.payout_repo.get_by_staff(staff.name)
+        for pay in payouts:
+            if self.date_begin <= pay.on_date <= self.date_end:
+                total += pay.amount
+        return total
 
     def calc_award(self, staff: Staff) -> float:
         award = 0
@@ -123,13 +140,38 @@ class SalaryCalculationService:
 
         return award
 
-    # Считаться должно так:
-    """
-    Берем ставку фиксы,
-    Прибавляем за период бонусы к ставке
-    (Ставку и бонус) умножаем на количество дней в периоде отработанным
-    И перенести это все в калькулятор по ассистентам
-    """
+    # продажники
+    def sellers_calc(self) -> list[SellerSalaryReport]:
+        salary_reports = []
+        for staff in self.staff_repo.get_staff():
+            if not isinstance(staff, Seller):
+                continue
+
+            traffic = list(filter(lambda t: self.date_begin <= t.on_date <= self.date_end,
+                                  self.traffic_repo.get_by_staff(staff.name)))
+            volume = sum([t.amount for t in traffic])
+
+            salary = self.salary_repo.get_salary(staff, Department('Прочее'), filial=self.filial)
+            salary.volume = volume
+            award = self.calc_award(staff)
+            salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
+
+            salary_reports.append(
+                SellerSalaryReport(
+                    staff=staff,
+                    income=salary.income,
+                    award=award,
+                    volume=volume,
+                    fix=salary.fix,
+                    payout=payout,
+                    traffic=traffic
+                )
+            )
+        return salary_reports
+
+    # ассистенты
     def assistants_calc(self) -> list[AssistantSalaryReport]:
         schedules = self.schedule_repo.get_all_schedule(self.date_begin, self.date_end)
         salary_reports = []
@@ -141,6 +183,8 @@ class SalaryCalculationService:
             salary = AssistantsSalaryCalculator().calc(staff, schedule, self.filial)
             award = self.calc_award(staff)
             salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
 
             salary_reports.append(
                 AssistantSalaryReport(
@@ -149,35 +193,41 @@ class SalaryCalculationService:
                     volume=salary.volume,
                     fix=salary.fix,
                     schedule=schedule,
-                    award=award
+                    award=award,
+                    payout=payout
                 )
             )
         return salary_reports
 
-    def other_staff_calc(self) -> list[OtherSalaryReport]:
+    # прочие
+    def other_staff_calc(self) -> list[SalaryReport]:
         salary_reports = []
 
         for staff in self.staff_repo.get_staff():
             if isinstance(staff, Doctor) or isinstance(staff, Assistant) or isinstance(staff, SeniorAssistant) \
                     or isinstance(staff, Technician) or isinstance(staff, Anesthetist) or isinstance(staff, Administrator) \
-                    or isinstance(staff, Householder):
+                    or isinstance(staff, Householder) or isinstance(staff, Seller):
                 continue
             salary = self.salary_repo.get_salary(staff, Department("Прочее"), filial=self.filial)
             salary.volume = 1
             award = self.calc_award(staff)
             salary.add_award(award)
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
 
             salary_reports.append(
-                OtherSalaryReport(
+                SalaryReport(
                     staff=staff,
                     income=salary.income,
                     award=award,
                     volume=0,
-                    fix=salary.fix
+                    fix=salary.fix,
+                    payout=payout
                 )
             )
         return salary_reports
 
+    # анестезиологи
     def anesthetists_calc(self) -> list[DoctorsSalaryReport]:
         treatments = self.treatment_repo.get_all_treatments(
             date_begin=self.date_begin,
@@ -198,6 +248,10 @@ class SalaryCalculationService:
         calculator = AnesthetistCalculator()
         for staff, treatments in data.items():
             salary = calculator.calc(staff, treatments, filial=self.filial)
+
+            payout = self.calc_payouts(staff)
+            salary.add_payout(payout)
+
             salary_reports.append(
                 DoctorsSalaryReport(
                     staff=staff,
@@ -205,12 +259,14 @@ class SalaryCalculationService:
                     award=0,
                     volume=salary.volume,
                     fix=salary.fix,
-                    treatments=treatments
+                    treatments=treatments,
+                    payout=payout
                 )
             )
 
         return salary_reports
 
+    # врачи
     def doctors_cals(self) -> list[DoctorsSalaryReport]:
         treatments = self._split_treatments(
             self.treatment_repo.get_all_treatments(
@@ -224,12 +280,17 @@ class SalaryCalculationService:
 
         for doctor, departments in treatments.items():
             salaries, marked_treatments = calculator.calc(doctor, departments, filial=self.filial)
+
+            payout = self.calc_payouts(doctor)
+
             salary_report = DoctorsSalaryReport(
                 staff=doctor,
-                income=sum([salary.income for salary in salaries]),
+                income=sum([salary.income for salary in salaries]) - payout,
                 volume=sum([salary.volume for salary in salaries]),
                 fix=0,
-                treatments=marked_treatments
+                treatments=marked_treatments,
+                payout=payout,
+                award=0
             )
             salary_reports.append(salary_report)
         return salary_reports
@@ -243,22 +304,20 @@ class SalaryCalculationService:
             bonus = self.bonus_repository.get_bonus(sch.staff, on_date=sch.on_date)
             if bonus:
                 sch.bonus = bonus.amount
+                sch.comment = bonus.comment
 
             data[sch.staff].append(sch)
 
         return data
 
-    def get_consumables(self, treatment: Treatment) -> Consumables | None:
-        return self.consumables_repo.get_by_technician_and_service(
-            technician=treatment.technician,
-            service=treatment.service
-        )
-
     def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))
 
         for treatment in treatments:
-            treatment.consumables = self.get_consumables(treatment)
+            treatment.consumables = self.consumables_repo.get_by_technician_and_service(
+                technician=treatment.technician,
+                service=treatment.service
+            )
 
             if not isinstance(treatment.staff, Doctor):
                 continue
@@ -293,8 +352,13 @@ class SalaryCalculationService:
                         history_treatment.markdown = MarkDown(
                             is_history=True
                         )
-                        result[treatment.staff][treatment.department].append(history_treatment)
 
-            result[treatment.staff][treatment.department].append(treatment)
+                        history_treatment.markdown.number = str(hash(history_treatment))
+                        if history_treatment.markdown.number not in self.complaints:
+                            result[treatment.staff][treatment.department].append(history_treatment)
+
+            treatment.markdown.number = str(hash(treatment))
+            if treatment.markdown.number not in self.complaints:
+                result[treatment.staff][treatment.department].append(treatment)
 
         return result

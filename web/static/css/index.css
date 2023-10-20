@@ -10,17 +10,20 @@
     --DescriptionColor: #8E8E8E;
     --black: #212529;
 }
-.prompt{
+
+.prompt {
     color: var(--DescriptionColor);
     padding: 3% 2%;
     font-size: 13px;
 }
+
 button,
 button:active,
-button:focus  {
-cursor: pointer;
-  border:none;
+button:focus {
+    cursor: pointer;
+    border: none;
 }
+
 input,
 select,
 option {
@@ -84,6 +87,57 @@ option {
     font-size: var(--FontSizeText)
 }
 
+.input-elevated {
+    font-size: 16px;
+    line-height: 1.5;
+    border: none;
+    background: #FFFFFF;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><path fill='%23838D99' d='M13.22 14.63a8 8 0 1 1 1.41-1.41l4.29 4.29a1 1 0 1 1-1.41 1.41l-4.29-4.29zm-.66-2.07a6 6 0 1 0-8.49-8.49 6 6 0 0 0 8.49 8.49z'></path></svg>");
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+    background-size: 20px 20px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+    border-radius: 5px;
+    width: 300px;
+    padding: .5em 1em .5em 2.5em;
+}
+
+.input-elevated::placeholder {
+    color: #838D99;
+}
+
+.input-elevated:focus {
+    outline: none;
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.16);
+}
+
+.select_consumables {
+    text-decoration: none;
+    outline: none;
+    border-radius: 0.4rem;
+    background-color: #efefef;
+    border: #bdc3c7 0.1rem solid;
+    padding: 0rem 1rem;
+    font-size: 1rem;
+    height: 2rem;
+}
+
+#ChangeService>input {
+    width: 95%;
+    height: 2rem;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: white;
+}
+
+
+
+.select_consumables:focus {
+    border: none;
+    text-decoration: none;
+}
+
 .input_and_select:focus {
     outline: none;
     border: #303030 0.1rem solid;
@@ -100,9 +154,10 @@ option {
     margin-top: 2%;
     font-size: var(--FontSizeText);
 }
-.sync_button{
+
+.sync_button {
     border-radius: 0.4rem;
-    background-color: rgb(93,121,93);
+    background-color: rgb(93, 121, 93);
     color: white;
     text-align: center;
     padding: 0rem 1rem;
@@ -112,8 +167,27 @@ option {
     font-size: var(--FontSizeText);
     margin-top: 4%;
 }
-.sync_button:hover{
+
+.sync_button:hover {
     background-color: rgb(71, 94, 71);
+
+}
+
+.export_button {
+    border-radius: 0.4rem;
+    background-color: rgb(63, 119, 159);
+    color: white;
+    text-align: center;
+    padding: 0rem 1rem;
+    height: 3rem;
+    width: max(16rem, 100%);
+    margin-top: 2%;
+    font-size: var(--FontSizeText);
+    margin-top: 4%;
+}
+
+.export_button:hover {
+    background-color: rgb(3, 86, 105);
 
 }
 
@@ -148,7 +222,12 @@ option {
     /* min-height: 50vh; */
 }
 
-
+td>textarea {
+    width: 100%;
+    height: 100%;
+    padding: 2%;
+    border: lightgrey;
+}
 
 th {
     text-align: center;
@@ -168,6 +247,7 @@ td:not(:nth-child(1)) {
 }
 
 td {
+        font-size: 14px;
     text-align: center;
     vertical-align: middle;
 }
@@ -210,12 +290,28 @@ td {
     margin-bottom: 5%;
     position: relative;
 }
-.block_data__change{
+
+.block_data__change__archieve {
+    width: 95vw;
+    margin-top: 2%;
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow: 11px 11px 22px #d9d9d9,
+        -11px -11px 22px #ffffff;
+    margin-bottom: 5%;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0)
+}
+
+.block_data__change {
     max-height: 90vh;
 }
+
 .block_data__add {
     max-height: 90vh;
 }
+
 .block_data__add__content {
     position: relative;
     display: flex;
@@ -226,23 +322,27 @@ td {
 }
 
 .block_data__add__content {
-    display: flex; /* Размещаем элементы в строку */
-    justify-content: space-between; /* Равномерно распределяем пространство между элементами */
-    align-items: center; /* Выравниваем элементы по вертикали по центру */
+    display: flex;
+    /* Размещаем элементы в строку */
+    justify-content: space-between;
+    /* Равномерно распределяем пространство между элементами */
+    align-items: center;
+    /* Выравниваем элементы по вертикали по центру */
 
-  }
-  
-  /* Убираем внешние отступы у элементов */
-  .block_data__add__content select,
-  .block_data__add__content input {
+}
+
+/* Убираем внешние отступы у элементов */
+.block_data__add__content select,
+.block_data__add__content input {
     margin: 0;
-  }
-  
-  /* Устанавливаем общий размер для всех элементов */
-  .block_data__add__content select,
-  .block_data__add__content input {
-    width: 90%; 
-  }
+}
+
+/* Устанавливаем общий размер для всех элементов */
+.block_data__add__content select,
+.block_data__add__content input {
+    width: 90%;
+}
+
 /* 
 .block_data__add__content select {
     max-width: 300px;
@@ -290,9 +390,11 @@ td {
 #showChange.transform {
     transform: rotate(180deg);
 }
-#showChange{
+
+#showChange {
     display: none;
 }
+
 #refreshData.transform {
     transform: rotate(360deg);
 }
@@ -308,19 +410,36 @@ td {
     table-layout: fixed;
 }
 
-.selectPriceCost{
+.selectPriceCost {
     border: 1px solid #969696;
     border-radius: 3px;
     padding: 2px 20px 2px 8px;
 
 }
-.selectPriceCost:focus{
+
+.selectPriceCost:focus {
     outline: none;
     border: 2px solid #969696;
 }
+
+
 /* Конец сотрудники */
 
 
+.metka {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
 
 .sticks {
     position: sticky;
@@ -354,6 +473,42 @@ td {
     background: lightsalmon;
 }
 
+.success {
+    animation: change_back 0.8s linear;
+}
+
+@keyframes change_back {
+    0% {
+        background: none;
+    }
+
+    50% {
+        background: lightgreen;
+    }
+
+    100% {
+        background: none;
+    }
+}
+
+.error {
+    animation: change_back_error 0.8s linear;
+}
+
+@keyframes change_back_error {
+    0% {
+        background: none;
+    }
+
+    50% {
+        background: rgb(201, 23, 23);
+    }
+
+    100% {
+        background: none;
+    }
+}
+
 /* Конец анимации */
 
 
@@ -373,9 +528,11 @@ td {
     .description {
         display: none;
     }
-    #showChange{
+
+    #showChange {
         display: block;
     }
+
     .input_block {
         width: 80%;
         margin: 0;
@@ -398,7 +555,6 @@ td {
         /* width: 50%; */
         padding: 0rem 1rem;
         font-size: var(--FontSizeText)
-
     }
 
     .logo_img {
@@ -438,10 +594,12 @@ td {
         display: flex;
         position: relative;
     }
-    .block_data__add{
+
+    .block_data__add {
         height: 95vh;
         max-height: 100vh;
     }
+
     .block_data__add__content {
         display: flex;
         flex-direction: column;
@@ -456,10 +614,12 @@ td {
         font-size: 16px;
         margin: 5% 0 0 1%;
     }
+
     .block_data__add__content select,
     .block_data__add__content input {
-      width:97%; 
+        width: 97%;
     }
+
     .table-staff {
         table-layout: auto;
         margin-top: 1%;

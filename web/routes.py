@@ -1,3 +1,5 @@
+import datetime
+
 from app import app
 from flask import render_template, request, redirect, send_from_directory
 
@@ -14,8 +16,13 @@ from web.use_cases.traffic import *
 
 @app.route('/', methods=['GET', ])
 def new_page():
+    today = datetime.date.today()
+    start_date = datetime.date(today.year, today.month, 1 if today.day <= 15 else 16)
+
     return render_template(
-        'index.html'
+        'index.html',
+        end_date=today,
+        start_date=start_date
     )
 
 

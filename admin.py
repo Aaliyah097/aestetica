@@ -1,16 +1,18 @@
+import os
 import os.path as op
 
-from flask import send_from_directory
+from flask import send_from_directory, redirect
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.sqla.fields import QuerySelectField
+from flask_admin.menu import MenuLink
 from flask_wtf import FlaskForm
 from wtforms import SelectField
 
 from app import app
 from app import db
 from flask_admin.form import Select2Field, Select2Widget
-from flask_admin import Admin, AdminIndexView, expose
+from flask_admin import Admin, AdminIndexView, expose, BaseView
 from db.aestetica.tables import (Filial, Salary, Staff, Role, Department, SalaryGrid,
     Service, Consumables, Bonus, Payouts, Traffic
 )
@@ -279,6 +281,9 @@ class MyHomeView(AdminIndexView):
     def index(self):
         return self.render('custom_admin_index.html')
 
+    def get_url(self, endpoint, **kwargs):
+        return '/'
+
 
 class CustomFileAdmin(FileAdmin):
     column_labels = {
@@ -287,10 +292,14 @@ class CustomFileAdmin(FileAdmin):
         'date': 'Дата',
     }
 
+    can_delete_dirs = False
+    can_rename = False
 
-admin = Admin(app, name='aestetica', template_mode='bootstrap4', index_view=MyHomeView(name='Главная'))
+
+admin = Admin(app, name='', template_mode='bootstrap4', index_view=MyHomeView(name='Главная'))
+
 path = op.join(op.dirname(__file__), 'static')
-admin.add_view(CustomFileAdmin(path, '/static', name='Файлы'))
+admin.add_view(CustomFileAdmin(path, '/static', name='Файлы', url='files'))
 
 admin.add_view(StaffView(Staff, db.session, name='Сотрудники'))
 admin.add_view(RoleView(Role, db.session, name='Должности'))

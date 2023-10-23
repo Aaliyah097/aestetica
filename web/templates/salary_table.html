@@ -73,7 +73,7 @@
                         style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"
                         onchange="Reclamation(this)">
                     {{ razbivka.client }}
-                    <div class="metka">РЕКЛАМАЦИЯ</div>
+                    <div class="metka"></div>
                 </td>
                 <td>{{ razbivka.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka.department }}</td>
@@ -111,7 +111,7 @@
             {% endfor %}
             {#margins by all doctors#}
             <tr style="background: #a7c9a7; color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ') }}
                 </td>
                 <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}
@@ -208,7 +208,7 @@
             {% endfor %}
             {#margins by all anesthetists#}
             <tr style="background: #a7c9a7; color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ')
                     }}</td>
                 <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ')
@@ -289,7 +289,7 @@
 
             {# сумма для всех ассистентов #}
             <tr style="background: #a7c9a7; color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td>
                     {{ assistants_report|selectattr('staff.role.name', 'equalto',
                     'Ассистент')|map(attribute='volume')|sum|round(2, 'floor')}}
@@ -376,7 +376,7 @@
 
             {# сумма для всех администраторов #}
             <tr style="background: #a7c9a7; color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td> {{ assistants_report|selectattr('staff.role.name', 'equalto',
                     'Администратор')|map(attribute='volume')|sum|round(2, 'floor')}}
                 </td>
@@ -391,10 +391,6 @@
                 <td></td>
                 <td></td>
             </tr>
-
-
-
-
 
             {# Менеджер по продажам #}
             <tr style="background: #fae08b; color: #215968; text-align: left">
@@ -451,7 +447,7 @@
             </tr>
             {% endfor %}
             <tr style="background: #a7c9a7; color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td>
                     {{ '{0:,} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='volume') | sum | round(2, 'floor')).replace(',', ' ') }}
 
@@ -505,7 +501,7 @@
             {% endfor %}
             {#margins by group#}
             <tr style="background: rgb(147, 177, 147); color: white; text-align: left">
-                <td style="text-align: left;">Итого</td>
+                <td style="text-align: left;">Всего</td>
                 <td></td>
                 <td>{{ '{0:,} ₽'.format(salary_reports|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}
                 </td>

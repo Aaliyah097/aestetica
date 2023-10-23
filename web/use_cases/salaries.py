@@ -96,6 +96,10 @@ def modify_salary(pk: int):
 @app.route('/salary/export', methods=['POST', ])
 def export_salary_report():
     table = request.json.get('table')
-    SalaryManagementService.export_salary(table)
+    date_begin = request.json.get('date_begin', None)
+    date_end = request.json.get('date_end', None)
+    filial = request.json.get('filial', None)
+
+    SalaryManagementService.export_salary(table, filial, date_begin, date_end)
 
     return 'ok', 200

@@ -1,4 +1,6 @@
 import os.path as op
+
+from flask import send_from_directory
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.sqla.fields import QuerySelectField
@@ -278,9 +280,17 @@ class MyHomeView(AdminIndexView):
         return self.render('custom_admin_index.html')
 
 
-admin = Admin(app, name='aestetica', template_mode='bootstrap4', index_view=MyHomeView())
+class CustomFileAdmin(FileAdmin):
+    column_labels = {
+        'name': 'Название',
+        'size': 'Размер',
+        'date': 'Дата',
+    }
+
+
+admin = Admin(app, name='aestetica', template_mode='bootstrap4', index_view=MyHomeView(name='Главная'))
 path = op.join(op.dirname(__file__), 'static')
-admin.add_view(FileAdmin(path, '/static/', name='Файлы'))
+admin.add_view(CustomFileAdmin(path, '/static', name='Файлы'))
 
 admin.add_view(StaffView(Staff, db.session, name='Сотрудники'))
 admin.add_view(RoleView(Role, db.session, name='Должности'))

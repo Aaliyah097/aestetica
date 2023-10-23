@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__,
             static_url_path='',
             template_folder="web/templates",
-            static_folder='web/static',)
+            static_folder='static',)
 app.config.from_object('settings.Config')
 app.config['FLASK_ADMIN_SWATCH'] = 'lux'
 

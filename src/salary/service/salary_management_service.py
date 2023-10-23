@@ -1,6 +1,7 @@
 import datetime
 
 import openpyxl
+from openpyxl.styles import Font, PatternFill
 import bs4
 import pandas
 
@@ -106,18 +107,73 @@ class SalaryManagementService:
 
     # TODO создать отдельный класс генератора отчетов в excel
     @staticmethod
-    def export_salary(table_html: str) -> None:
-        wb = openpyxl.Workbook()
-        sheet = wb.active()
+    def export_salary(table_html: str, filial: str = None, date_begin: datetime.date = None, date_end: datetime.date = None) -> None:
+        df = pandas.read_html(table_html)[0]
 
-        table = bs4.BeautifulSoup(table_html, "html.parser")
-        rows = table.find_all('tr')
-        for idx, row in enumerate(rows):
-            columns = [col.text for col in row.find_all('td')]
-            if hasattr(row, 'header'):
-                pass
+        file_name = f"static/{filial}_{str(date_begin)}_{str(date_end)}.xlsx"
+
+        writer = pandas.ExcelWriter(file_name, engine='openpyxl')
+
+        df.to_excel(writer, sheet_name=f"{str(date_begin)}-{str(date_end)}", index=False)
+        sheet = writer.sheets[f"{str(date_begin)}-{str(date_end)}"]
+
+        for idx, column in enumerate(sheet.columns):
+            if idx == 3:
+                continue
+            max_length = 0
+            column_name = column[0].column_letter
+
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+
+            sheet.column_dimensions[column_name].width = adjusted_width
+
+        bold_font = Font(bold=True)
+        blue = PatternFill(start_color='CFE2FF', end_color='CFE2FF', fill_type='solid')
+        green = PatternFill(start_color='A7C9A7', end_color='A7C9A7', fill_type='solid')
+        dark_green = PatternFill(start_color='839D83', end_color='839D83', fill_type='solid')
+        orange = PatternFill(start_color='FAE08B', end_color='FAE08B', fill_type='solid')
+
+        start_counter, end_counter = None, None
+        min_row = 2
+
+        for row_idx, row in enumerate(sheet.iter_rows(min_row=min_row, values_only=True)):
+            rows_idx = row_idx + min_row
+            if row[0] in ['Итого', "Клиент", 'Дата', 'Всего'] or row[2] == 'Руб.':
+                for col_idx in range(1, sheet.max_column + 1):
+                    sheet.cell(rows_idx, col_idx).font = bold_font
+                    if row[0] in ['Клиент', 'Дата']:
+                        sheet.cell(rows_idx, col_idx).fill = blue
+                    elif row[0] == 'Итого':
+                        sheet.cell(rows_idx, col_idx).fill = green
+                    elif row[2] == 'Руб.':
+                        sheet.cell(rows_idx, col_idx).fill = orange
+                    elif row[0] == 'Всего':
+                        sheet.cell(rows_idx, col_idx).fill = dark_green
             else:
-                pass
+                if sheet.cell(rows_idx - 1, 1).value in ['Клиент', 'Дата']:
+                    if not start_counter:
+                        start_counter = rows_idx - 1
+                if sheet.cell(rows_idx + 1, 1).value == 'Итого':
+                    if not end_counter:
+                        end_counter = rows_idx + 1
 
-        # df = pandas.read_html(table_html)[0]
-        # df.to_excel("data.xlsx")
+            if start_counter and end_counter:
+                for i in range(start_counter, end_counter + 1):
+                    sheet.row_dimensions[i].outline_level = 1
+                    sheet.row_dimensions[i].outline_below = True
+                    sheet.row_dimensions[i].hidden = True
+                start_counter, end_counter = None, None
+
+            for i in range(1, sheet.max_column + 1):
+                if "Unnamed" in sheet.cell(1, i).value:
+                    sheet.cell(1, i).value = ""
+
+            sheet.freeze_panes = "A2"
+
+        writer.close()

@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, send_from_directory
 
 from web.use_cases.staff import *
 from web.use_cases.consumables import *
@@ -24,3 +24,8 @@ def archieve():
     return render_template(
         'archive.html'
     )
+
+
+@app.route('/download/<filename>')
+def download_file(filename):
+    return send_from_directory('static', filename)

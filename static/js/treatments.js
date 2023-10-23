@@ -34,7 +34,10 @@ function ExportSalary(){
             url: '/salary/export',
             async: true,
             data: JSON.stringify({
-                'table': table.outerHTML
+                'table': table.outerHTML,
+                'date_begin': document.getElementById('date_start').value,
+                'date_end': document.getElementById("date_end").value,
+                'filial': document.getElementById("filial").value
             }),
             contentType: 'application/json',
             success: function (data){

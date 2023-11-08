@@ -56,8 +56,8 @@ class Role(Base):
 class Filial(Base):
     __tablename__ = 'filials'
 
-    name: Mapped[str] = mapped_column(String(50), primary_key=True, unique=True, autoincrement=False)
-    db_address: Mapped[str] = mapped_column(String(15), nullable=True)
+    name: Mapped[str] = mapped_column(String(150), primary_key=True, unique=True, autoincrement=False)
+    db_address: Mapped[str] = mapped_column(String(150), nullable=True)
     db_port: Mapped[str] = mapped_column(String(5), nullable=True)
     db_name: Mapped[str] = mapped_column(String(50), nullable=True)
     db_user: Mapped[str] = mapped_column(String(150), nullable=True)

@@ -312,6 +312,7 @@ class SalaryCalculationService:
 
     def _split_treatments(self, treatments: list[Treatment]) -> dict[Staff, dict[Department, list[Treatment]]]:
         result = defaultdict(lambda: defaultdict(list))
+        unique_numbers = []
 
         for treatment in treatments:
             treatment.consumables = self.consumables_repo.get_by_technician_and_service(
@@ -354,11 +355,13 @@ class SalaryCalculationService:
                         )
 
                         history_treatment.markdown.number = str(hash(history_treatment))
-                        if history_treatment.markdown.number not in self.complaints:
+                        if history_treatment.markdown.number not in self.complaints and history_treatment.markdown.number not in unique_numbers:
                             result[treatment.staff][treatment.department].append(history_treatment)
+                            unique_numbers.append(history_treatment.markdown.number)
 
             treatment.markdown.number = str(hash(treatment))
-            if treatment.markdown.number not in self.complaints:
+            if treatment.markdown.number not in self.complaints and treatment.markdown.number not in unique_numbers:
                 result[treatment.staff][treatment.department].append(treatment)
+                unique_numbers.append(treatment.markdown.number)
 
         return result

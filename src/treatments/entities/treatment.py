@@ -30,7 +30,11 @@ class Treatment:
         self.markdown: MarkDown = MarkDown()
 
     def __hash__(self):
-        data = (self.client, self.on_date, self.staff.name, self.department.name, self.service.code)
+        data = (self.client, self.on_date,
+                self.staff.name if self.staff else "",
+                self.department.name if self.department else "",
+                self.service.code if self.service else "",
+                self.tooth if self.tooth else "")
         return hash(data)
 
     def serialize(self) -> dict:

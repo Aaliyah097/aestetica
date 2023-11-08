@@ -37,7 +37,7 @@ class BonusRepository:
         if not staff:
             return
 
-        if not isinstance(staff, Assistant) or not isinstance(staff, Administrator) or not isinstance(staff, SeniorAssistant):
+        if not isinstance(staff, Assistant) and not isinstance(staff, Administrator) and not isinstance(staff, SeniorAssistant):
             raise Exception(f"Надбавки недоступны для должности {staff.role.name}")
 
         with Base() as session:

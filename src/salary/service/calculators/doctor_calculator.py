@@ -79,13 +79,16 @@ class DoctorSalaryCalculator:
         if is_submit:
             consumables_cost += treatment.consumables.cost if treatment.consumables else 0
 
+        if treatment.staff.name == "Манукян Артавазд Генрикович":
+            consumables_cost = 0
+
         volume -= withdraw
 
         if is_submit:
             volume = (volume - consumables_cost) * sp
         else:
             # если техник не указан, то в полном объеме начисляем
-            if consumables_cost != 0:
+            if treatment.technician:
                 volume = (volume - consumables_cost) * fp
             else:
                 volume = volume

@@ -73,7 +73,7 @@ class Repository:
         WHERE
         t.treatdate <= '{str(lt_date)}' 
         AND d.dname LIKE '%{doctor_name}%' 
-        AND c.fullname LIKE '%{client}"%' 
+        AND c.fullname LIKE '%{client}%' 
         AND od.toothcode {tooth_statement}
         AND od.schamount_a <> 0
         AND w.kodoper <> '6.29'
@@ -86,10 +86,11 @@ class Repository:
 
         with self.connector as cursor:
             cursor.execute(query)
-            return self.map_headings(
+            result =  self.map_headings(
                 columns=[column[0] for column in cursor.description],
                 data=cursor.fetchall()
-            )[0]
+            )
+            return None if len(result) == 0 else result[0]
 
     def get_schedule(self, date_begin: datetime.date, date_end: datetime.date) -> list[dict]:
         query = """

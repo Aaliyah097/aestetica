@@ -42,6 +42,8 @@ class DoctorSalaryCalculator:
                     withdraw=prev_volume
                 )
 
+                treatment.markdown.prev_treatment.markdown.volume = prev_volume
+
                 salaries[treatment.markdown.prev_treatment.department].volume = volume
             else:
                 # обычнй прием, который за 1 раз оказывается в полной мере,

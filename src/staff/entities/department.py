@@ -5,7 +5,9 @@ class Department:
     def __init__(self, name: str):
         name = remove_spaces(name)
 
-        self.name = name
+        if name == 'None':
+            name = 'Стоматология'
+        self.name = name or 'Стоматология'
 
     def serialize(self) -> dict:
         return {

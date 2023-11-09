@@ -49,7 +49,7 @@
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
                 style="position: sticky; top:9vh; z-index:2">
-{#                <th>Номер тек/пред</th>#}
+                <th>Номер тек/пред</th>
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Департамент</th>
@@ -69,11 +69,11 @@
                 data-name-employee-no-show="{{ salary.staff.name }}"
                 data-isHistory="{{ razbivka.markdown.is_history }}">
 
-{#                {% if razbivka.markdown.prev_treatment %}#}
-{#                    <td>{{ razbivka.markdown.number }} / {{ razbivka.markdown.prev_treatment.markdown.number }}</td>#}
-{#                {% else %}#}
-{#                    <td>{{ razbivka.markdown.number }}</td>#}
-{#                {% endif %}#}
+                {% if razbivka.markdown.prev_treatment %}
+                    <td>{{ razbivka.markdown.number }} / {{ razbivka.markdown.prev_treatment.markdown.number }}</td>
+                {% else %}
+                    <td>{{ razbivka.markdown.number }}</td>
+                {% endif %}
 
                 <td style="position: relative; padding: 0;">
                     <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}"

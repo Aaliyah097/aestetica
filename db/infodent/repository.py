@@ -71,7 +71,16 @@ class Repository:
         left join conftype cf ON d.stdtype = cf.stdtype
 
         WHERE
-        t.treatdate <= '{str(lt_date)}' 
+        t.treatdate <= '{str(lt_date.date())}' 
+        AND d.dname LIKE '%{doctor_name}%' 
+        AND c.fullname LIKE '%{client}%' 
+        AND od.toothcode {tooth_statement}
+        AND od.schamount_a <> 0
+        AND w.kodoper <> '6.29'
+        """
+
+        """
+        t.treatdate <= '{str(lt_date.date())}' 
         AND d.dname LIKE '%{doctor_name}%' 
         AND c.fullname LIKE '%{client}"%' 
         AND od.toothcode {tooth_statement}
@@ -93,7 +102,7 @@ class Repository:
             if len(result) == 0:
                 return None
             else:
-                result[0]
+                return result[0]
 
     def get_schedule(self, date_begin: datetime.date, date_end: datetime.date) -> list[dict]:
         query = """

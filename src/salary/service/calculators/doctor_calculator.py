@@ -42,6 +42,7 @@ class DoctorSalaryCalculator:
                     withdraw=prev_volume
                 )
 
+                treatment.markdown.prev_treatment.markdown.volume = prev_volume
                 salaries[treatment.markdown.prev_treatment.department].volume = volume
             else:
                 # обычнй прием, который за 1 раз оказывается в полной мере,
@@ -77,7 +78,7 @@ class DoctorSalaryCalculator:
         consumables_cost = treatment.consumables.cost if treatment.consumables else 0
 
         if is_submit:
-            consumables_cost += treatment.consumables.cost if treatment.consumables else 0
+            consumables_cost += treatment.consumables.cost_new if treatment.consumables else 0
 
         if treatment.staff.name == "Манукян Артавазд Генрикович":
             consumables_cost = 0

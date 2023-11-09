@@ -117,6 +117,10 @@ class SalaryManagementService:
         df.to_excel(writer, sheet_name=f"{str(date_begin)}-{str(date_end)}", index=False)
         sheet = writer.sheets[f"{str(date_begin)}-{str(date_end)}"]
 
+        for row in range(1, sheet.max_row + 1):
+            for col in range(1, sheet.max_column + 1):
+                sheet.cell(row, col).value = sheet.cell(row, col).value.replace(" ₽", "").replace("₽", "")
+
         for idx, column in enumerate(sheet.columns):
             if idx == 3:
                 continue

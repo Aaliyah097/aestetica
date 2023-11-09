@@ -332,9 +332,20 @@ class SalaryCalculationService:
                                                                   t.cost != 0,
                                                         treatments)), key=lambda t: t.on_date, reverse=True)
 
-                history_treatment = history_treatments[-1] if len(history_treatments) > 0 else None
+                history_treatment = history_treatments[0] if len(history_treatments) > 0 else None
 
-                if not history_treatment:
+                if history_treatment:
+                    # если прием нашелся среди текущих приемов
+                    history_treatment.markdown = MarkDown(
+                        is_history=False,
+                        number=int(hash(history_treatment))
+                    )
+                    treatment.markdown = MarkDown(
+                        is_history=False,
+                        prev_treatment=history_treatment
+                    )
+                else:
+                    # если прием нашелся среди сторических приемов
                     history_treatment = self.treatment_repo.get_history_treatment(
                         lt_date=treatment.on_date,
                         tooth_code=treatment.tooth,
@@ -342,24 +353,20 @@ class SalaryCalculationService:
                         block_services_codes=tuple([service.code for service in self.submit_services]),
                         client=treatment.client
                     )
-
-                if history_treatment:
-                    treatment.markdown = MarkDown(
-                        is_history=False,
-                        prev_treatment=history_treatment
-                    )
-
-                    if history_treatment.on_date.date() <= self.date_begin:
+                    if history_treatment:
                         history_treatment.markdown = MarkDown(
-                            is_history=True
+                            is_history=True,
+                            number=int(hash(history_treatment))
                         )
-
-                        history_treatment.markdown.number = str(hash(history_treatment))
-                        if history_treatment.markdown.number not in self.complaints and history_treatment.markdown.number not in unique_numbers:
+                        treatment.markdown = MarkDown(
+                            is_history=False,
+                            prev_treatment=history_treatment,
+                            number=int(hash(treatment))
+                        )
+                        if history_treatment.markdown.number not in self.complaints:
                             result[treatment.staff][treatment.department].append(history_treatment)
-                            unique_numbers.append(history_treatment.markdown.number)
 
-            treatment.markdown.number = str(hash(treatment))
+            treatment.markdown.number = int(hash(treatment))
             if treatment.markdown.number not in self.complaints and treatment.markdown.number not in unique_numbers:
                 result[treatment.staff][treatment.department].append(treatment)
                 unique_numbers.append(treatment.markdown.number)

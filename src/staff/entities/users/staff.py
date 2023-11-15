@@ -7,12 +7,14 @@ class Staff:
         self.name: str = remove_spaces(name)
         self.role: Role | None = None
         self.is_new: bool = False
+        self.reduce_discount: bool = True
 
     def serialize(self) -> dict:
         return {
             'name': self.name,
             'role': self.role.serialize() or None,
-            'is_new': self.is_new
+            'is_new': self.is_new,
+            'reduce_discount': self.reduce_discount
         }
 
     def __repr__(self):

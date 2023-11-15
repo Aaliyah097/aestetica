@@ -70,23 +70,22 @@ class DoctorSalaryCalculator:
                 volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
             else:
                 volume = treatment.cost
-        elif (treatment.discount * 100 / treatment.cost_wo_discount) > 50:
+        elif ((treatment.discount * 100 / treatment.cost_wo_discount) > 50) and treatment.staff.reduce_discount:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
         else:
             volume = treatment.cost
 
-        consumables_cost = treatment.consumables.cost if treatment.consumables else 0
-
-        if is_submit:
-            consumables_cost += treatment.consumables.cost_new if treatment.consumables else 0
+        consumables_cost = (treatment.consumables.cost or 0) if treatment.consumables else 0
+        consumables_cost_new = (treatment.consumables.cost_new or 0) if treatment.consumables else 0
 
         if treatment.staff.name == "Манукян Артавазд Генрикович":
             consumables_cost = 0
+            consumables_cost_new = 0
 
-        volume -= withdraw
+        # volume -= withdraw
 
         if is_submit:
-            volume = (volume - consumables_cost) * sp
+            volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
             # если техник не указан, то в полном объеме начисляем
             if treatment.technician:

@@ -45,3 +45,18 @@ def delete_staff():
     StaffRepository().delete_staff_by_name(staff_name)
 
     return 'ok', 200
+
+
+@app.route('/staff/update', methods=['POST', ])
+def update_staff():
+    staff_name = request.args.get('staff', None)
+
+    if not staff_name:
+        return 'expected argument ?staff='
+
+    reduce_discount = request.json.get('reduce_discount', None)
+    is_new = request.json.get('is_new', None)
+
+    StaffRepository().update_staff_by_name(staff_name, is_new, reduce_discount)
+
+    return 'ok', 200

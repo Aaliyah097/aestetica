@@ -67,6 +67,7 @@ class StaffRepository:
                     )
                 )
                 staff.is_new = st.is_new
+                staff.reduce_discount = st.reduce_discount
                 employees.append(staff)
         return employees
 
@@ -122,3 +123,17 @@ class StaffRepository:
             session.commit()
 
         return self.get_staff_by_name(staff.name)
+
+    def update_staff_by_name(self, staff_name: str, is_new: bool | None, reduce_discount: bool | None) -> None:
+        with Base() as session:
+            staff_table = self._get_staff_by_name(staff_name)
+            if not staff_table:
+                return
+
+            if not is_new is None:
+                staff_table.is_new = is_new
+            if not reduce_discount is None:
+                staff_table.reduce_discount = reduce_discount
+
+            session.add(staff_table)
+            session.commit()

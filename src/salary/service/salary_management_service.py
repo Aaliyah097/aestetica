@@ -4,6 +4,7 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill
 import bs4
 import pandas
+import re
 
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
@@ -119,7 +120,13 @@ class SalaryManagementService:
 
         for row in range(1, sheet.max_row + 1):
             for col in range(1, sheet.max_column + 1):
-                sheet.cell(row, col).value = sheet.cell(row, col).value.replace(" ₽", "").replace("₽", "")
+                if "₽" in sheet.cell(row, col).value:
+                    sheet.cell(row, col).value = sheet.cell(row, col).value.replace(" ₽", "").replace("₽", "")
+                try:
+                    val = float(sheet.cell(row, col).value.replace(" ", ""))
+                    sheet.cell(row, col).value = val
+                except ValueError:
+                    pass
 
         for idx, column in enumerate(sheet.columns):
             if idx == 3:

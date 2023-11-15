@@ -14,7 +14,7 @@ from db.aestetica.tables import Base
 
 
 db = SQLAlchemy(model_class=Base)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.abspath('db/aestetica/db.sqlite3')
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.abspath('db/aestetica/db_old.sqlite3')
 db.init_app(app)
 
 

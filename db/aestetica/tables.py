@@ -45,6 +45,7 @@ class Staff(Base):
     name: Mapped[str] = mapped_column(String(150), unique=True, primary_key=True, autoincrement=False)
     role: Mapped[str] = mapped_column(ForeignKey("roles.name"))
     is_new: Mapped[bool] = mapped_column(Boolean(), default=False)
+    reduce_discount: Mapped[bool] = mapped_column(Boolean(), default=True, nullable=True)
 
 
 class Role(Base):

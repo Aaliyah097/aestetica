@@ -1,7 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-    ChangeService.style = 'display: none;';
-    addStaffBlock.style = 'display: none;'
-});
 class Loader {
     constructor(loader) {
         this.loader = document.querySelector('.bgDark')
@@ -15,6 +11,14 @@ class Loader {
     }
 }
 const loader = new Loader()
+
+document.addEventListener("DOMContentLoaded", () => {
+    loader.LoaderOn()
+    ChangeService.style = 'display: none;';
+    addStaffBlock.style = 'display: none;'
+    loader.LoaderOff()
+});
+
 let originalHeaderText = '';
 
 
@@ -635,6 +639,42 @@ function ChangeIsSubmit(checkbox) {
             console.error(`Произошла ошибка: ${error}`);
         });
 }
+
+
+function ChangeDiscountByStaff(checkbox) {
+
+    const Name = checkbox.getAttribute('data-name-staff');
+    const isNew = checkbox.getAttribute('data-name-isNew')
+    const newValue = checkbox.checked; // Получаем новое значение чекбокса
+   
+    fetch(`/staff/update?staff=${Name}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            is_new: Boolean(isNew),
+            reduce_discount: newValue,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                checkbox.parentNode.classList.add('success')
+                setTimeout(() => checkbox.parentNode.classList.remove('success'), 850)
+
+                console.log(`Значение чекбокса для ${cargoName} (код ${cargoCode}) успешно обновлено.`);
+            } else {
+                checkbox.parentNode.classList.add('error')
+                setTimeout(() => checkbox.parentNode.classList.remove('error'), 850)
+                console.error(`Ошибка при обновлении значения чекбокса для ${cargoName} (код ${cargoCode}).`);
+            }
+        })
+        .catch((error) => {
+            console.error(`Произошла ошибка: ${error}`);
+        });
+}
+
+
 
 function searchServices(input) {
     const searchText = input.value.toLowerCase(); // Получаем текст из поля ввода и приводим его к нижнему регистру

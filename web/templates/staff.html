@@ -39,6 +39,7 @@
                             <thead>
                                 <tr class="sticks">
                                     <th onclick="makeInput(this)">ФИО</th>
+                                    <th>Скидка</th>
                                     <th>Роль</th>
                                     <th>Новый врач</th>
                                     <th>Действие</th>
@@ -49,7 +50,17 @@
                                 <tr>
 
                                     <td>{{ item.name }}</td>
-                                    <td>{{ item.role.name }}</td>
+                                    <td>
+                                        {% if item.reduce_discount == True %}
+                                        <input type="checkbox" checked data-name-staff="{{ item.name }}"
+                                        data-name-isNew="{{ item.is_new }}" onchange="ChangeDiscountByStaff(this)">
+                                        {% else %}
+                                        <input type="checkbox"  data-name-staff="{{ item.name }}" 
+                                        data-name-isNew="{{ item.is_new }}"  onchange="ChangeDiscountByStaff(this)">
+                                        {% endif %}
+                                    </td>
+                                    <!-- <td>{{ item.reduce_discount }}</td> -->
+                                    <td >{{ item.role.name }}</td>
                                     <td>{{ "Да" if item.is_new else "Нет" }}</td>
                                     <td>
                                         <div class="btn-group" style="width: 100%;">

@@ -22,7 +22,12 @@ class AssistantsSalaryCalculator:
             if sch.on_date in on_date_set:
                 continue
 
-            salary.volume = 1
+            work_hours = sch.end_hour - sch.begin_hour
+            if work_hours >= 8:
+                salary.volume = 1
+            else:
+                salary.volume = 0.5
+                sch.comment += " (пол ставки)"
 
             if sch.bonus:
                 salary.add_bonus(sch.bonus)

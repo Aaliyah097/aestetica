@@ -89,7 +89,7 @@ class DoctorSalaryCalculator:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
             # если техник не указан, то в полном объеме начисляем
-            if treatment.technician:
+            if (treatment.technician or treatment.consumables):
                 volume = (volume - consumables_cost) * fp
             else:
                 volume = volume

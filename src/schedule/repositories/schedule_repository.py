@@ -36,7 +36,9 @@ class ScheduleRepository:
                 staff_role=Role(name=row['DOCTOR_STDTYPENAME'])
             ),
             filial=self.filial,
-            department=Department(name=row['DEPNAME']) if row['DEPNAME'] else None
+            department=Department(name=row['DEPNAME']) if row['DEPNAME'] else None,
+            begin_hour=row['BEGHOUR'],
+            end_hour=row['ENDHOUR']
         )
 
         if schedule.staff.name in self.staff:

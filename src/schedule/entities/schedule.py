@@ -16,7 +16,7 @@ class Schedule:
         self.filial: Filial = filial
         self.department: Department = department or Department("Прочее")
         self.bonus: float = 0
-        self.comment: str | None = None
+        self.comment: str= ""
         self.begin_hour: float = begin_hour or 0
         self.end_hour: float = end_hour or 0
 

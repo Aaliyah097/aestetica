@@ -70,7 +70,7 @@ class DoctorSalaryCalculator:
                 volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
             else:
                 volume = treatment.cost
-        elif ((treatment.discount * 100 / treatment.cost_wo_discount) > 50) and treatment.staff.reduce_discount:
+        elif ((treatment.discount * 100 / treatment.cost_wo_discount) >= 50) and treatment.staff.reduce_discount:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
         else:
             volume = treatment.cost

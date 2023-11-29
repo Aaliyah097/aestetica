@@ -192,8 +192,8 @@
                 <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
-                <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
-                <td style="white-space: nowrap;"></td>
+                <td style="white-space: nowrap;">{{razbivka}}</td>
+                <td style="white-space: nowrap;">{{razbivka}}</td>
                 <td style="white-space: nowrap;"></td>
             </tr>
             {% endfor %}
@@ -214,6 +214,8 @@
                     ' ') }}</td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             {% endfor %}
             {#margins by all anesthetists#}
@@ -224,7 +226,7 @@
                 <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ')
                     }}</td>
                 <td></td>
-                <td colspan="9"></td>
+                <td colspan="11"></td>
             </tr>
             {# end comment #}
 

@@ -30,6 +30,7 @@
             </tr>
             {% for salary in doctors_report |sort(attribute="staff.name")%}
             <tr>
+    
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">
@@ -38,9 +39,7 @@
                         </div>
                     </span>
                 </td>
-                <td style="white-space: nowrap;">
-                    {{ '{0:,} ₽'.format(salary.volume).replace(',', ' ')}}
-                </td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
@@ -173,7 +172,8 @@
                 <th>Зуб</th>
                 <th>Расходники</th>
                 <th>Техник</th>
-                <th></th>
+                <th>Начало, час</th>
+                <th>Конец, час</th>
             </tr>
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment {{'isHistory' if  razbivka.markdown.is_history  }}"
@@ -190,7 +190,8 @@
                 <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
-                <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
+                <td style="white-space: nowrap;">{{razbivka.begin_hour}}</td>
+                <td style="white-space: nowrap;">{{razbivka.end_hour}}</td>
                 <td style="white-space: nowrap;"></td>
             </tr>
             {% endfor %}
@@ -211,6 +212,8 @@
                     ' ') }}</td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
             </tr>
             {% endfor %}
             {#margins by all anesthetists#}
@@ -221,7 +224,7 @@
                 <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ')
                     }}</td>
                 <td></td>
-                <td colspan="9"></td>
+                <td colspan="11"></td>
             </tr>
             {# end comment #}
 
@@ -265,7 +268,9 @@
                 <th>Ставка</th>
                 <th>Надбавка</th>
                 <th colspan="2">Комментарий</th>
-                <th></th>
+                <th>Начало, час</th>
+                <th>Конец, час</th>
+               
             </tr>
             {% for razbivka_asisst in salary.schedule| sort(attribute="on_date") %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
@@ -279,6 +284,8 @@
                     {{ razbivka_asisst.comment }}
                     {% endif %}
                 </td>
+                <td>{{ razbivka_asisst.begin_hour }}</td>
+                <td>{{ razbivka_asisst.end_hour }}</td>
             </tr>
             {% endfor %}
             {# сумма для ассистентов #}
@@ -291,6 +298,8 @@
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                
             </tr>
             {% endfor %}
 
@@ -352,7 +361,9 @@
                 <th>Ставка</th>
                 <th>Надбавка</th>
                 <th colspan="2">Комментарий</th>
-                <th></th>
+                <th>Начало, час</th>
+                <th>Конец, час</th>
+               
             </tr>
             {% for razbivka_admin in salary.schedule| sort(attribute="on_date") %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
@@ -366,6 +377,8 @@
                     {{ razbivka_admin.comment }}
                     {% endif %}
                 </td>
+                <td>{{ razbivka_admin.begin_hour }}</td>
+                <td>{{ razbivka_admin.end_hour }}</td>
             </tr>
             {% endfor %}
             {# сумма для администраторов #}
@@ -378,6 +391,7 @@
                 <td colspan="2"></td>
                 <td></td>
                 <td></td>
+                
             </tr>
             {% endfor %}
 

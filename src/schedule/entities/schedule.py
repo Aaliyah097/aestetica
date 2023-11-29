@@ -27,7 +27,9 @@ class Schedule:
             'filial': self.filial.serialize() if self.filial else None,
             'department': self.department.serialize() if self.department else None,
             'bonus': self.bonus,
-            'comment': self.comment
+            'comment': self.comment,
+            'begin_hour': self.begin_hour,
+            'end_hour': self.end_hour
         }
 
     def __repr__(self):

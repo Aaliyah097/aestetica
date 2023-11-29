@@ -174,7 +174,8 @@
                 <th>Зуб</th>
                 <th>Расходники</th>
                 <th>Техник</th>
-                <th></th>
+                <th>Начало, час</th>
+                <th>Конец, час</th>
             </tr>
             {% for razbivka in salary.treatments %}
             <tr class="no_show attachment {{'isHistory' if  razbivka.markdown.is_history  }}"
@@ -192,6 +193,7 @@
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
                 <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
+                <td style="white-space: nowrap;"></td>
                 <td style="white-space: nowrap;"></td>
             </tr>
             {% endfor %}

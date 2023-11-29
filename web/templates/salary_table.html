@@ -30,6 +30,7 @@
             </tr>
             {% for salary in doctors_report |sort(attribute="staff.name")%}
             <tr>
+    
                 <td data-name-employee="{{ salary.staff.name }}" style="position: relative; white-space: nowrap">
                     <span data-name-employee="{{ salary.staff.name }}" class="toggle-span">
                         <div style="display: flex; justify-content: space-between">

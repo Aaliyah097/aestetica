@@ -8,13 +8,17 @@ class Schedule:
     def __init__(self, on_date: datetime.date,
                  staff: Staff,
                  filial: Filial,
-                 department: Department):
+                 department: Department,
+                 begin_hour: float = 0,
+                 end_hour: float = 0):
         self.on_date: datetime.date = on_date
         self.staff: Staff = staff
         self.filial: Filial = filial
         self.department: Department = department or Department("Прочее")
         self.bonus: float = 0
         self.comment: str | None = None
+        self.begin_hour: float = begin_hour or 0
+        self.end_hour: float = end_hour or 0
 
     def serialize(self) -> dict:
         return {

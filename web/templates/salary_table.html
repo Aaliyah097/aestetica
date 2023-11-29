@@ -39,7 +39,7 @@
                         </div>
                     </span>
                 </td>
-                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.volume|round(0, 'ceil')) }}</td>
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>

@@ -39,10 +39,10 @@
                         </div>
                     </span>
                 </td>
-                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.volume|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.award|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
@@ -87,13 +87,14 @@
                 <td>{{ razbivka.service.code }}</td>
                 <td>{{razbivka.amount}}</td>
                 <td>{{'{0:,} ₽'.format(razbivka.cost_wo_discount).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.discount).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.discount|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.cost|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
                 <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
-                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.markdown.volume|round(2,
-                    'floor')).replace(',', ' ') }}</td>
+                <!-- <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.markdown.volume|round(2,'floor')).replace(',', ' ') }}</td> -->
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.markdown.volume|round(0, 'ceil')).replace(',', ' ') }}</td>
+                
             </tr>
             {% endfor %}
             {#margins by doctors#}
@@ -101,16 +102,11 @@
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
                 <td colspan="5"></td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='cost_wo_discount')).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='discount')).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='cost')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='cost_wo_discount')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='discount')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='cost')).replace(',', ' ') }}</td>
                 <td></td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')).replace(',',
-                    ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')).replace(',',' ') }}</td>
                 <td></td>
                 <td></td>
             </tr>
@@ -118,9 +114,9 @@
             {#margins by all doctors#}
             <tr style="background: #a7c9a7; color: white; text-align: left">
                 <td style="text-align: left;">Всего</td>
-                <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ') }}
+                <td>{{ '{0:,.0f} ₽'.format(doctors_report|sum(attribute='volume')|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
-                <td>{{ '{0:,} ₽'.format(doctors_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}
+                <td>{{ '{0:,.0f} ₽'.format(doctors_report|sum(attribute='income')|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
                 <td></td>
                 <td colspan="9"></td>
@@ -149,10 +145,8 @@
                         </div>
                     </span>
                 </td>
-                <td style="white-space: nowrap;">
-                    {{ '{0:,}'.format(salary.volume).replace(',', ' ')}}
-                </td>
-                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,}'.format(salary.volume).replace(',', ' ')}}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.treatments|selectattr('markdown.is_history', 'false')|list|count }}</td>
                 <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
@@ -185,9 +179,9 @@
                 <td>{{ razbivka.service.name }}</td>
                 <td>{{ razbivka.service.code }}</td>
                 <td>{{razbivka.amount}}</td>
-                <td>{{'{0:,} ₽'.format(razbivka.cost_wo_discount).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.discount).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.cost ).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(razbivka.cost_wo_discount|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.discount|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.cost|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
                 <td style="white-space: nowrap;">{{razbivka.begin_hour}}</td>
@@ -200,16 +194,11 @@
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
                 <td colspan="5"></td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='cost_wo_discount')).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='discount')).replace(',', ' ') }}</td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|sum(attribute='cost')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.treatments|sum(attribute='cost_wo_discount')|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.treatments|sum(attribute='discount')|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.treatments|sum(attribute='cost')|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td></td>
-                <td style="white-space: nowrap;">{{ '{0:,}
-                    ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')).replace(',',
-                    ' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')|round(0, 'ceil')).replace(',',' ') }}</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -221,7 +210,7 @@
                 <td style="text-align: left;">Всего</td>
                 <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='volume')|round(2, 'floor')).replace(',', ' ')
                     }}</td>
-                <td>{{ '{0:,}'.format(anesthetists_report|sum(attribute='income')|round(2, 'floor')).replace(',', ' ')
+                <td>{{ '{0:,.0f} ₽'.format(anesthetists_report|sum(attribute='income')|round(0, 'ceil')).replace(',', ' ')
                     }}</td>
                 <td></td>
                 <td colspan="11"></td>
@@ -254,9 +243,9 @@
                 </td>
 
                 <td>{{ salary.volume }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.award|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
 
                 <td class="add" colspan="8"></td>
@@ -277,7 +266,7 @@
 
                 <td>{{ razbivka_asisst.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka_asisst.department.name }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.fix|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka_asisst.bonus }}</td>
                 <td colspan="2">
                     {% if razbivka_asisst.comment is not none %}
@@ -293,7 +282,7 @@
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
                 <td></td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -310,10 +299,7 @@
                     {{ assistants_report|selectattr('staff.role.name', 'equalto',
                     'Ассистент')|map(attribute='volume')|sum|round(2, 'floor')}}
                 </td>
-                <td>
-                   
-                    {{ '{0:,} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto',
-                    'Ассистент')|map(attribute='income')|sum|round(2, 'floor')).replace(',', ' ')}}
+                <td>{{ '{0:,.0f} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto','Ассистент')|map(attribute='income')|sum|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
                 <td></td>
                 <td colspan="9"></td>
@@ -348,9 +334,9 @@
                 </td>
 
                 <td>{{ salary.volume }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.schedule|count }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.award|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
@@ -370,7 +356,7 @@
 
                 <td>{{ razbivka_admin.on_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ razbivka_admin.department.name }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.fix|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka_admin.bonus }}</td>
                 <td colspan="2">
                     {% if razbivka_admin.comment is not none %}
@@ -386,7 +372,7 @@
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
                 <td> </td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td></td>
                 <td colspan="2"></td>
                 <td></td>
@@ -403,8 +389,8 @@
                 </td>
 
                 <td>
-                    {{ '{0:,} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto',
-                    'Администратор')|map(attribute='income')|sum|round(2, 'floor')).replace(',', ' ')}}
+                    {{ '{0:,.0f} ₽'.format(assistants_report|selectattr('staff.role.name', 'equalto',
+                    'Администратор')|map(attribute='income')|sum|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
 
                 <td></td>
@@ -435,10 +421,10 @@
                     </span>
                 </td>
 
-                <td>{{ '{0:,} ₽'.format(salary.volume).replace(',', ' ') }} / {{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.volume|round(0, 'ceil')).replace(',', ' ') }} / {{ '{0:,.0f} ₽'.format(salary.fix|round(0, 'ceil')).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.award|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
@@ -454,13 +440,13 @@
             {% for razbivka_manager in salary.traffic | sort(attribute="on_date") %}
             <tr class="no_show attachment" data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>{{ razbivka_manager.on_date.strftime('%d.%m.%Y') }}</td>
-                <td>{{ '{0:,} ₽'.format(razbivka_manager.amount).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(razbivka_manager.amount|round(0, 'ceil')).replace(',', ' ') }}</td>
             </tr>
             {% endfor %}
             <tr class="no_show attachment" style="background: #699b69; color: white"
                 data-name-employee-no-show="{{ salary.staff.name }}">
                 <td>Итого</td>
-                <td>{{ '{0:,} ₽'.format(salary.traffic|sum(attribute='amount')|round(2,'floor')).replace(',', ' ') }}
+                <td>{{  '{0:,.0f} ₽'.format(salary.traffic|sum(attribute='amount')|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
                 <td colspan="2"></td>
                 <td colspan="2"></td>
@@ -470,11 +456,11 @@
             <tr style="background: #a7c9a7; color: white; text-align: left">
                 <td style="text-align: left;">Всего</td>
                 <td>
-                    {{ '{0:,} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='volume') | sum | round(2, 'floor')).replace(',', ' ') }}
+                    {{  '{0:,.0f} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='volume') | sum | round(0, 'floor')).replace(',', ' ') }}
 
                 </td>
                 <td>
-                    {{ '{0:,} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='income') | sum | round(2, 'floor')).replace(',', ' ') }}
+                    {{  '{0:,.0f} ₽'.format(sellers_report | selectattr('staff.role.name', 'equalto', 'Продажник') | map(attribute='income') | sum | round(0, 'floor')).replace(',', ' ') }}
                 </td>
                 <td></td>
                 <td colspan="2"></td>
@@ -512,10 +498,10 @@
                     </span>
                 </td>
 
-                <td>{{ '{0:,} ₽'.format(salary.fix).replace(',', ' ') }}</td>
-                <td>{{ '{0:,} ₽'.format(salary.income).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.fix|round(0, 'ceil')).replace(',', ' ')  }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.income|round(0, 'ceil')).replace(',', ' ')  }}</td>
                 <td>-</td>
-                <td>{{ '{0:,} ₽'.format(salary.award).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(salary.award|round(0, 'ceil')).replace(',', ' ')  }}</td>
                 <td>{{ salary.payout }} ₽</td>
                 <td class="add" colspan="8"></td>
             </tr>
@@ -524,7 +510,7 @@
             <tr style="background: rgb(147, 177, 147); color: white; text-align: left">
                 <td style="text-align: left;">Всего</td>
                 <td></td>
-                <td>{{ '{0:,} ₽'.format(salary_reports|sum(attribute='income')|round(2, 'floor')).replace(',', ' ') }}
+                <td>{{ '{0:,.0f} ₽'.format(salary_reports|sum(attribute='income')|round(0, 'floor')).replace(',', ' ') }}
                 </td>
                 <td></td>
                 <td colspan="9"></td>
@@ -536,7 +522,7 @@
                 style="background: rgb(93, 121, 93); color: white; text-align: left; font-weight: bold; font-size: 22px">
                 <td style="text-align: left;">Всего</td>
                 <td></td>
-                <td>{{ '{0:,} ₽'.format(total_income|round(2, 'floor')).replace(',', ' ') }}</td>
+                <td>{{ '{0:,.0f} ₽'.format(total_income|round(0, 'floor')).replace(',', ' ') }}</td>
                 <td></td>
                 <td colspan="9"></td>
             </tr>

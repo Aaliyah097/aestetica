@@ -10,11 +10,12 @@ def services_update():
     name = request.json.get('name', None)
     is_submit = request.json.get('is_submit', None)
     code = request.json.get('code', None)
+    is_double = request.json.get("is_double", None)
 
     if code == None:
         return "'code' is not defined", 500
 
-    ServicesRepository().update(code=code, name=name, is_submit=is_submit)
+    ServicesRepository().update(code=code, name=name, is_submit=is_submit, is_double=is_double)
 
     return 'ok', 200
 

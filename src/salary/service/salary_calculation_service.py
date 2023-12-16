@@ -317,7 +317,8 @@ class SalaryCalculationService:
         for treatment in treatments:
             treatment.consumables = self.consumables_repo.get_by_technician_and_service(
                 technician=treatment.technician,
-                service=treatment.service
+                service=treatment.service,
+                amount=treatment.amount
             )
 
             if not isinstance(treatment.staff, Doctor):
@@ -364,6 +365,11 @@ class SalaryCalculationService:
                             number=str(hash(treatment))
                         )
                         if history_treatment.markdown.number not in self.complaints:
+                            history_treatment.consumables = self.consumables_repo.get_by_technician_and_service(
+                                technician=treatment.technician,
+                                service=treatment.service,
+                                amount=treatment.amount
+                                )
                             result[treatment.staff][treatment.department].append(history_treatment)
 
             treatment.markdown.number = str(hash(treatment))

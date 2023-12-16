@@ -107,6 +107,7 @@ class Service(Base):
     code: Mapped[str] = mapped_column(String(20), primary_key=True, unique=True, autoincrement=False)
     name: Mapped[str] = mapped_column(String(500))
     is_submit: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
+    is_double: Mapped[bool] = mapped_column(Boolean(), nullable=True, default=False)
 
 
 class Consumables(Base):
@@ -124,7 +125,7 @@ class Consumables(Base):
 
 class Bonus(Base):
     __tablename__ = "bonuses"
-    __table_args__ = (UniqueConstraint('staff', 'date_begin', 'date_end', name='staff_dates_uc'), )
+    # __table_args__ = (UniqueConstraint('staff', 'date_begin', 'date_end', name='staff_dates_uc'), )
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True, unique=True, autoincrement=True)
     date_begin: Mapped[datetime.date] = mapped_column(Date())

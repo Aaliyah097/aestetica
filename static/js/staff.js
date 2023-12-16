@@ -640,6 +640,39 @@ function ChangeIsSubmit(checkbox) {
         });
 }
 
+function ChangeIsDouble(checkbox){
+    const cargoCode = checkbox.getAttribute('data-cargo-code');
+    const cargoName = checkbox.getAttribute('data-cargo-name');
+    const newValue = checkbox.checked; // Получаем новое значение чекбокса
+
+    fetch('/services/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            code: cargoCode,
+            name: cargoName,
+            is_double: newValue,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                checkbox.parentNode.classList.add('success')
+                setTimeout(() => checkbox.parentNode.classList.remove('success'), 850)
+
+                console.log(`Значение чекбокса для ${cargoName} (код ${cargoCode}) успешно обновлено.`);
+            } else {
+                checkbox.parentNode.classList.add('error')
+                setTimeout(() => checkbox.parentNode.classList.remove('error'), 850)
+                console.error(`Ошибка при обновлении значения чекбокса для ${cargoName} (код ${cargoCode}).`);
+            }
+        })
+        .catch((error) => {
+            console.error(`Произошла ошибка: ${error}`);
+        });
+}
+
 
 function ChangeDiscountByStaff(checkbox) {
 

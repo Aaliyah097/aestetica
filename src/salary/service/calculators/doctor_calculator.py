@@ -4,6 +4,7 @@ from src.treatments.entities.treatment import Treatment
 from src.salary.entities.salary import Salary
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.staff.entities.filial import Filial
+from src.staff.repositories.departments_repository import DepartmentsRepository
 
 from itertools import chain
 
@@ -11,6 +12,7 @@ from itertools import chain
 class DoctorSalaryCalculator:
     def __init__(self):
         self.salary_repo: SalaryRepository = SalaryRepository()
+        self.dep_repo: DepartmentsRepository = DepartmentsRepository()
 
     def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]], filial: Filial) -> tuple[list[Salary], list[Treatment]]:
         union_treatments = list(chain.from_iterable(treatments.values()))
@@ -20,7 +22,7 @@ class DoctorSalaryCalculator:
         salaries = {
             dep: self.salary_repo.get_salary(staff=doctor, department=dep, filial=filial)
                  or Salary(staff=doctor, department=dep, filial=filial)
-            for dep in treatments
+            for dep in self.dep_repo.get_all()
         }
 
         for treatment in union_treatments:
@@ -44,7 +46,11 @@ class DoctorSalaryCalculator:
 
                 treatment.markdown.prev_treatment.markdown.volume = prev_volume
 
-                salaries[treatment.markdown.prev_treatment.department].volume = volume
+                try:
+                    salaries[treatment.markdown.prev_treatment.department].volume = volume
+                except KeyError:
+                    print(salaries)
+                    raise KeyError()
             else:
                 # обычнй прием, который за 1 раз оказывается в полной мере,
                 # только проверяем, что он в текущем отчетном периоде был выполнен
@@ -88,9 +94,15 @@ class DoctorSalaryCalculator:
         if is_submit:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
+            # TODO в два этапа считается только конкретный перечень услуг
             # если техник не указан, то в полном объеме начисляем
-            if (treatment.technician or treatment.consumables):
-                volume = (volume - consumables_cost) * fp
+            # if (treatment.technician or treatment.consumables):
+            #     volume = (volume - consumables_cost) * fp
+            # else:
+            #     volume = volume
+            volume = volume - consumables_cost
+            if treatment.service.is_double:
+                volume = volume * fp
             else:
                 volume = volume
 

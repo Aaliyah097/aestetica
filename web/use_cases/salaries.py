@@ -80,8 +80,8 @@ def modify_salary(pk: int):
     fix = request.json.get('fix', 0)
     salary_grid = request.json.get('grid', [])
 
-    if salary_grid == [] and fix == 0:
-        return "expected params 'fix: int' and 'salary_grid: list[dict]'"
+    # if salary_grid == [] and fix == 0:
+    #     return "expected params 'fix: int' and 'salary_grid: list[dict]'"
 
     for grid in salary_grid:
         if type(grid) != dict or 'limit' not in grid or 'percent' not in grid:

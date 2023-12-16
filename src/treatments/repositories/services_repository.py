@@ -27,7 +27,8 @@ class ServicesRepository:
                 Service(
                     name=s.name,
                     code=s.code,
-                    is_submit=s.is_submit
+                    is_submit=s.is_submit,
+                    is_double=s.is_double
                 )
                 for s in session.scalars(query).all()
             ]
@@ -42,6 +43,8 @@ class ServicesRepository:
             return Service(
                 name=service.name,
                 code=service.code,
+                is_submit=service.is_submit,
+                is_double=service.is_double
             ) if service else None
 
     def create(self, service: Service) -> None:
@@ -66,13 +69,14 @@ class ServicesRepository:
                 Service(
                     name=s.name,
                     code=s.code,
-                    is_submit=s.is_submit
+                    is_submit=s.is_submit,
+                    is_double=s.is_double
                 )
                 for s in session.scalars(query).all()
             ]
 
     @staticmethod
-    def update(code: str, name: str = None, is_submit: bool = None) -> None:
+    def update(code: str, name: str = None, is_submit: bool = None, is_double: bool = None) -> None:
         with Base() as session:
             service = session.get(ServiceTable, code)
             if not service:
@@ -83,5 +87,8 @@ class ServicesRepository:
 
             if is_submit != None:
                 service.is_submit = is_submit
+
+            if is_double != None:
+                service.is_double = is_double
 
             session.commit()

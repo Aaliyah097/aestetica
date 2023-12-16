@@ -271,6 +271,7 @@
                             <th>Код</th>
                             <th>Наименование</th>
                             <th>Сдача работы</th>
+                            <th>В два этапа</th>
                         </tr>
                         {% for s in services | sort(attribute='code') %}
                         <tr>
@@ -287,6 +288,15 @@
                                 {% else %}
                                 <input type="checkbox" data-cargo-code="{{ s.code }}" data-cargo-name="{{ s.name }}"
                                     onchange="ChangeIsSubmit(this)">
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if s.is_double == True %}
+                                <input type="checkbox" checked data-cargo-code="{{ s.code }}"
+                                    data-cargo-name="{{ s.name }}" onchange="ChangeIsDouble(this)">
+                                {% else %}
+                                <input type="checkbox" data-cargo-code="{{ s.code }}" data-cargo-name="{{ s.name }}"
+                                    onchange="ChangeIsDouble(this)">
                                 {% endif %}
                             </td>
                         </tr>

@@ -5,6 +5,7 @@ from openpyxl.styles import Font, PatternFill
 import bs4
 import pandas
 import re
+import os
 
 from src.staff.entities.users.staff import Staff
 from src.staff.entities.users.doctor import Doctor
@@ -111,7 +112,8 @@ class SalaryManagementService:
     def export_salary(table_html: str, filial: str = None, date_begin: datetime.date = None, date_end: datetime.date = None) -> None:
         df = pandas.read_html(table_html)[0]
 
-        file_name = f"static/{filial}_{str(date_begin)}_{str(date_end)}.xlsx"
+        file_name = f"C:/users/Калинин Александр/aestetica/static/{filial}_{str(date_begin)}_{str(date_end)}.xlsx"
+        # print(file_name)
 
         writer = pandas.ExcelWriter(file_name, engine='openpyxl')
 

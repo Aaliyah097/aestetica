@@ -4,10 +4,12 @@ from db.aestetica.tables import (
 )
 
 from src.staff.entities.department import Department
+from functools import cache
 
 
 class DepartmentsRepository:
     @staticmethod
+    @cache
     def get_all() -> list[Department]:
         with Base() as session:
             return [

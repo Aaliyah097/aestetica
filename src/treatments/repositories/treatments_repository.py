@@ -76,7 +76,7 @@ class TreatmentRepository:
                 tooth_code=tooth_code,
                 doctor_name=doctor_name,
                 block_services_codes=block_services_codes,
-                client=client
+                client=client,
             )
 
         if response:

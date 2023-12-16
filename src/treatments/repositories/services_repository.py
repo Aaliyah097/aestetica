@@ -34,6 +34,20 @@ class ServicesRepository:
             ]
 
     @staticmethod
+    def get_one_steps() -> list[Service]:
+        query = select(ServiceTable).where((ServiceTable.is_double == False) | (ServiceTable.is_double == None))
+        with Base() as session:
+            return [
+                Service(
+                    name=s.name,
+                    code=s.code,
+                    is_submit=s.is_submit,
+                    is_double=s.is_double
+                )
+                for s in session.scalars(query).all()
+            ]
+
+    @staticmethod
     def get_by_code(code: str) -> Service | None:
         if not code:
             return None

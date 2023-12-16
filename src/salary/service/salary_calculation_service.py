@@ -81,6 +81,8 @@ class SalaryCalculationService:
 
         self.treatment_repo: TreatmentRepository = TreatmentRepository(filial)
         self.submit_services: list[Service] = ServicesRepository.get_submits()
+        self.one_step_services: list[Service] = ServicesRepository.get_one_steps()
+
         self.schedule_repo: ScheduleRepository = ScheduleRepository(filial)
         self.bonus_repository: BonusRepository = BonusRepository()
         self.consumables_repo: ConsumablesRepository = ConsumablesRepository()
@@ -351,7 +353,7 @@ class SalaryCalculationService:
                         lt_date=treatment.on_date,
                         tooth_code=treatment.tooth,
                         doctor_name=treatment.staff.name,
-                        block_services_codes=tuple([service.code for service in self.submit_services]),
+                        block_services_codes=tuple([service.code for service in self.submit_services] + [service.code for service in self.one_step_services]),
                         client=treatment.client
                     )
                     if history_treatment:
@@ -366,9 +368,9 @@ class SalaryCalculationService:
                         )
                         if history_treatment.markdown.number not in self.complaints:
                             history_treatment.consumables = self.consumables_repo.get_by_technician_and_service(
-                                technician=treatment.technician,
-                                service=treatment.service,
-                                amount=treatment.amount
+                                technician=history_treatment.technician,
+                                service=history_treatment.service,
+                                amount=history_treatment.amount
                                 )
                             result[treatment.staff][treatment.department].append(history_treatment)
 

@@ -70,6 +70,9 @@ class DoctorSalaryCalculator:
         else:
             fp, sp = 0.7, 0.3
 
+        if "Вдовиченко" in treatment.staff.name and 'Федорова' in treatment.client:
+            print(round((treatment.discount * 100 / treatment.cost_wo_discount), 0))
+
         if treatment.cost_wo_discount == 0:
             volume = 0
         elif treatment.staff.name == "Колотова Анастасия Валентиновна":
@@ -77,7 +80,7 @@ class DoctorSalaryCalculator:
                 volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
             else:
                 volume = treatment.cost
-        elif ((treatment.discount * 100 / treatment.cost_wo_discount) >= 50) and treatment.staff.reduce_discount:
+        elif (round((treatment.discount * 100 / treatment.cost_wo_discount), 0) >= 50.0) and treatment.staff.reduce_discount:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
         else:
             volume = treatment.cost

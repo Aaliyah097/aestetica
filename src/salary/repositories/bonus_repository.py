@@ -17,19 +17,33 @@ class BonusRepository:
     def get_bonus(staff: Staff, on_date: datetime.date) -> Bonus | None:
         query = select(BonusTable).where(BonusTable.staff.like(f"%{staff.name}%"),
                                          BonusTable.date_begin <= on_date,
-                                         BonusTable.date_end >= on_date).limit(1)
+                                         BonusTable.date_end >= on_date)
 
         with Base() as session:
-            bonus = session.scalar(query)
+            query = session.query(BonusTable).filter(
+                BonusTable.staff.like(f"%{staff.name}%"),
+                BonusTable.date_begin <= on_date,
+                BonusTable.date_end >= on_date
+            )
+            records = query.all()
 
-            return Bonus(
+            bonuses = [Bonus(
                 staff=staff,
                 date_begin=bonus.date_begin,
                 date_end=bonus.date_end,
                 amount=bonus.amount,
                 _id=bonus.id,
                 comment=bonus.comment
-            ) if bonus else None
+            ) for bonus in records]
+            
+            if len(bonuses) == 0:
+                return None
+            
+            total_bonus = bonuses[0]
+            for b in bonuses[1:]:
+                total_bonus += b
+
+            return total_bonus
 
     @staticmethod
     def create(staff_name: str, amount: float, date_begin: datetime.date, date_end: datetime.date, comment: str = None) -> None:

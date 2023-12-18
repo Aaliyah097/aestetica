@@ -5,6 +5,7 @@ from src.salary.entities.salary import Salary
 from src.salary.repositories.salary_repository import SalaryRepository
 from src.staff.entities.filial import Filial
 from src.staff.repositories.departments_repository import DepartmentsRepository
+from src.staff.repositories.staff_repository import StaffRepository
 
 from itertools import chain
 
@@ -13,6 +14,8 @@ class DoctorSalaryCalculator:
     def __init__(self):
         self.salary_repo: SalaryRepository = SalaryRepository()
         self.dep_repo: DepartmentsRepository = DepartmentsRepository()
+        self.staff_repo = StaffRepository()
+        self.staff_reduce_discount_list = [st.name for st in list(filter(lambda x: x.reduce_discount == True, StaffRepository.get_staff()))]
 
     def calc(self, doctor: Staff, treatments: dict[Department, list[Treatment]], filial: Filial) -> tuple[list[Salary], list[Treatment]]:
         union_treatments = list(chain.from_iterable(treatments.values()))
@@ -63,15 +66,11 @@ class DoctorSalaryCalculator:
 
         return list(salaries.values()), union_treatments
 
-    @staticmethod
-    def get_volume(treatment: Treatment, is_submit: bool = False, withdraw: float = 0) -> float:
+    def get_volume(self, treatment: Treatment, is_submit: bool = False, withdraw: float = 0) -> float:
         if treatment.department.name == 'Исправление прикуса':
             fp, sp = 0.5, 0.5
         else:
             fp, sp = 0.7, 0.3
-
-        if "Вдовиченко" in treatment.staff.name and 'Федорова' in treatment.client:
-            print(round((treatment.discount * 100 / treatment.cost_wo_discount), 0))
 
         if treatment.cost_wo_discount == 0:
             volume = 0
@@ -80,7 +79,7 @@ class DoctorSalaryCalculator:
                 volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
             else:
                 volume = treatment.cost
-        elif (round((treatment.discount * 100 / treatment.cost_wo_discount), 0) >= 50.0) and treatment.staff.reduce_discount:
+        elif (round((treatment.discount * 100 / treatment.cost_wo_discount), 0) >= 50.0) and treatment.client in self.staff_reduce_discount_list:
             volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
         else:
             volume = treatment.cost
@@ -97,12 +96,6 @@ class DoctorSalaryCalculator:
         if is_submit:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
-            # TODO в два этапа считается только конкретный перечень услуг
-            # если техник не указан, то в полном объеме начисляем
-            # if (treatment.technician or treatment.consumables):
-            #     volume = (volume - consumables_cost) * fp
-            # else:
-            #     volume = volume
             volume = volume - consumables_cost
             if treatment.service.is_double:
                 volume = volume * fp

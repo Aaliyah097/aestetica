@@ -63,7 +63,8 @@ function getSalary(form) {
             async: true,
             contentType: 'application/json',
             data: JSON.stringify({
-                'complaints': all_reclamation
+                'complaints': all_reclamation,  
+                "changed_consumables": {}
             }),
             success: function (data) {
                 document.querySelector('.nodata').style = 'display: none'

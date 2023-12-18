@@ -96,7 +96,7 @@ class DoctorSalaryCalculator:
         if is_submit:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
-            volume = volume - consumables_cost
+            volume = volume - consumables_cost_new
             if treatment.service.is_double:
                 volume = volume * fp
             else:

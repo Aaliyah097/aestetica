@@ -48,7 +48,7 @@
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
                 style="position: sticky; top:9vh; z-index:2">
-                <!-- <th>Номер тек/пред</th> -->
+                <th>Номер тек/пред</th>
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Департамент</th>
@@ -60,6 +60,7 @@
                 <th>Итого</th>
                 <th>Зуб</th>
                 <th>Расходники</th>
+                <th>Расходники нов.</th>
                 <th>Техник</th>
                 <th>Объем</th>
             </tr>
@@ -68,12 +69,8 @@
                 data-name-employee-no-show="{{ salary.staff.name }}"
                 data-isHistory="{{ razbivka.markdown.is_history }}">
 
-<!--                 {% if razbivka.markdown.prev_treatment %}
-                    <td>{{ razbivka.markdown.number }} / {{ razbivka.markdown.prev_treatment.markdown.number }}</td>
-                {% else %}
-                    <td>{{ razbivka.markdown.number }}</td>
-                {% endif %}
- -->
+
+                <td>{{ razbivka.markdown.number }}</td>
                 <td style="position: relative; padding: 0;">
                     <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}"
                         style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"
@@ -91,6 +88,7 @@
                 <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.cost|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
+                <td>{{ razbivka.consumables.cost_new if razbivka.consumables else 0}}</td>
                 <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
                 <!-- <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.markdown.volume|round(2,'floor')).replace(',', ' ') }}</td> -->
                 <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.markdown.volume|round(0, 'ceil')).replace(',', ' ') }}</td>

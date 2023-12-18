@@ -75,7 +75,9 @@ class SalaryCalculationService:
     def __init__(self, filial: Filial | str,
                  date_begin: datetime.date = None,
                  date_end: datetime.date = None,
-                 complaints: list = None):
+                 complaints: list = None,
+                 changed_consumables: dict = None):
+        self.changed_consumables: dict[str, float] = changed_consumables or {}
         self.complaints = [str(c) for c in complaints] if complaints else []
         self.filial = Filial(filial) if type(filial) == str else filial
 
@@ -372,9 +374,19 @@ class SalaryCalculationService:
                                 service=history_treatment.service,
                                 amount=history_treatment.amount
                                 )
+
+                            if str(history_treatment.markdown.number) in self.changed_consumables and history_treatment.consumables:
+                                history_treatment.consumables.cost_new = self.changed_consumables[history_treatment.markdown.number]['cost_new']
+                                history_treatment.consumables.cost = self.changed_consumables[history_treatment.markdown.number]['cost']
+
                             result[treatment.staff][treatment.department].append(history_treatment)
 
             treatment.markdown.number = str(hash(treatment))
+
+            if str(treatment.markdown.number) in self.changed_consumables and treatment.consumables:
+                treatment.consumables.cost_new = self.changed_consumables[treatment.markdown.number]['cost_new']
+                treatment.consumables.cost = self.changed_consumables[treatment.markdown.number]['cost']
+
             if treatment.markdown.number not in self.complaints:
                 result[treatment.staff][treatment.department].append(treatment)
                 unique_numbers.append(treatment.markdown.number)

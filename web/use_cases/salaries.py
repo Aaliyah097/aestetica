@@ -29,6 +29,7 @@ def list_salary():
     date_begin = request.args.get('date_begin', None)
     date_end = request.args.get('date_end', None)
     complaints = request.json.get('complaints', [])
+    changed_consumables = request.json.get("changed_consumables", {})
 
     if not all([filial_name, date_begin, date_end]):
         return 'Expected params are ?filial&date_begin&date_end', 500
@@ -39,7 +40,7 @@ def list_salary():
     except (AttributeError, ValueError):
         return "Expected date format is %Y-%m-%d", 500
 
-    service = SalaryCalculationService(filial_name, date_begin, date_end, complaints=complaints)
+    service = SalaryCalculationService(filial_name, date_begin, date_end, complaints=complaints, changed_consumables=changed_consumables)
 
     doctors_salary_reports = service.doctors_cals()
     assistants_salary_report = service.assistants_calc()

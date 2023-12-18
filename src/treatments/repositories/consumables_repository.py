@@ -27,7 +27,7 @@ class ConsumablesRepository:
             ]
 
     @staticmethod
-    def get_by_technician_and_service(technician: Staff | None, service: Service, amount: float = 1) -> Consumables | None:
+    def get_by_technician_and_service(technician: Staff | None, service: Service, amount: float = 1) -> Consumables:
         if not service:
             return None
 
@@ -50,7 +50,12 @@ class ConsumablesRepository:
                 technician=technician,
                 cost=consumables.cost * amount,
                 cost_new=consumables.cost_new * amount
-            ) if consumables else None
+            ) if consumables else Consumables(
+                service=service,
+                technician=technician,
+                cost=0,
+                cost_new=0
+            )
 
     def create(self, technician_name: str, service_code: str, cost: float = 0, cost_new: float = 0) -> None:
         if technician_name:

@@ -12,6 +12,7 @@ class Loader {
 }
 let all_reclamation = [];
 let confirmation = document.getElementById('confiramtion_reclamation');
+let newConsumables = {}
 
 document.getElementById('form_data').addEventListener('submit', function (event) {
     event.preventDefault()
@@ -178,6 +179,11 @@ function getReclamation() {
     all_reclamation = []
 }
 
+
+
+
+
+
 async function ChangePriceConsumablesCost(el) {
     if (el.key === 'Enter') {
         const prevalue = el.target.dataset.prevalue;
@@ -186,23 +192,51 @@ async function ChangePriceConsumablesCost(el) {
 
         el.target.style = "background: lightgreen; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
 
-        // Оборачиваем весь блок в Promise для использования await
-        await new Promise(resolve => {
-            setTimeout(() => {
-                el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
-                resolve(); // Резолвим Promise после завершения setTimeout
-            }, 850);
-        });
+        if (currentValue == 0 || currentValue == "") {
+            el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+        }
+              // Оборачиваем весь блок в Promise для использования await
+//         // await new Promise(resolve => {
+//         //     setTimeout(() => {
+//         //         el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+//         //         resolve(); // Резолвим Promise после завершения setTimeout
+//         //     }, 850);
+//         // });
 
-        
-     changed_consumables = {
-            [consumables]: {
-                cost: Number(prevalue),
-                cost_new: Number(currentValue)
-            }
+        changed_consumables = {
+            cost: Number(prevalue),
+            cost_new: Number(currentValue)
         };
 
-        await generate_button.click();
-        changed_consumables = {}
+        newConsumables[consumables] = changed_consumables;
+
+        let notifNewConsumables = document.getElementById('confiramtion_new_consumables');
+        notifNewConsumables.style = 'display: block';
+
+        changed_consumables = {};
     }
 }
+
+function getTableWithNewCost() {
+    changed_consumables = newConsumables
+    let notifNewConsumables = document.getElementById('confiramtion_new_consumables');
+    notifNewConsumables.style = 'display: none';
+    generate_button.click()
+}
+
+function closeModal() {
+    let notifNewConsumables = document.getElementById('confiramtion_new_consumables');
+    notifNewConsumables.style = 'display: none';
+
+    // Обновление стилей и значений в полях
+    for (const consumableNumber in newConsumables) {
+        const consumable = newConsumables[consumableNumber];
+        const inputElement = document.querySelector(`[data-consumables="${consumableNumber}"]`);
+        if (inputElement) {
+            inputElement.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+            inputElement.value = consumable.cost; // Установка значения обратно
+        }
+    }
+}
+
+

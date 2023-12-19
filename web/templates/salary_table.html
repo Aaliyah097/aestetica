@@ -48,7 +48,7 @@
             </tr>
             <tr class="no_show table-primary" data-name-employee-no-show="{{ salary.staff.name }}"
                 style="position: sticky; top:9vh; z-index:2">
-                <th>Номер тек/пред</th>
+                 {# <th>Номер тек/пред</th> #}
                 <th>Клиент</th>
                 <th>Дата</th>
                 <th>Департамент</th>
@@ -70,7 +70,7 @@
                 data-isHistory="{{ razbivka.markdown.is_history }}">
 
 
-                <td>{{ razbivka.markdown.number }}</td>
+                {#<td>{{ razbivka.markdown.number }}</td>#}
                 <td style="position: relative; padding: 0;">
                     <input type="checkbox" data-markdown-number="{{ razbivka.markdown.number }}"
                         style="position: absolute; left: 0; z-index: 1; transform: translate(50%, 50%);"
@@ -88,7 +88,19 @@
                 <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.cost|round(0, 'ceil')).replace(',', ' ') }}</td>
                 <td>{{ razbivka.tooth if razbivka.tooth else '—'}}</td>
                 <td>{{ razbivka.consumables.cost if razbivka.consumables else 0}}</td>
-                <td>{{ razbivka.consumables.cost_new if razbivka.consumables else 0}}</td>
+                   <td style="position: relative;">
+                    <input 
+                    data-prevalue="{{ razbivka.consumables.cost if razbivka.consumables else 0 }}"
+                    data-consumables="{{razbivka.markdown.number}}"
+                    style="text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;"
+                    type="text" 
+                    value="{{razbivka.consumables.cost_new if razbivka.consumables else 0}}"
+                    onkeydown="ChangePriceConsumablesCost(event)"
+                   
+                    >
+                </td>
+               
+               <!--   <td>{{ razbivka.consumables.cost_new if razbivka.consumables else 0}}</td> -->
                 <td style="white-space: nowrap;">{{razbivka.technician.name if razbivka.technician else '—' }}</td>
                 <!-- <td style="white-space: nowrap;">{{'{0:,} ₽'.format(razbivka.markdown.volume|round(2,'floor')).replace(',', ' ') }}</td> -->
                 <td style="white-space: nowrap;">{{ '{0:,.0f} ₽'.format(razbivka.markdown.volume|round(0, 'ceil')).replace(',', ' ') }}</td>
@@ -105,6 +117,7 @@
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|sum(attribute='cost')).replace(',', ' ') }}</td>
                 <td></td>
                 <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost')).replace(',',' ') }}</td>
+                <td style="white-space: nowrap;">{{ '{0:,} ₽'.format(salary.treatments|selectattr('consumables')|sum(attribute='consumables.cost_new')).replace(',',' ') }}</td>
                 <td></td>
                 <td></td>
             </tr>
@@ -117,7 +130,7 @@
                 <td>{{ '{0:,.0f} ₽'.format(doctors_report|sum(attribute='income')|round(0, 'ceil')).replace(',', ' ') }}
                 </td>
                 <td></td>
-                <td colspan="9"></td>
+                <td colspan="10"></td>
             </tr>
 
 

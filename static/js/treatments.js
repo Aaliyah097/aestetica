@@ -20,9 +20,9 @@ document.getElementById('form_data').addEventListener('submit', function (event)
 })
 
 
-function ExportSalary(){
+function ExportSalary() {
     let table = document.getElementById('DownloadMainTable');
-    if (!table){
+    if (!table) {
         getNotifications('Сформируйте таблицу перед экспортом')
         return
     }
@@ -40,7 +40,7 @@ function ExportSalary(){
                 'filial': document.getElementById("filial").value
             }),
             contentType: 'application/json',
-            success: function (data){
+            success: function (data) {
                 loader.LoaderOff()
             },
             error: function (xhr, errmsg, err) {
@@ -51,6 +51,7 @@ function ExportSalary(){
     )
 }
 
+let changed_consumables
 
 function getSalary(form) {
     document.getElementById('table_block').innerHTML = ""
@@ -63,25 +64,20 @@ function getSalary(form) {
             async: true,
             contentType: 'application/json',
             data: JSON.stringify({
-                'complaints': all_reclamation,  
-                "changed_consumables": {}
+                'complaints': all_reclamation,
+                changed_consumables
             }),
             success: function (data) {
                 document.querySelector('.nodata').style = 'display: none'
                 document.getElementById('table_block').innerHTML = data
-
-
 
                 const toggleSpans = document.querySelectorAll('.toggle-span');
 
                 toggleSpans.forEach(span => {
                     span.addEventListener('click', function () {
 
-
                         const img = span.querySelector('img');
                         img.classList.toggle('rotaed');
-
-
 
                         const closestRow = this.closest('tr');
                         const name = this.getAttribute('data-name-employee');
@@ -97,8 +93,6 @@ function getSalary(form) {
 
                 loader.LoaderOff()
 
-
-
             },
             error: function (xhr, errmsg, err) {
                 loader.LoaderOff()
@@ -107,11 +101,6 @@ function getSalary(form) {
         }
     )
 }
-
-
-
-
-
 
 function fnExcelReport() {
     var table = document.getElementById('DownloadMainTable')
@@ -144,17 +133,15 @@ function fnExcelReport() {
     document.body.removeChild(a);
 }
 
-
-
 sync_button.addEventListener('click', async (event) => {
     event.preventDefault();
     let loader = new Loader();
     loader.LoaderOn();
-    
+
     try {
         let result = await fetch('/sync/services');
         loader.LoaderOff();
-        
+
         if (result.status === 200) {
             getNotifications(`Успешно! Данные синхронизированы.`, 'alert-success');
         } else if (result.status === 404) {
@@ -171,9 +158,7 @@ sync_button.addEventListener('click', async (event) => {
     }
 });
 
-
-
-function Reclamation(el) {    
+function Reclamation(el) {
     if (el.checked) {
         el.closest('td').children[1].style.display = 'block';
         all_reclamation.push(el.getAttribute('data-markdown-number'));
@@ -187,10 +172,37 @@ function Reclamation(el) {
     all_reclamation.length > 0 ? confirmation.style.display = 'block' : confirmation.style.display = 'none';
     console.log(all_reclamation);
 }
-function getReclamation(){
+function getReclamation() {
     confirmation.style.display = 'none'
     generate_button.click()
     all_reclamation = []
 }
 
+async function ChangePriceConsumablesCost(el) {
+    if (el.key === 'Enter') {
+        const prevalue = el.target.dataset.prevalue;
+        const consumables = el.target.dataset.consumables;
+        const currentValue = el.target.value;
 
+        el.target.style = "background: lightgreen; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+
+        // Оборачиваем весь блок в Promise для использования await
+        await new Promise(resolve => {
+            setTimeout(() => {
+                el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+                resolve(); // Резолвим Promise после завершения setTimeout
+            }, 850);
+        });
+
+        
+     changed_consumables = {
+            [consumables]: {
+                cost: Number(prevalue),
+                cost_new: Number(currentValue)
+            }
+        };
+
+        await generate_button.click();
+        changed_consumables = {}
+    }
+}

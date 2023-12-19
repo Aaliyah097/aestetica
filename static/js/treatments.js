@@ -192,9 +192,9 @@ async function ChangePriceConsumablesCost(el) {
 
         el.target.style = "background: lightgreen; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
 
-        if (currentValue == 0 || currentValue == "") {
-            el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
-        }
+        // if (currentValue == 0 || currentValue == "") {
+        //     el.target.style = "background: white; text-align: center; width: 100% !important; height: 100% !important; position: absolute; top: 0; right: 0; border: none;";
+        // }
               // Оборачиваем весь блок в Promise для использования await
 //         // await new Promise(resolve => {
 //         //     setTimeout(() => {

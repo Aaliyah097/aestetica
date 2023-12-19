@@ -2,6 +2,8 @@
     Зарплатная ведомость {{ date_begin.strftime('%d.%m.%Y') }} - {{date_end.strftime('%d.%m.%Y') }}
     <br>
     Оборот за месяц: {{ '{0:,} ₽'.format(month_volume|round(2, 'ceil')).replace(',', ' ')}}
+    <br>
+    <span style="font-size: 14px !important;">* Для сохранения новых значений расходников нажмите на Enter (поле зажжется зеленым цветом). После выбора всех полей подтвердите действие.</span>
 </p>
 <hr>
 

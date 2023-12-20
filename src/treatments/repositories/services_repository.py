@@ -28,7 +28,9 @@ class ServicesRepository:
                     name=s.name,
                     code=s.code,
                     is_submit=s.is_submit,
-                    is_double=s.is_double
+                    is_double=s.is_double,
+                    fp=s.fp,
+                    sp=s.sp
                 )
                 for s in session.scalars(query).all()
             ]
@@ -42,7 +44,9 @@ class ServicesRepository:
                     name=s.name,
                     code=s.code,
                     is_submit=s.is_submit,
-                    is_double=s.is_double
+                    is_double=s.is_double,
+                    fp=s.fp,
+                    sp=s.sp
                 )
                 for s in session.scalars(query).all()
             ]
@@ -58,7 +62,9 @@ class ServicesRepository:
                 name=service.name,
                 code=service.code,
                 is_submit=service.is_submit,
-                is_double=service.is_double
+                is_double=service.is_double,
+                fp=service.fp,
+                sp=service.sp
             ) if service else None
 
     def create(self, service: Service) -> None:
@@ -84,13 +90,15 @@ class ServicesRepository:
                     name=s.name,
                     code=s.code,
                     is_submit=s.is_submit,
-                    is_double=s.is_double
+                    is_double=s.is_double,
+                    fp=s.fp,
+                    sp=s.sp
                 )
                 for s in session.scalars(query).all()
             ]
 
     @staticmethod
-    def update(code: str, name: str = None, is_submit: bool = None, is_double: bool = None) -> None:
+    def update(code: str, name: str = None, is_submit: bool = None, is_double: bool = None, fp: float = None, sp: float = None) -> None:
         with Base() as session:
             service = session.get(ServiceTable, code)
             if not service:
@@ -104,5 +112,11 @@ class ServicesRepository:
 
             if is_double != None:
                 service.is_double = is_double
+
+            if fp != None:
+                service.fp = fp
+
+            if sp != None:
+                service.sp = sp
 
             session.commit()

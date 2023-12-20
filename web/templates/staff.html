@@ -272,6 +272,8 @@
                             <th>Наименование</th>
                             <th>Сдача работы</th>
                             <th>В два этапа</th>
+                            <th>FP</th>
+                            <th>SP</th>
                         </tr>
                         {% for s in services | sort(attribute='code') %}
                         <tr>
@@ -299,6 +301,8 @@
                                     onchange="ChangeIsDouble(this)">
                                 {% endif %}
                             </td>
+                            <td>{{ s.fp }}</td>
+                            <td>{{ s.sp }}</td>
                         </tr>
                         {% endfor %}
                     </table>

@@ -108,6 +108,8 @@ class Service(Base):
     name: Mapped[str] = mapped_column(String(500))
     is_submit: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     is_double: Mapped[bool] = mapped_column(Boolean(), nullable=True, default=False)
+    fp: Mapped[float] = mapped_column(Float(), default=0, nullable=True)
+    sp: Mapped[float] = mapped_column(Float(), default=0, nullable=True)
 
 
 class Consumables(Base):

@@ -69,9 +69,9 @@ class ConsumablesRepository:
         if not service:
             raise NameError(f"Услуга с кодом '{service_code}' не существует")
 
-        print(self.get_by_technician_and_service(staff, service), technician_name)
-        if self.get_by_technician_and_service(staff, service):
-            return None
+        # print(self.get_by_technician_and_service(staff, service), technician_name)
+        # if self.get_by_technician_and_service(staff, service):
+        #     return None
 
         with Base() as session:
             session.add(

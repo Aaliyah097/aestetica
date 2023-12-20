@@ -67,20 +67,28 @@ class DoctorSalaryCalculator:
         return list(salaries.values()), union_treatments
 
     def get_volume(self, treatment: Treatment, is_submit: bool = False, withdraw: float = 0) -> float:
-        if treatment.department.name == 'Исправление прикуса':
-            fp, sp = 0.5, 0.5
+        # if treatment.department.name == 'Исправление прикуса':
+        #     fp, sp = 0.5, 0.5
+        # else:
+        #     fp, sp = 0.7, 0.3
+
+        if treatment.service:
+            fp, sp = treatment.service.fp, treatment.service.sp
         else:
-            fp, sp = 0.7, 0.3
+            fp, sp = 0, 0
 
         if treatment.cost_wo_discount == 0:
             volume = 0
         elif treatment.staff.name == "Колотова Анастасия Валентиновна":
-            if (treatment.discount * 100 / treatment.cost_wo_discount) > 10:
+            if (treatment.discount * 100 / treatment.cost_wo_discount) > 10.0:
                 volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.1)
             else:
                 volume = treatment.cost
-        elif (round((treatment.discount * 100 / treatment.cost_wo_discount), 0) >= 50.0) and treatment.client in self.staff_reduce_discount_list:
-            volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
+        elif (round((treatment.discount * 100 / treatment.cost_wo_discount), 0) >= 20.0):
+            if treatment.client in self.staff_reduce_discount_list:
+                volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.5)
+            else:
+                volume = treatment.cost_wo_discount - (treatment.cost_wo_discount * 0.2)
         else:
             volume = treatment.cost
 
@@ -96,7 +104,7 @@ class DoctorSalaryCalculator:
         if is_submit:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
-            volume = volume - consumables_cost_new
+            volume = volume - consumables_cost or consumables_cost_new # не проверено, старый вариант volume - consumables_cost
             if treatment.service.is_double:
                 volume = volume * fp
             else:

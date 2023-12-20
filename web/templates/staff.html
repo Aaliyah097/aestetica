@@ -301,8 +301,19 @@
                                     onchange="ChangeIsDouble(this)">
                                 {% endif %}
                             </td>
-                            <td>{{ s.fp }}</td>
-                            <td>{{ s.sp }}</td>
+                            <td>
+                                <input type="number" value="{{ s.fp }}" data-type="fp"  data-cargo-code="{{ s.code }}"
+                                    data-cargo-name="{{ s.name }}"  onkeydown="SetNewFpSp(event, this)"
+                                    style='text-align: center !important'
+                                    >
+                                </td>
+                            <td>
+                                <input type="number" value="{{ s.fp }}" data-type="sp"  data-cargo-code="{{ s.code }}"
+                                    data-cargo-name="{{ s.name }}"  onkeydown="SetNewFpSp(event, this)"
+                                     style='text-align: center !important'
+                                    >
+
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>

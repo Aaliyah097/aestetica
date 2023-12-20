@@ -640,6 +640,42 @@ function ChangeIsSubmit(checkbox) {
         });
 }
 
+function SetNewFpSp(event, el){
+    
+    if (event.key === 'Enter'){
+        console.log('1231')
+        const cargoCode = el.getAttribute('data-cargo-code');
+        const cargoName = el.getAttribute('data-cargo-name');
+        const newValue = Number(el.value); // Получаем новое значение чекбокса
+        const dataType = el.getAttribute('data-type')
+
+        fetch('/services/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                code: cargoCode,
+                name: cargoName,
+                [dataType]: newValue,
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    el.classList.add('success')
+                    setTimeout(() => el.classList.remove('success'), 850)
+                } else {
+                    el.parentNode.classList.add('error')
+                    setTimeout(() => el.parentNode.classList.remove('error'), 850)
+                    console.error(`Ошибка при обновлении значения ${cargoName} (код ${cargoCode}).`);
+                }
+            })
+            .catch((error) => {
+                console.error(`Произошла ошибка: ${error}`);
+            });
+        }
+}
+
 function ChangeIsDouble(checkbox){
     const cargoCode = checkbox.getAttribute('data-cargo-code');
     const cargoName = checkbox.getAttribute('data-cargo-name');

@@ -662,10 +662,10 @@ function SetNewFpSp(event, el){
         })
             .then(response => {
                 if (response.ok) {
-                    el.classList.add('success')
+                    el.parentNode.classList.add('success')
                     setTimeout(() => el.classList.remove('success'), 850)
                 } else {
-                    el.parentNode.classList.add('error')
+                    el.parentNode.parentNode.classList.add('error')
                     setTimeout(() => el.parentNode.classList.remove('error'), 850)
                     console.error(`Ошибка при обновлении значения ${cargoName} (код ${cargoCode}).`);
                 }

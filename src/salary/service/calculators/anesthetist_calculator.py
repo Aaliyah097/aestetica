@@ -20,6 +20,8 @@ class AnesthetistCalculator:
         ) or Salary(staff=anesthetist, department=department, filial=filial)
 
         for treatment in treatments:
+            if not treatment.service:
+                continue
             match = re.findall(r'\d+', treatment.service.name)
             if len(match) == 0:
                 continue

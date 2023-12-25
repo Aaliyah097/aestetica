@@ -12,7 +12,9 @@ def services_update():
     code = request.json.get('code', None)
     is_double = request.json.get("is_double", None)
     fp = request.json.get("fp", None)
-    so = request.json.get("sp", None)
+    sp = request.json.get("sp", None)
+
+    print(request.json)
 
     if code == None:
         return "'code' is not defined", 500

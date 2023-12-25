@@ -5,6 +5,7 @@ from db.infodent.repository import Repository, Connector
 from src.treatments.entities.service import Service
 from src.staff.repositories.filials_repository import FilialsRepository
 from src.treatments.repositories.services_repository import ServicesRepository
+from src.utils import remove_spaces
 
 
 def sync_services():
@@ -34,9 +35,10 @@ def sync_services():
                 services[d['KODOPER']] = d
 
     for service_code, service in services.items():
-        if service_repository.get_by_code(service['KODOPER']):
-            service_repository.update(service['KODOPER'], service['SCHNAME'])
+        service_code = remove_spaces(service['KODOPER'])
+        if service_repository.get_by_code(service_code):
+            service_repository.update(service_code, service['SCHNAME'])
         else:
             service_repository.create(
-                Service(name=service['SCHNAME'], code=service['KODOPER'], is_submit=False)
+                Service(name=service['SCHNAME'], code=service_code, is_submit=False)
             )

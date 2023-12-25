@@ -67,13 +67,8 @@ class DoctorSalaryCalculator:
         return list(salaries.values()), union_treatments
 
     def get_volume(self, treatment: Treatment, is_submit: bool = False, withdraw: float = 0) -> float:
-        # if treatment.department.name == 'Исправление прикуса':
-        #     fp, sp = 0.5, 0.5
-        # else:
-        #     fp, sp = 0.7, 0.3
-
         if treatment.service:
-            fp, sp = treatment.service.fp, treatment.service.sp
+            fp, sp = round(treatment.service.fp / 100, 1), round(treatment.service.sp / 100, 1)
         else:
             fp, sp = 0, 0
 
@@ -105,7 +100,7 @@ class DoctorSalaryCalculator:
             volume = ( (volume - consumables_cost_new) * sp ) + ( (volume - consumables_cost_new) - (volume - consumables_cost) ) * fp
         else:
             volume = volume - consumables_cost or consumables_cost_new # не проверено, старый вариант volume - consumables_cost
-            if treatment.service.is_double:
+            if treatment.service and treatment.service.is_double:
                 volume = volume * fp
             else:
                 volume = volume
